@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * 通过反射实现的动态代理，动态代理还可通过ASM那些来实现（cglib)
+ * 通过反射实现的动态代理；动态代理还可通过ASM那些来实现，则是通过生成业务类的子类作为代理类（cglib)
  */
 public class DynamicProxy {
 
