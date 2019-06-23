@@ -1,4 +1,4 @@
-package com.stillcoolme.utils.config;
+package com.stillcoolme.config;
 
 public class ConfigUtils {
 

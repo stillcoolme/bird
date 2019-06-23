@@ -6,9 +6,14 @@
 
   <groupId>com.stillcoolme</groupId>
   <artifactId>bird</artifactId>
-  <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+    <modules>
+        <module>bird-basic</module>
+      <module>bird-leetcode</module>
+    </modules>
 
-  <name>bird</name>
+    <name>bird</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
