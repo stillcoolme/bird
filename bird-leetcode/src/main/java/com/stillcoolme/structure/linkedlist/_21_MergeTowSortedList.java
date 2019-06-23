@@ -6,7 +6,7 @@ import com.stillcoolme.data.ListNode;
  * @author: create by stillcoolme
  * @description: com.stillcoolme.structure.linkedlist
  * @date:2019/6/23
- * 将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+ * 将两个有序链表合并为一个新的有序链表并返回。（easy）
  * **示例:
  *
  * ```
@@ -60,21 +60,37 @@ public class _21_MergeTowSortedList {
 
     /**
      * 递归解题思路
-     *
+     *（1）对空链表存在的情况进行处理，假如 pHead1 为空则返回 pHead2 ，pHead2 为空则返回 pHead1。
+     *（2）比较两个链表第一个结点的大小，确定头结点的位置
+     *（3）头结点确定后，继续在剩下的结点中选出下一个结点去链接到第二步选出的结点后面，然后在继续重复（2 ）（3） 步，直到有链表为空。
      * @param l1
      * @param l2
      * @return
      */
     public ListNode mergeTwoOrderedLists2(ListNode l1, ListNode l2){
-        return null;
+        ListNode head;
+        if(l1 == null){
+            return l2;
+        } else if(l2 == null){
+            return l1;
+        } else {
+            if(l1.val < l2.val){
+                head = l1;
+                head.next = mergeTwoOrderedLists2(l1.next, l2);
+            } else {
+                head = l2;
+                head.next = mergeTwoOrderedLists2(l1, l2.next);
+            }
+            return head;
+        }
     }
 
     public static void main(String[] args) {
         _21_MergeTowSortedList solution = new _21_MergeTowSortedList();
         ListNode listNode0 = ListNode.createTestData("[1,3,5,7,9]");
-        ListNode listNode1 = ListNode.createTestData("[2,4,6,8,10]");
+        ListNode listNode1 = ListNode.createTestData("[2,3,6,8,10]");
         ListNode.print(listNode0);
         ListNode.print(listNode1);
-        ListNode.print(solution.mergeTwoOrderedLists(listNode0, listNode1));
+        ListNode.print(solution.mergeTwoOrderedLists2(listNode0, listNode1));
     }
 }
