@@ -1,5 +1,7 @@
 package com.stillcoolme.structure.linkedlist;
 
+import com.stillcoolme.data.ListNode;
+
 /**
  * @author: create by stillcoolme
  * @description: com.stillcoolme.structure.linkedlist
@@ -56,13 +58,23 @@ public class _21_MergeTowSortedList {
         return head.next;
     }
 
-    public class ListNode {
-        int val;
-        ListNode next;
+    /**
+     * 递归解题思路
+     *
+     * @param l1
+     * @param l2
+     * @return
+     */
+    public ListNode mergeTwoOrderedLists2(ListNode l1, ListNode l2){
+        return null;
+    }
 
-        ListNode(int x) {
-            val = x;
-            next = null;
-        }
+    public static void main(String[] args) {
+        _21_MergeTowSortedList solution = new _21_MergeTowSortedList();
+        ListNode listNode0 = ListNode.createTestData("[1,3,5,7,9]");
+        ListNode listNode1 = ListNode.createTestData("[2,4,6,8,10]");
+        ListNode.print(listNode0);
+        ListNode.print(listNode1);
+        ListNode.print(solution.mergeTwoOrderedLists(listNode0, listNode1));
     }
 }
