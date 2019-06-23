@@ -1,4 +1,4 @@
-package com.stillcoolme.core.utils.config;
+package com.stillcoolme.utils.config;
 
 import java.io.IOException;
 import java.io.InputStream;
