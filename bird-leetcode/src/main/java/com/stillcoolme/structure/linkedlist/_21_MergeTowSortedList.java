@@ -27,7 +27,7 @@ public class _21_MergeTowSortedList {
      * @param l2
      * @return
      */
-    public ListNode mergeTwoOrderedLists(ListNode l1, ListNode l2){
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2){
         // 创建一个头结点，最后还要删除掉
         ListNode head = new ListNode(0);
         ListNode tail = head;
@@ -67,7 +67,7 @@ public class _21_MergeTowSortedList {
      * @param l2
      * @return
      */
-    public ListNode mergeTwoOrderedLists2(ListNode l1, ListNode l2){
+    public ListNode mergeTwoLists2(ListNode l1, ListNode l2){
         ListNode head;
         if(l1 == null){
             return l2;
@@ -76,10 +76,10 @@ public class _21_MergeTowSortedList {
         } else {
             if(l1.val < l2.val){
                 head = l1;
-                head.next = mergeTwoOrderedLists2(l1.next, l2);
+                head.next = mergeTwoLists2(l1.next, l2);
             } else {
                 head = l2;
-                head.next = mergeTwoOrderedLists2(l1, l2.next);
+                head.next = mergeTwoLists2(l1, l2.next);
             }
             return head;
         }
@@ -91,6 +91,6 @@ public class _21_MergeTowSortedList {
         ListNode listNode1 = ListNode.createTestData("[2,3,6,8,10]");
         ListNode.print(listNode0);
         ListNode.print(listNode1);
-        ListNode.print(solution.mergeTwoOrderedLists2(listNode0, listNode1));
+        ListNode.print(solution.mergeTwoLists(listNode0, listNode1));
     }
 }
