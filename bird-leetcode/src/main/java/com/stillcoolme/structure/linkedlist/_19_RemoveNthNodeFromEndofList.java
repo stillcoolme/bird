@@ -24,8 +24,15 @@ public class _19_RemoveNthNodeFromEndofList {
         dummyHead.next = head;
         ListNode prepre = dummyHead;
         ListNode pre = head, curr = head;
+        if(n <= 0){
+            return null;
+        }
         for (int i = 0; i < n - 1; i++) {
             curr = curr.next;
+            // 如果n大于链表的长度
+            if(curr == null){
+                return null;
+            }
         }
         while (curr.next != null){
             curr = curr.next;

@@ -33,7 +33,14 @@ public class _242_ValidAnagram {
     }
 
     /**
-     * 解法2: 将s作为char数组放到map中，
+     * 解法2: 使用map来记数。
+     * 1. 将s作为char数组，每个char放到map中作为key，然后出现次数作为value；
+     * 2. t也弄成char数组，每个char放到map中value为减1；
+     * 3. 最后map中那个value不为0，说明 s和t不一致。
+     *
+     * 时间复杂度：O(n)。因为访问计数器表是一个固定的时间操作。
+     * 空间复杂度：O(1)。尽管我们使用了额外的空间，但是空间的复杂性是 O(1)，因为无论 N 有多大，表的大小都保持不变。
+     *
      * @param s
      * @param t
      * @return
@@ -68,14 +75,31 @@ public class _242_ValidAnagram {
     }
 
     /**
-     * 解法3: 使用数组来计数
+     * 解法3: 使用数组来计数，对解法2的改进。
+     * 1. 因为只有26个字母，每个字母占用一个数组位置，数组值用来计数。
      * @param s
      * @param t
      * @return
      */
     public boolean isAnagram3(String s, String t) {
-
-
+        if(s == null || t == null || s.length() != t.length()){
+            return false;
+        }
+        int[] table = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            table[s.charAt(i) - 'a'] ++;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            table[t.charAt(i) - 'a'] --;
+            if(table[t.charAt(i) - 'a'] < 0){
+                return false;
+            }
+        }
         return true;
+    }
+
+    public static void main(String[] args) {
+        _242_ValidAnagram validAnagram = new _242_ValidAnagram();
+        validAnagram.isAnagram3("hahah", "hahah");
     }
 }
