@@ -12,7 +12,6 @@
 * 参考
     * [MisterBooo/LeetCodeAnimation](https://github.com/MisterBooo/LeetCodeAnimation)
     * [Wang-Jun-Chao/leetcode](https://github.com/Wang-Jun-Chao/leetcode)
-    * [apachecn/awesome-algorithm](https://github.com/apachecn/awesome-algorithm)
     * [Blankj/awesome-java-leetcode附各公司题号及基础结构](https://github.com/Blankj/awesome-java-leetcode)
     * [常用算法学习](https://algorithm.yuanbin.me/zh-hans/)
     
@@ -20,21 +19,15 @@
 0. 时间空间复杂度，做完每道题都应该分析一下时间空间复杂度！
 
 1. 链表
-    * 反转链表，两两元素反转，判断链表是否有环
-    
 2. 堆栈
-    * 判断括号是否有效20，用栈实现堆232，用堆实现栈225
-
-3. 哈希表、Set：用于查询和计数
-    * 有效的字母异位词242，2Sum1，3Sum15
-    
+3. 哈希表、Set：用于查询和计数  
 5. 优先队列
-    * 
-
 6. 二叉树，二叉搜索树（左子树小于根结点，右子树大于根节点）
-    * 验证二叉搜索树98，最小公共祖先235、236，
-    
-    
+
 ### 算法
 1. 递归，分治
 
+
+
+### 分布式
+1. bitmap
