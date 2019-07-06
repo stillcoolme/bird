@@ -85,4 +85,9 @@ public class TreeNode {
         }
         System.out.println(res);
     }
+
+    public static void main(String[] args) {
+        TreeNode tree = TreeNode.createTestData("[3,5,1,6,2,0,8,null,null,7,4]");
+        TreeNode.print(tree);
+    }
 }
