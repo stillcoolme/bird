@@ -1,4 +1,4 @@
-package com.stillcoolme.structure.tree;
+package com.stillcoolme.structure.tree.BFS_DSF;
 
 import com.stillcoolme.data.TreeNode;
 
