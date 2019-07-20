@@ -10,6 +10,7 @@
 ## bird-leetcode
 * 记录刷leetcode的代码及思路整理总结
 * 参考
+    * [azl397985856/leetcode](https://github.com/azl397985856/leetcode)
     * [MisterBooo/LeetCodeAnimation](https://github.com/MisterBooo/LeetCodeAnimation)
     * [Wang-Jun-Chao/leetcode](https://github.com/Wang-Jun-Chao/leetcode)
     * [Blankj/awesome-java-leetcode附各公司题号及基础结构](https://github.com/Blankj/awesome-java-leetcode)
