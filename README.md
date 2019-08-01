@@ -6,7 +6,9 @@
 * 参考
     * [crossoverJie/JCSprout](https://github.com/crossoverJie/JCSprout)
     * [liushaoming/Java interview-高级Java面试题2019](https://github.com/liushaoming/java-interview)
-
+    * [中华石杉](https://github.com/shishan100/Java-Interview-Advanced)
+    * [大厂面试题](https://github.com/0voice/interview_internal_reference)
+    
 ## bird-leetcode
 * 记录刷leetcode的代码及思路整理总结
 * 参考

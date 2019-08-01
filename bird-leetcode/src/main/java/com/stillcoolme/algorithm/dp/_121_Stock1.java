@@ -10,7 +10,7 @@ package com.stillcoolme.algorithm.dp;
  * 例子1：
  * Input: [7, 1, 5, 3, 6, 4]
  * Output: 5
- * 最大的利润为：6-1 = 5（不是7-1 = 6，因为销售价格需要比购买价格大）
+ * 最大的利润为：6 - 1 = 5（不是 7 - 1 = 6，因为销售价格需要比购买价格大）
  **/
 public class _121_Stock1 {
 
@@ -29,23 +29,37 @@ public class _121_Stock1 {
         return profile;
     }
 
+    /**
+     * DP
+     * @param prices
+     * @return
+     */
     public int maxProfit2(int[] prices) {
-        int[][][] mp = new int[prices.length][3][2];
+        // 从1 开始计算天数，这样方便定义base，对应的价格为prices[i - 1]
+        // k也是从下标 1 开始算比较方便
+        int[][][] mp = new int[prices.length + 1][2][2];
+
+        // 定义base
+        // i = 0 ，即第 0 天还没开始，这时不持有股票利润当然就是 0
         mp[0][0][0] = 0;
-        mp[0][0][1] = prices[0];
-        for (int i = 1; i < prices.length; i++) {
-            for (int k = 0; k < 2; k++) {
+        mp[0][1][0] = 0;
+        // 还没开始的时候，是不可能持有股票的，用负无穷表示这种不可能。
+        mp[0][0][1] = Integer.MIN_VALUE;
+        mp[0][1][1] = Integer.MIN_VALUE;
+
+        for (int i = 1; i < prices.length + 1; i++) {
+            for (int k = 1; k < 2; k++) {
                 // 第i天没有股票
-                mp[i][k][0] = Math.max(mp[i][k][0], mp[i][k + 1][1] + prices[i]);
+                mp[i][k][0] = Math.max(mp[i - 1][k][0], mp[i - 1][k][1] + prices[i - 1]);
                 // 第i天有股票
-                mp[i][k][1] = Math.max(mp[i][k][1], mp[i][k + 1][0] - prices[i]);
+                mp[i][k][1] = Math.max(mp[i - 1][k][1], mp[i - 1][k - 1][0] - prices[i - 1]);
             }
         }
-        return mp[prices.length - 1][1][0];
+        return mp[prices.length][1][0];
     }
 
     public static void main(String[] args) {
-        int[] prices = {7,1,5,3,6,4};
+        int[] prices = {7,1,5,3,6,4,90};
         _121_Stock1 stock = new _121_Stock1();
         System.out.println(stock.maxProfit2(prices));
     }
