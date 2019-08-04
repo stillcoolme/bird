@@ -31,7 +31,7 @@ public class _188_StockWithKTimes {
      *      mp[i, 1] 就是 i 天 持有了股票，就是 没有操作 或者 卖出了：
      *      mp[i, 1] =  Max - | mp[i - 1, 1]          // i 天没有操作
      *                        | mp[i - 1, 0] - a[i]   // i 天买入了股票
-     * 3）还有个条件：买卖股票的次数最多为k次，需要再多一维来记录已经交易了多少次
+     * 3）还有个条件：交易股票的次数最多为k次（买一次股票记为交易一次），需要再多一维来记录已经交易了多少次
      *  定义 mp[i][k][j] k的范围是 0 - k 次
      *  于是得到状态转移方程：
      *      mp[i, k, 0] 就是 i 天 没有股票，就是 没有操作 或者 卖出了：
@@ -46,6 +46,54 @@ public class _188_StockWithKTimes {
      * @return
      */
     public int maxProfit(int k, int[] prices) {
-        return 0;
+        if(k < 1) {
+            return 0;
+        }
+        // 一次交易由买入和卖出构成，至少需要两天。
+        // 所以说有效的限制 k 应该不超过 n/2，如果超过，就没有约束作用了，相当于 k = +infinity。
+        if(k > prices.length / 2) {
+            int[][] mp = new int[prices.length + 1][2];
+            mp[0][0] = 0;
+            mp[0][1] = Integer.MIN_VALUE;
+            for (int i = 1; i < prices.length + 1; i++) {
+                mp[i][0] = Math.max(mp[i - 1][0], mp[i - 1][1] + prices[i - 1]);
+                mp[i][1] = Math.max(mp[i - 1][1], mp[i - 1][0] - prices[i - 1]);
+            }
+            return mp[prices.length][0];
+        }
+        // 从1 开始计算天数，这样方便定义base，对应的价格为prices[i - 1]
+        // k也是从下标 1 开始算比较方便
+        int[][][] mp = new int[prices.length + 1][k + 1][2];
+        // 定义base
+        for (int kk = 1; kk <= k; kk++) {
+            // 因为 i 是从 1 开始的，所以 i = 0 意味着还没有开始，这时候的利润当然是 0 。
+            mp[0][kk][0] = 0;
+            // 还没开始的时候，是不可能持有股票的，用负无穷表示这种不可能。
+            mp[0][kk][1] = Integer.MIN_VALUE;
+        }
+        for (int i = 0; i < prices.length + 1; i++) {
+            // 因为 k 是从 1 开始的，所以 k = 0 意味着根本不允许交易，这时候利润当然是 0 。
+            mp[i][0][0] = 0;
+            // 不允许交易的情况下，是不可能持有股票的，用负无穷表示这种不可能。
+            mp[i][0][1] = Integer.MIN_VALUE;
+        }
+        for (int i = 1; i < prices.length + 1; i++) {
+            for (int kk = k; kk >= 1; kk--) {
+                // 第i天没有股票
+                mp[i][kk][0] = Math.max(mp[i - 1][kk][0], mp[i - 1][kk][1] + prices[i - 1]);
+                // 第i天有股票
+                mp[i][kk][1] = Math.max(mp[i - 1][kk][1], mp[i - 1][kk - 1][0] - prices[i - 1]);
+                System.out.println(i + " " + kk + " " + mp[i][kk][0]);
+            }
+        }
+        return mp[prices.length][k][0];
+    }
+
+    public static void main(String[] args) {
+        // 测试用例1： int[] prices = {2, 4, 1};  k = 2
+        // 测试用例2:  int[] prices = {1,2,4,2,5,7,2,4,9,0};  k = 4
+        int[] prices = {1,2,4,2,5,7,2,4,9,0};
+        _188_StockWithKTimes stockWithKTimes = new _188_StockWithKTimes();
+        System.out.println(stockWithKTimes.maxProfit(4, prices));
     }
 }
