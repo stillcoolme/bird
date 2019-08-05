@@ -48,7 +48,7 @@ public class _121_Stock1 {
         mp[0][1][1] = Integer.MIN_VALUE;
 
         for (int i = 1; i < prices.length + 1; i++) {
-            for (int k = 1; k < 2; k++) {
+            for (int k = 1; k <= 1; k++) {
                 // 第i天没有股票
                 mp[i][k][0] = Math.max(mp[i - 1][k][0], mp[i - 1][k][1] + prices[i - 1]);
                 // 第i天有股票
@@ -58,9 +58,39 @@ public class _121_Stock1 {
         return mp[prices.length][1][0];
     }
 
+    /**
+     * 简单优化一下，上面的for循环里面，k都是等于1的
+     *  // 第i天没有股票
+     *  mp[i][1][0] = Math.max(mp[i - 1][1][0], mp[i - 1][1][1] + prices[i - 1]);
+     *  // 第i天有股票
+     *  mp[i][1][1] = Math.max(mp[i - 1][1][1], mp[i - 1][0][0] - prices[i - 1]);
+     *  而且可知道 mp[i - 1][0][0] 等于 0
+     *  所以状态选择方程和 k 的值无关了
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfit3(int[] prices) {
+        int[][] mp = new int[prices.length + 1][2];
+        // 定义base
+        // i = 0 ，即第 0 天还没开始，这时不持有股票利润当然就是 0
+        mp[0][0] = 0;
+        // 还没开始的时候，是不可能持有股票的，用负无穷表示这种不可能。
+        mp[0][1] = Integer.MIN_VALUE;
+        for (int i = 1; i < prices.length + 1; i++) {
+            for (int k = 1; k <= 1; k++) {
+                // 第i天没有股票
+                mp[i][0] = Math.max(mp[i - 1][0], mp[i - 1][1] + prices[i - 1]);
+                // 第i天有股票
+                mp[i][1] = Math.max(mp[i - 1][1],  - prices[i - 1]);
+            }
+        }
+        return mp[prices.length][0];
+    }
+
     public static void main(String[] args) {
         int[] prices = {7,1,5,3,6,4,90};
         _121_Stock1 stock = new _121_Stock1();
-        System.out.println(stock.maxProfit2(prices));
+        System.out.println(stock.maxProfit3(prices));
     }
 }

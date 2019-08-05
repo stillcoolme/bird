@@ -12,7 +12,7 @@ package com.stillcoolme.algorithm.dp;
  * 输出: 2
  * 解释: 在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。
  **/
-public class _188_StockWithKTimes {
+public class _188_StockWithK {
 
     /**
      * 思路：
@@ -40,7 +40,10 @@ public class _188_StockWithKTimes {
      *      mp[i, k, 1] 就是 i 天 持有了股票，就是 没有操作 或者 卖出了：
      *      mp[i, k, 1] =  Max - | mp[i - 1, k, 1]          // i 天没有操作
      *                        | mp[i - 1, k - 1, 0] - a[i]   // i 天买入了股票
-     *
+     * 注意的点：
+     *  1）当 k = +infinity 就相当于 122题的 k 为无限大
+     *  2）设置base要通过for循环来，不要漏掉一些
+     *  3）循环 k 是从大到小的？
      * @param k
      * @param prices
      * @return
@@ -51,6 +54,7 @@ public class _188_StockWithKTimes {
         }
         // 一次交易由买入和卖出构成，至少需要两天。
         // 所以说有效的限制 k 应该不超过 n/2，如果超过，就没有约束作用了，相当于 k = +infinity。
+        // 当 k = +infinity 就相当于 122题了
         if(k > prices.length / 2) {
             int[][] mp = new int[prices.length + 1][2];
             mp[0][0] = 0;
@@ -61,8 +65,9 @@ public class _188_StockWithKTimes {
             }
             return mp[prices.length][0];
         }
+
         // 从1 开始计算天数，这样方便定义base，对应的价格为prices[i - 1]
-        // k也是从下标 1 开始算比较方便
+        // k 也是从下标 1 开始算比较方便
         int[][][] mp = new int[prices.length + 1][k + 1][2];
         // 定义base
         for (int kk = 1; kk <= k; kk++) {
@@ -93,7 +98,7 @@ public class _188_StockWithKTimes {
         // 测试用例1： int[] prices = {2, 4, 1};  k = 2
         // 测试用例2:  int[] prices = {1,2,4,2,5,7,2,4,9,0};  k = 4
         int[] prices = {1,2,4,2,5,7,2,4,9,0};
-        _188_StockWithKTimes stockWithKTimes = new _188_StockWithKTimes();
+        _188_StockWithK stockWithKTimes = new _188_StockWithK();
         System.out.println(stockWithKTimes.maxProfit(4, prices));
     }
 }
