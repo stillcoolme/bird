@@ -4,6 +4,7 @@ package com.stillcoolme.algorithm.dp;
  * @author: stillcoolme
  * @date: 2019/8/6 11:44
  * @description:
+ *  求 最长回文子串
  *  给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
  *  示例 1：
  *  输入: "babad"
@@ -19,7 +20,7 @@ public class _5_LongestPalindrome {
      * 事实上，上面的分析已经建立了大问题和小问题之间的关联， 基于此，我们可以建立动态规划模型。
      * 1）状态定义：dp[i][j] 表示 字符串中下标 i 到 j 的子字符串是否是回文子串
      * 2）状态选择方程：
-     * if (s[i] === s[j] && dp[i + 1][j - 1]) {
+     * if (s[i] == s[j] && dp[i + 1][j - 1]) {
      *   dp[i][j] = true;
      * }
      * 3）base case就是：
