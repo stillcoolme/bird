@@ -12,7 +12,7 @@ package com.stillcoolme.algorithm.dp;
  * Output: 5
  * 最大的利润为：6 - 1 = 5（不是 7 - 1 = 6，因为销售价格需要比购买价格大）
  **/
-public class _121_Stock1 {
+public class Stock1_121 {
 
     /**
      * 暴力单循环即可
@@ -90,7 +90,7 @@ public class _121_Stock1 {
 
     public static void main(String[] args) {
         int[] prices = {7,1,5,3,6,4,90};
-        _121_Stock1 stock = new _121_Stock1();
+        Stock1_121 stock = new Stock1_121();
         System.out.println(stock.maxProfit3(prices));
     }
 }

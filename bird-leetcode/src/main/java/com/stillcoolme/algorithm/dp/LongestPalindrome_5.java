@@ -11,7 +11,7 @@ package com.stillcoolme.algorithm.dp;
  *  输出: "bab"
  *  注意: "aba" 也是一个有效答案。
  **/
-public class _5_LongestPalindrome {
+public class LongestPalindrome_5 {
 
     /**
      * 解决这类问题的核心思想就是两个字“延伸”，具体来说
@@ -40,7 +40,7 @@ public class _5_LongestPalindrome {
         String result = "";
         for (int i = length - 1; i >= 0; i --) {
             for (int j = i; j < length; j ++) {
-                if(j - i == 0) {
+                if(j == i) {
                     dp[i][j] = true;
                 } else if(j - i == 1 && chars[i] == chars[j]) {
                     dp[i][j] = true;
@@ -58,7 +58,7 @@ public class _5_LongestPalindrome {
 
 
     public static void main(String[] args) {
-        _5_LongestPalindrome longestPalindrome = new _5_LongestPalindrome();
+        LongestPalindrome_5 longestPalindrome = new LongestPalindrome_5();
         System.out.println(longestPalindrome.longestPalindrome("abcda"));
     }
 }

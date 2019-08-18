@@ -7,7 +7,7 @@ package com.stillcoolme.algorithm.dp;
  *  设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。
  *  即 k = +infinity
  **/
-public class _122_StockWithKInfinity {
+public class StockWithKInfinity_122 {
 
     /**
      * DP 解法：
@@ -36,7 +36,7 @@ public class _122_StockWithKInfinity {
 
     public static void main(String[] args) {
         int[] prices = {7,1,5,3,6,4};
-        _122_StockWithKInfinity stock2 = new _122_StockWithKInfinity();
+        StockWithKInfinity_122 stock2 = new StockWithKInfinity_122();
         System.out.println(stock2.maxProfit(prices));
     }
 }

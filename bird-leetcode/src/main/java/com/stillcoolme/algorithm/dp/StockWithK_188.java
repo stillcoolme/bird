@@ -12,7 +12,7 @@ package com.stillcoolme.algorithm.dp;
  * 输出: 2
  * 解释: 在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。
  **/
-public class _188_StockWithK {
+public class StockWithK_188 {
 
     /**
      * 思路：
@@ -98,7 +98,7 @@ public class _188_StockWithK {
         // 测试用例1： int[] prices = {2, 4, 1};  k = 2
         // 测试用例2:  int[] prices = {1,2,4,2,5,7,2,4,9,0};  k = 4
         int[] prices = {1,2,4,2,5,7,2,4,9,0};
-        _188_StockWithK stockWithKTimes = new _188_StockWithK();
+        StockWithK_188 stockWithKTimes = new StockWithK_188();
         System.out.println(stockWithKTimes.maxProfit(4, prices));
     }
 }

@@ -9,7 +9,7 @@ package com.stillcoolme.algorithm.dp;
  *  2. 卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
  *  即 k = +infinity 并且有冷冻期
  **/
-public class _309_StockWirthCooldown {
+public class StockWirthCooldown_309 {
 
     /**
      * DP解法：
@@ -39,7 +39,7 @@ public class _309_StockWirthCooldown {
 
     public static void main(String[] args) {
         int[] prices = {1,2,3,0,2};
-        _309_StockWirthCooldown stockWirthCooldown = new _309_StockWirthCooldown();
+        StockWirthCooldown_309 stockWirthCooldown = new StockWirthCooldown_309();
         System.out.println(stockWirthCooldown.maxProfit(prices));
     }
 

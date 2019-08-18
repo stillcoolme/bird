@@ -7,7 +7,7 @@ package com.stillcoolme.algorithm.dp;
  *  设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
  *  即 k = 2
  **/
-public class _123_StockWithK2 {
+public class StockWithK2_123 {
 
     /**
      * DP
@@ -46,7 +46,7 @@ public class _123_StockWithK2 {
 
     public static void main(String[] args) {
         int[] prices = {7,6,4,3,1};
-        _123_StockWithK2 stock3 = new _123_StockWithK2();
+        StockWithK2_123 stock3 = new StockWithK2_123();
         System.out.println(stock3.maxProfit(prices));
 
     }
