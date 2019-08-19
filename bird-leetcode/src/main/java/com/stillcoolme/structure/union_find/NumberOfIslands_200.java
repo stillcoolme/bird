@@ -68,14 +68,15 @@ public class NumberOfIslands_200 {
                         parent[i * n + j] = i * n + j;
                         ++count;
                     }
-                    rank[i * n + j] = 0;
+                    // 初始化时，所有的元素只包含它自己，只有一个元素，所以 rank[i] = 1
+                    rank[i * n + j] = 1;
                 }
             }
         }
 
         /**
          * 查找自己指向的老大，一开始是指向自己的，后面不是指向自己了就递归继续查找.
-         * 也叫 path compression
+         * 同时指向新的老大，也叫 path compression
          * @param i
          * @return
          */
