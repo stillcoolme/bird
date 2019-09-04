@@ -25,6 +25,17 @@ public class MapUtils {
         }
     }
 
+    public static void testGetOrCreate() {
+        Map<String, List<Integer>> map = new HashMap<>();
+        List list = map.getOrDefault("haha", new ArrayList<>());
+        list.add(1);
+        list.add(2);
+        List list2 = map.get("haha");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+    }
+
     public static void main(String[] args) {
         Map<String, Float> map = new HashMap();
         map.put("2dea5b3439b94d248de0e5e0fbc3fa0d", 0.7857033f);
@@ -39,5 +50,6 @@ public class MapUtils {
         map.put("7d5adf6dd410426fa2f785c2f574d23d", 0.7084687f);
         sortMap(map);
 
+        testGetOrCreate();
     }
 }
