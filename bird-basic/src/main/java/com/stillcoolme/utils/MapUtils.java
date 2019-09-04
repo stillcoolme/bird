@@ -30,10 +30,12 @@ public class MapUtils {
         List list = map.getOrDefault("haha", new ArrayList<>());
         list.add(1);
         list.add(2);
-        List list2 = map.get("haha");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
+        map.put("haha", list);
+        for (Map.Entry entry : map.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
         }
+
     }
 
     public static void main(String[] args) {
