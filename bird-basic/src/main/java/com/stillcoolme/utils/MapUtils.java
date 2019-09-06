@@ -1,6 +1,7 @@
 package com.stillcoolme.utils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author: stillcoolme
@@ -25,18 +26,69 @@ public class MapUtils {
         }
     }
 
+    /**
+     * 测试 map中的list是否需要重新 put回去
+     * getOrDefault得到的不行
+     * get出来的才能不put回去
+     */
     public static void testGetOrCreate() {
         Map<String, List<Integer>> map = new HashMap<>();
         List list = map.getOrDefault("haha", new ArrayList<>());
         list.add(1);
         list.add(2);
-        map.put("haha", list);
+        //map.put("haha", list);
         for (Map.Entry entry : map.entrySet()) {
             System.out.println(entry.getKey());
             System.out.println(entry.getValue());
         }
 
+        map.put("yoyo", new ArrayList<>());
+        List list3 = map.get("yoyo");
+        list3.add(3);
+        list3.add(4);
+        for (Map.Entry entry : map.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+
+        Iterator<Map.Entry<String, List<Integer>>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<Integer>> entry = iterator.next();
+            entry.getValue().clear();
+        }
+        System.out.println("=======");
+        for (Map.Entry entry : map.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+        System.out.println("+++++");
+        List list4 = map.get("yoyo");
+        list4.add(3);
+        list4.add(4);
+        for (Map.Entry entry : map.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
     }
+
+
+    public static void test() {
+        Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
+        Set<Integer> set = new HashSet<Integer>();
+        set.add(2);
+        set.add(3);
+        map.put("haha", set);
+        Iterator<Map.Entry<String, Set<Integer>>> iterator = map.entrySet().iterator();
+        Map.Entry<String, Set<Integer>> entry = iterator.next();
+        if(! entry.getValue().isEmpty()) {
+            Integer[] keyArray = entry.getValue().stream().toArray(Integer[]::new);
+            for (int i = 0; i < keyArray.length; i++) {
+                System.out.println(keyArray[i]);
+            }
+        }
+    }
+
+
 
     public static void main(String[] args) {
         Map<String, Float> map = new HashMap();
@@ -53,5 +105,8 @@ public class MapUtils {
         sortMap(map);
 
         testGetOrCreate();
+
+        //test();
+
     }
 }
