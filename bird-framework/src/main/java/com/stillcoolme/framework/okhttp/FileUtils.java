@@ -1,4 +1,4 @@
-package com.stillcoolme.utils;
+package com.stillcoolme.framework.okhttp;
 
 import java.io.*;
 import java.util.ArrayList;
