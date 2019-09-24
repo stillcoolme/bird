@@ -2,6 +2,7 @@ package com.stillcoolme.core.io.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -23,7 +24,8 @@ public class SocketChannelClient {
 
     public String sendMessage(String message) throws IOException {
         socketChannel = SocketChannel.open();
-        socketChannel.bind(new InetSocketAddress(server, port));
+        socketChannel.connect(new InetSocketAddress(server, port));
+        //socketChannel.bind(new InetSocketAddress(server, port));
         // 发送请求
         ByteBuffer byteBuffer = ByteBuffer.wrap(message.getBytes());
         socketChannel.write(byteBuffer);
