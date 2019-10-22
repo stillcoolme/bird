@@ -27,6 +27,36 @@ public class MapUtils {
     }
 
     /**
+     * 遍历map的几种方式
+     * @param map
+     */
+    public static void loopMap(Map<String, Object> map) {
+
+        System.out.println("遍历方式一 使用entries来遍历：");
+        for(Map.Entry<String, Object> entry: map.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+
+        System.out.println("遍历方式二 使用Iterator遍历：");
+        Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> entry = iterator.next();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+
+        System.out.println("遍历方式三 在for-each循环中遍历keys或values，效率低：");
+        //遍历map中的键
+        for (String key : map.keySet()) {
+            System.out.println("Key = " + key + ", Value = " + map.get(key));
+        }
+        //遍历map中的值
+        for (Object value : map.values()) {
+            System.out.println("Value = " + value);
+        }
+    }
+
+
+    /**
      * 测试 map中的list是否需要重新 put回去
      * getOrDefault得到的不行
      * get出来的才能不put回去
@@ -88,6 +118,18 @@ public class MapUtils {
         }
     }
 
+
+    /**
+     * 没有map就new Map的正常写法
+     */
+    public static void noThenCreate() {
+        Map<String, Map> localState = new HashMap<>();
+        Map<String, String> local = (Map<String, String>) localState.get("map");
+        if (local == null) {
+            local = new HashMap<String, String>();
+        }
+
+    }
 
 
     public static void main(String[] args) {
