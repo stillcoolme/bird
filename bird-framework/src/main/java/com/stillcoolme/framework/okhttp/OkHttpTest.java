@@ -1,21 +1,19 @@
 package com.stillcoolme.framework.okhttp;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.junit.Test;
 import sun.misc.BASE64Encoder;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author: stillcoolme
@@ -28,7 +26,7 @@ public class OkHttpTest {
     // 测试 http://api.test.nemoface.com/api
     // https://api.cloud.deepglint.com/v2
     public static final String GL_URL = "http://api.test.nemoface.com/api";
-    public static final String REPO_NAME = "3a66ba80-7c1d-4558-97b9-cdcb9e1e319a";
+    public static String REPO_NAME = "6221c791-02f7-4a1c-8197-1e7c064899be";
 
     OkHttpClient client = new OkHttpClient();
 
@@ -76,16 +74,16 @@ public class OkHttpTest {
     private JSONObject prettyPrint(String response) {
         JSONObject jsonObject = JSONObject.parseObject(response);
         String responseJson = JSON.toJSONString(jsonObject, true);
-        System.out.println(responseJson);
+        // System.out.println(responseJson);
         return jsonObject;
     }
 
     @Test
     public void addPersonNoAddRepo() throws IOException {
-        String repoId = "3a66ba80-7c1d-4558-97b9-cdcb9e1e319a";
+        String repoId = "5459a0e4-14b1-4304-8682-1094d135b6ad";
 
         OkHttpTest example = new OkHttpTest();
-        List<String> filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\image\\丁坠22");
+        List<String> filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\传递性问题\\新建文件夹");
 //        List<String> filePath = new ArrayList<>();
 //        filePath.add("C:\\Users\\zhangjianhua\\Desktop\\提取失败\\侧脸数据\\26742a9c1c9e450097c88728431912b4_face.jpg");
         for (int i = 0; i < filePath.size(); i++) {
@@ -108,10 +106,10 @@ public class OkHttpTest {
 
     @Test
     public void addPerson() throws IOException {
-        String repoId = addRepo("grg-face-test-archive");
+        String repoId = addRepo("kuangshi");
 
         OkHttpTest example = new OkHttpTest();
-        List<String> filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\image\\丁乜堆47");
+        List<String> filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\提取失败\\侧脸数据");
 //        List<String> filePath = new ArrayList<>();
 //        filePath.add("C:\\Users\\zhangjianhua\\Desktop\\提取失败\\侧脸数据\\26742a9c1c9e450097c88728431912b4_face.jpg");
         for (int i = 0; i < filePath.size(); i++) {
@@ -146,9 +144,10 @@ public class OkHttpTest {
 
     @Test
     public void search() throws IOException {
+        REPO_NAME = "3a66ba80-7c1d-4558-97b9-cdcb9e1e319a";
         OkHttpTest example = new OkHttpTest();
         List<String> filePath = new ArrayList<>();
-        filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\image\\丁乜堆47");
+        filePath = FileUtils.getAllFilePath("C:\\Users\\zhangjianhua\\Desktop\\image\\丁坠22");
         //filePath.add("C:\\Users\\zhangjianhua\\Desktop\\image\\picthTestMore\\d5dbfd26-d7fc-49cb-bd44-b6356373cc87.jpg");
         int count = 1;
         for (int i = 0; i < filePath.size(); i++) {
@@ -164,6 +163,17 @@ public class OkHttpTest {
                 System.out.println(count ++);
             }
         }
+
+/*        String bindata = imageToBase64ByLocal("C:\\Users\\zhangjianhua\\Desktop\\image\\丁坠22\\7d9c4d41-1adc-4586-b6ab-1fddda38b14a.jpg");
+        String json = searchRepoJson(Arrays.asList(new String[]{REPO_NAME}), bindata, 100, 0.5f);
+        //System.out.println(json);
+        String response = example.post(GL_URL + "/repo/search", json);
+        JSONObject jsonObject = prettyPrint(response);
+        if(! jsonObject.get("Msg").equals("success")) {
+            String responseJson = JSON.toJSONString(jsonObject, true);
+            System.out.println(" ::: " + responseJson);
+            System.out.println(count ++);
+        }*/
     }
 
     private static String searchRepoJson(List<String> repoIds, String bindata, int topN, float score) {

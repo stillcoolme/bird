@@ -1,19 +1,22 @@
-package com.stillcoolme.netty;
+package com.stillcoolme.netty.second;
 
+import com.stillcoolme.netty.second.message.Message;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
  * @author: stillcoolme
- * @date: 2019/8/19 19:41
+ * @date: 2019/10/24 16:12
  * @description:
- **/
-public class ServerStringHandler extends ChannelInboundHandlerAdapter {
+ */
+public class ClientPoHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        System.err.println("receive server msg:" + msg.toString());
-        ctx.writeAndFlush(msg.toString() + "你好");
+        Message message = (Message) msg;
+        System.out.println("client:" + message.getContent());
     }
 
     @Override

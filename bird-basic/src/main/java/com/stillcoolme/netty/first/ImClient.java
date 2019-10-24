@@ -1,4 +1,4 @@
-package com.stillcoolme.netty;
+package com.stillcoolme.netty.first;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -12,6 +12,7 @@ import io.netty.handler.codec.string.StringEncoder;
  * @author: stillcoolme
  * @date: 2019/8/19 19:45
  * @description:
+ *  客户端连接逻辑
  **/
 public class ImClient {
 
