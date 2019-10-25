@@ -1,7 +1,10 @@
 package com.stillcoolme.netty.first;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -27,7 +30,7 @@ public class ImServer{
         ServerBootstrap bootstrap = new ServerBootstrap ();
         bootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                // childHandler用来配置具体的数据处理方式，可以指定编解码器，处理数据的Handler
+                // childHandler用来配置具体的数据处理方式，可以指定编解码器，处理数据的Handler（用户实现），黏包分包的方式
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {

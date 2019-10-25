@@ -8,8 +8,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -21,7 +23,7 @@ public class ImClient {
 
     private Channel channel;
 
-    private Channel connect(String host, int port) {
+    public Channel connect(String host, int port) {
         doConnect(host, port);
         return this.channel;
     }
@@ -36,29 +38,18 @@ public class ImClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            // IdleStateHandler用于心跳检测，20秒没往服务端发送过数据就发送一个心跳
+                            ch.pipeline().addLast("ping", new IdleStateHandler(60, 20, 60 * 10, TimeUnit.SECONDS));
                             ch.pipeline().addLast("decoder", new MessageDecoder());
                             ch.pipeline().addLast("encoder", new MessageEncoder());
                             ch.pipeline().addLast(new ClientPoHandler());
                         }
                     });
             ChannelFuture future = bootstrap.connect(host, port).sync();
+            future.addListener(new ConnectionListener());
             channel = future.channel();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-
-    public static void main(String[] args) {
-        String host = "127.0.0.1";
-        int port = 2222;
-        Channel channel = new ImClient().connect(host, port);
-        //对象传输数据
-        Message message = new Message();
-        message.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-        message.setContent("hello stillcoolme");
-        channel.writeAndFlush(message);
-        //字符串传输数据
-        //channel.writeAndFlush("stillcoolme");
     }
 }

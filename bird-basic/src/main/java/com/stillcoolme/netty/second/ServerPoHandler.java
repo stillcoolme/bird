@@ -29,6 +29,11 @@ public class ServerPoHandler extends ChannelInboundHandlerAdapter {
         Message message = (Message) msg;
         System.err.println("server message id:" + message.getId());
         ctx.writeAndFlush(message);
+
+        // 服务端收到客户端发送的心跳类型消息后，回复一条信息
+        if(message.getType() == 1) {
+            ctx.writeAndFlush(message);
+        }
     }
 
     @Override
