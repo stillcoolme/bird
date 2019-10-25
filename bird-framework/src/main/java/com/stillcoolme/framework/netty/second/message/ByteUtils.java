@@ -1,6 +1,5 @@
-package com.stillcoolme.netty.second.message;
+package com.stillcoolme.framework.netty.second.message;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import io.netty.buffer.ByteBuf;
 
 import java.io.*;

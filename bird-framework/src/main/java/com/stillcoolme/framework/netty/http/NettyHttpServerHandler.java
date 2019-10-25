@@ -1,6 +1,6 @@
-package com.stillcoolme.netty.http;
+package com.stillcoolme.framework.netty.http;
 
-import com.stillcoolme.netty.second.message.ByteUtils;
+import com.stillcoolme.framework.netty.second.message.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.EmptyByteBuf;
 import io.netty.buffer.Unpooled;

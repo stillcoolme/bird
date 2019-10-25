@@ -1,7 +1,7 @@
-package com.stillcoolme.netty.second;
+package com.stillcoolme.framework.netty.second;
 
-import com.stillcoolme.netty.second.message.MessageDecoder;
-import com.stillcoolme.netty.second.message.MessageEncoder;
+import com.stillcoolme.framework.netty.second.message.MessageDecoder;
+import com.stillcoolme.framework.netty.second.message.MessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

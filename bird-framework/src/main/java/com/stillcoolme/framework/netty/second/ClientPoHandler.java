@@ -1,6 +1,6 @@
-package com.stillcoolme.netty.second;
+package com.stillcoolme.framework.netty.second;
 
-import com.stillcoolme.netty.second.message.Message;
+import com.stillcoolme.framework.netty.second.message.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;

@@ -1,4 +1,4 @@
-package com.stillcoolme.netty.first;
+package com.stillcoolme.framework.netty.first;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

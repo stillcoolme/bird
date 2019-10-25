@@ -1,4 +1,4 @@
-package com.stillcoolme.netty.first;
+package com.stillcoolme.framework.netty.first;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -1,5 +1,7 @@
-package com.stillcoolme.netty.second;
+package com.stillcoolme.framework.netty.second;
 
+import com.stillcoolme.framework.netty.second.App;
+import com.stillcoolme.framework.netty.second.ImClient;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;

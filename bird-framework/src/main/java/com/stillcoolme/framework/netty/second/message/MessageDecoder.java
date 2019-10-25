@@ -1,4 +1,4 @@
-package com.stillcoolme.netty.second.message;
+package com.stillcoolme.framework.netty.second.message;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,8 +1,7 @@
-package com.stillcoolme.netty.second;
+package com.stillcoolme.framework.netty.second;
 
-import com.stillcoolme.netty.second.message.Message;
-import com.stillcoolme.netty.second.message.MessageDecoder;
-import com.stillcoolme.netty.second.message.MessageEncoder;
+import com.stillcoolme.framework.netty.second.message.MessageDecoder;
+import com.stillcoolme.framework.netty.second.message.MessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,7 +9,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
