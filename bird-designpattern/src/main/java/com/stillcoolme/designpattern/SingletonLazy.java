@@ -1,4 +1,4 @@
-package com.stillcoolme.designpatterns;
+package com.stillcoolme.designpattern;
 
 /**
  * @author: stillcoolme
