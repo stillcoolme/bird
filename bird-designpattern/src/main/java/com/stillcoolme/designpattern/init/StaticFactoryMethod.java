@@ -44,6 +44,7 @@ public class StaticFactoryMethod {
         private static Client client;
         static {
             client = new Client("testClient");
+            // 或者 client = clientBuilder();  再封装client构造逻辑。。。
         }
     }
 

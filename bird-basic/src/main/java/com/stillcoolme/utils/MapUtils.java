@@ -9,6 +9,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description:
  **/
 public class MapUtils {
+    public static void mergeMap(Map map) {
+        Map ss = new HashMap<String, Float>();
+        Map ss2 = new HashMap<String, Float>();
+        ss.put("ss", 12F);
+        ss2.put("aa", 13F);
+        ss2.put("aad", 14F);
+        ss2.put("aa", 14F);
+        //  https://blog.csdn.net/ontheroad1875/article/details/86747672
+        ss2.forEach((key, value) -> ss.merge(key, value, (v1, v2) -> v2));
+        for (Object key : ss.keySet()) {
+            System.out.println(key + " " + ss.get(key));
+        }
+    }
 
     public static void sortMap(Map allGeodeKey2ScoreMap) {
         List<Map.Entry<String, Float>> list1 = new ArrayList<>();
