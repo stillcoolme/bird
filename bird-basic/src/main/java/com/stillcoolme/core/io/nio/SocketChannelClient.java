@@ -46,7 +46,8 @@ public class SocketChannelClient {
     public static void main(String[] args) {
         SocketChannelClient socketChannelClient = new SocketChannelClient("localhost", 8081);
         try {
-            socketChannelClient.sendMessage("tcp request data");
+            String response = socketChannelClient.sendMessage("tcp request data");
+            System.out.println(response);
         } catch (IOException e) {
             e.printStackTrace();
         }

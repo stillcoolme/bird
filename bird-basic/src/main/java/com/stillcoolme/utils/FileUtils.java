@@ -1,9 +1,13 @@
 package com.stillcoolme.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: stillcoolme
@@ -91,4 +95,17 @@ public class FileUtils {
         return list;
     }
 
+
+    public static void main(String[] args) {
+        String dbName = "dd";
+        String reqBody = "{\n" +
+                "\t\"method\": \"searchImagesInRemoteDB\",\n" +
+                "\t\"dbName\": \"" + dbName + "\",\n" +
+                "}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key", null);
+        String key2 = Optional.ofNullable(jsonObject.getString("key")).orElse("_))");
+        key2 = key2.length() == 0 ? "history" : key2;
+        System.out.println(key2);
+    }
 }

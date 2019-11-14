@@ -35,6 +35,7 @@ public class StaticFactoryMethod {
     // ================================================
     /**
      * 获取单例对象
+     * * curator框架客户端操作初始化什么的就可以通过这个来封装了
      */
     public Client getClientInstance() {
         return Holder.client;

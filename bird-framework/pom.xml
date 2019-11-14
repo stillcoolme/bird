@@ -49,6 +49,20 @@
       <artifactId>netty-all</artifactId>
       <version>${netty.version}</version>
     </dependency>
+
+
+    <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>transport</artifactId>
+        <version>5.2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.10</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

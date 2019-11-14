@@ -23,6 +23,9 @@ public class MapUtils {
         }
     }
 
+
+
+
     public static void sortMap(Map allGeodeKey2ScoreMap) {
         List<Map.Entry<String, Float>> list1 = new ArrayList<>();
         list1.addAll(allGeodeKey2ScoreMap.entrySet());
@@ -66,6 +69,16 @@ public class MapUtils {
         for (Object value : map.values()) {
             System.out.println("Value = " + value);
         }
+
+        // java8
+        map.forEach((key, value) -> {
+            System.out.println("Key = " + key + "  " + " Value = " + value);
+        });
+
+        map.entrySet().stream()
+                // ...
+                .forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
+
     }
 
 
@@ -114,6 +127,26 @@ public class MapUtils {
         }
     }
 
+    public static void removeByIterator() {
+        Map _revertMap = new HashMap();
+        _revertMap.put("aa_1", "aa");
+        _revertMap.put("aa_2", "aa");
+        _revertMap.put("bb_2", "bb");
+        Iterator<Map.Entry<String, String>> iterator = _revertMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            if(entry.getValue().equals("aa")){
+                iterator.remove();
+            }
+        }
+
+        Iterator<Map.Entry<String, String>> iterator2 = _revertMap.entrySet().iterator();
+        while (iterator2.hasNext()) {
+            Map.Entry<String, String> entry = iterator2.next();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+    }
 
     public static void test() {
         Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
@@ -146,7 +179,7 @@ public class MapUtils {
 
 
     public static void main(String[] args) {
-        Map<String, Float> map = new HashMap();
+/*        Map<String, Float> map = new HashMap();
         map.put("2dea5b3439b94d248de0e5e0fbc3fa0d", 0.7857033f);
         map.put("123", 0.98581654f);
         map.put("3d9c457767ce41c7a275115455e4437a", 0.7002197f);
@@ -159,9 +192,9 @@ public class MapUtils {
         map.put("7d5adf6dd410426fa2f785c2f574d23d", 0.7084687f);
         sortMap(map);
 
-        testGetOrCreate();
+        testGetOrCreate();*/
 
         //test();
-
+        removeByIterator();
     }
 }

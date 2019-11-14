@@ -2,10 +2,7 @@ package com.stillcoolme.utils;
 
 import com.stillcoolme.bean.Person;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -42,5 +39,40 @@ public class Map8Utils {
         */
     }
 
+    public static void sort() {
+        Map<String, Integer> map = new HashMap();
+        map.put("derek",24 );
+        map.put("dad", 51);
+        map.put("mom", 46);
+        List<Map.Entry<String, Integer>> list = new ArrayList<>();
+        list.addAll(map.entrySet());
+        Collections.sort(list, (m1, m2) ->
+            m1.getValue() - m2.getValue());
+        list.forEach(x -> System.out.println(x.getKey()));
+    }
+
+
+    public static void removeByIterator() {
+        Map<String, String> _revertMap = new HashMap();
+        _revertMap.put("aa_1", "aa");
+        _revertMap.put("aa_2", "aa");
+        _revertMap.put("bb_2", "bb");
+
+        _revertMap.entrySet().stream().forEach(x -> {
+            System.out.println("Key = " + x.getKey() + ", Value = " + x.getValue());
+        });
+        Iterator<Map.Entry<String, String>> iterator = _revertMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
+            if(entry.getValue().equals("aa")){
+                iterator.remove();
+            }
+        }
+        Iterator<Map.Entry<String, String>> iterator2 = _revertMap.entrySet().iterator();
+        while (iterator2.hasNext()) {
+            Map.Entry<String, String> entry = iterator2.next();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+    }
 
 }
