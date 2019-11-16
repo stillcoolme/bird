@@ -1,5 +1,7 @@
 package com.stillcoolme.utils;
 
+import com.stillcoolme.bean.Person;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -148,6 +150,16 @@ public class MapUtils {
         }
     }
 
+    public static void putSame() {
+        Map<Person, String> map = new HashMap<>();
+        map.put(new Person(), "2");
+        map.put(new Person(), "2");
+        for(Map.Entry<Person, String> entry: map.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+    }
+
+
     public static void test() {
         Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
         Set<Integer> set = new HashSet<Integer>();
@@ -196,5 +208,7 @@ public class MapUtils {
 
         //test();
         removeByIterator();
+
+        putSame();
     }
 }

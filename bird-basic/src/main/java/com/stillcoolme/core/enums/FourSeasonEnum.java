@@ -1,4 +1,4 @@
-package com.stillcoolme.core;
+package com.stillcoolme.core.enums;
 
 /**
  * @author: stillcoolme
