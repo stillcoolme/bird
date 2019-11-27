@@ -1,4 +1,4 @@
-package com.stillcoolme.core.concurrent.guava;
+package com.stillcoolme.core.concurrent.executor;
 
 
 import com.google.common.util.concurrent.*;
@@ -8,10 +8,10 @@ import java.util.concurrent.Executors;
 
 
 /**
- * ListenableFuture是非阻塞的，会先执行下面的逻辑
  * Author: stillcoolme
  * Date: 2019/7/25 19:35
  * Description:
+ *  Guava的 ListenableFuture 是非阻塞的，会先执行下面的逻辑
  */
 public class ListenableFutureTest {
     //定义一个线程池，用于处理所有任务
@@ -33,7 +33,7 @@ public class ListenableFutureTest {
         Futures.addCallback(stringTask, new FutureCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                System.err.println("StringTask: " + result);
+                System.out.println("获取StringTask结果: " + result);
             }
 
             @Override
@@ -42,8 +42,9 @@ public class ListenableFutureTest {
         });
 
         // 执行时间
-        System.err.println("time: " + (System.currentTimeMillis() - t1));
-        System.out.println("后面的逻辑。。。");
+        System.out.println("time: " + (System.currentTimeMillis() - t1));
+
+        System.out.println("后面的业务逻辑...");
     }
 
 }
