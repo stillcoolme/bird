@@ -11,7 +11,7 @@
     <groupId>com.stillcoolme</groupId>
     <artifactId>bird-designpattern</artifactId>
     <version>1.0.0</version>
-    <name>bird-designpattern</name>
+    <name>${project.artifactId}</name>
 
     <dependencies>
     </dependencies>

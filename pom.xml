@@ -6,15 +6,15 @@
 
   <groupId>com.stillcoolme</groupId>
   <artifactId>bird</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0</version>
-    <modules>
-        <module>bird-basic</module>
-        <module>bird-leetcode</module>
-        <module>bird-framework</module>
-        <module>bird-framework-self</module>
-        <module>bird-designpattern</module>
-    </modules>
+  <packaging>pom</packaging>
+  <version>1.0.0</version>
+  <modules>
+      <module>bird-basic</module>
+      <module>bird-leetcode</module>
+      <module>bird-framework</module>
+      <module>bird-framework-self</module>
+      <module>bird-designpattern</module>
+  </modules>
 
     <name>bird</name>
   <!-- FIXME change it to the project's website -->

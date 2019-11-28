@@ -11,7 +11,6 @@
 
     <groupId>com.stillcoolme</groupId>
     <artifactId>bird-framework-self</artifactId>
-    <packaging>pom</packaging>
     <version>1.0.0</version>
 
 
