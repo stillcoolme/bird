@@ -12,6 +12,7 @@
         <module>bird-basic</module>
         <module>bird-leetcode</module>
         <module>bird-framework</module>
+        <module>bird-framework-self</module>
         <module>bird-designpattern</module>
     </modules>
 

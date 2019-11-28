@@ -19,5 +19,14 @@ public enum SearchType {
         if(jsonObject.get("type").equals(SearchType.SEARCH_KEY)) {
             System.out.println("ture");
         }
+
+        String searchType = jsonObject.getString("type");
+        System.out.println(searchType);
+        // searchType = "SEARCH_KEY" 作为String 是不等于 SearchType.SEARCH_KEY的
+        if(searchType.equals(SearchType.SEARCH_KEY)){
+            System.out.println("ture");
+        } else {
+            System.out.println("false");
+        }
     }
 }

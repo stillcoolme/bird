@@ -11,7 +11,9 @@ import java.util.concurrent.Executors;
  * Author: stillcoolme
  * Date: 2019/7/25 19:35
  * Description:
- *  Guava的 ListenableFuture 是非阻塞的，会先执行下面的逻辑
+ *  Guava的 ListenableFuture 是异步，非阻塞的，会先执行下面的逻辑
+ *
+ *  http://ifeve.com/google-guava-listenablefuture/
  */
 public class ListenableFutureTest {
     //定义一个线程池，用于处理所有任务

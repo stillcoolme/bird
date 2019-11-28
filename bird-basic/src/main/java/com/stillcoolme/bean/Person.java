@@ -1,5 +1,7 @@
 package com.stillcoolme.bean;
 
+import java.util.Objects;
+
 public class Person{
     private String name;
     private int age ;
@@ -55,4 +57,18 @@ public class Person{
         return "姓名:" + name + "年龄："+ age + "性别:" + sex;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &&
+                sex == person.sex &&
+                name.equals(person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, sex);
+    }
 }

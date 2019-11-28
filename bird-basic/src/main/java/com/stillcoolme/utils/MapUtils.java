@@ -189,6 +189,20 @@ public class MapUtils {
 
     }
 
+    /**
+     * 删除对象，覆盖了hash方法就行
+     */
+    public static void deleteObject() {
+        HashMap<Person, String> personHashMap = new HashMap();
+        Person person = new Person("bobo", 20, 'm');
+        personHashMap.put(person, "bobo");
+        System.out.println(personHashMap.keySet().size());
+
+        Person person1 = new Person("bobo", 20, 'm');
+        personHashMap.remove(person1);
+        System.out.println(personHashMap.keySet().size());
+    }
+
 
     public static void main(String[] args) {
 /*        Map<String, Float> map = new HashMap();
