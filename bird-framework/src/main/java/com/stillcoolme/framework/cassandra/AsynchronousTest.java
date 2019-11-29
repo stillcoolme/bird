@@ -37,11 +37,12 @@ public class AsynchronousTest {
                 });
 
         // Perform an action once a stage is complete:
-        resultStage.whenComplete((version, error) -> {
+        //
+        resultStage.whenComplete((resultSet, error) -> {
             if (error != null) {
                 System.out.printf("Failed to retrieve the version: %s%n", error.getMessage());
             } else {
-                System.out.printf("Server version: %s%n", version);
+                System.out.printf("Server version: %s%n", resultSet);
             }
             sessionStage.thenAccept(CqlSession::closeAsync);
         });

@@ -41,12 +41,6 @@ public class CassandraClient {
         return Holder.session;
     }
 
-
-
-
-
-
-
     public static void main(String[] args) {
 
         CqlSession cqlSession = CassandraClient.getCassandraSession();
