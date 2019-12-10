@@ -48,7 +48,7 @@ Btree是一种多路平衡查找树，每个节点最多包含 k 个孩子（k�
 Btree 每個节点最多可以包容兩個值，就可以在节点內定位省了一次到不同硬碟分頁的時間。
 
 Btree结构：
-![](file/Btree结构.png)
+![](src/main/resources/file/Btree结构.png)
 
 ### B+tree
 B+ Tree 特征
@@ -140,22 +140,32 @@ Union：将两个子集合并成同一个集合。
 * 参数传值，而不用返回值来传（98）
 
 ## 模板
-![面试四件套](file/面试四件套.jpg)
+![面试四件套](src/main/resources/file/面试四件套.jpg)
 
-![递归](file/recursion.jpg)
+![递归](src/main/resources/file/recursion.jpg)
 
-![dfs](file/dfs.jpg)
+![dfs](src/main/resources/file/dfs.jpg)
 
-![bfs](file/bfs.jpg)
+![bfs](src/main/resources/file/bfs.jpg)
 
-![dp](file/dp.jpg)
+![dp](src/main/resources/file/dp.jpg)
 
-![binary](file/binary.jpg)
+![binary](src/main/resources/file/binary.jpg)
 
 
 # 二刷首选
-* 3
-* 递归  51 52 152
+* 无重复字符的最长子串（leetcode3）
+* 递归  N皇后51 52 152
 * 动态规划 322 72 
 
+* 最大子序和（leetcode53）
+* 三数之和（leetcode15，这道题当时字节跳动三面时被问到了，题目忘记了最优解法导致最后挂）
+* 合并两个有序链表（leetcode21）
+* 全排列（leetcode46，47）
+* 二叉树中序后序的非递归
+* 股票买卖的最佳时机（leetcode121，122）
+* LRU缓存（leetcode146）
+* k个一组反转链表（leetcode25）
+* 用队列实现栈（leetcode225，232）
+* 岛屿数量（leetcode200）
 

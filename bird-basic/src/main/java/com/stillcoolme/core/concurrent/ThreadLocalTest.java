@@ -4,6 +4,7 @@ package com.stillcoolme.core.concurrent;
  * @author: stillcoolme
  * @date: 2019/9/16 11:18
  * @description:
+ *  http://www.jasongj.com/java/threadlocal/
  * ThreadLocal是线程 Thread 中 属性threadLocals 的管理者；
  * 它会为 每个线程 分别存储一份唯一的数据， 你所创建出来变量对每个线程实例来说都是唯一的。
  * 类似于 每个人都一张银行卡；每个人获取银行卡余额都必须通过该银行的管理系统；每个人都只能获取自己卡持有的余额信息，他人的不可访问。

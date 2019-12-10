@@ -1,10 +1,9 @@
-package com.stillcoolme.framework.cassandra.db;
+package com.stillcoolme.framework.cassandra.mapper;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.stillcoolme.framework.cassandra.CassandraClient;
 
-import java.net.InetSocketAddress;
 import java.util.UUID;
 
 /**

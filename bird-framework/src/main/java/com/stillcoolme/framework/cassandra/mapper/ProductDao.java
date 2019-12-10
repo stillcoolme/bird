@@ -1,4 +1,4 @@
-package com.stillcoolme.framework.cassandra.db;
+package com.stillcoolme.framework.cassandra.mapper;
 
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;

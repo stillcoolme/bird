@@ -1,4 +1,4 @@
-package com.stillcoolme.framework.cassandra.db;
+package com.stillcoolme.framework.cassandra.mapper;
 
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
@@ -14,6 +14,8 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Product {
 
     @PartitionKey
