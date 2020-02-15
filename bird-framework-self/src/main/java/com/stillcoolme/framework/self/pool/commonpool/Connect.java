@@ -1,4 +1,4 @@
-package com.stillcoolme.pool.commonpool;
+package com.stillcoolme.framework.self.pool.commonpool;
 
 import lombok.AllArgsConstructor;
 

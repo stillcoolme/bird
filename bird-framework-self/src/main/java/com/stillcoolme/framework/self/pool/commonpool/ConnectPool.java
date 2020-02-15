@@ -1,4 +1,4 @@
-package com.stillcoolme.pool.commonpool;
+package com.stillcoolme.framework.self.pool.commonpool;
 
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;

@@ -1,4 +1,4 @@
-package com.stillcoolme.pool.commonpool;
+package com.stillcoolme.framework.self.pool.commonpool;
 
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -10,7 +10,8 @@ import java.util.Random;
 /**
  * Author: stillcoolme
  * Date: 2020/2/12 21:07
- * Description: 测试 对象池 的使用
+ * Description: 基于 common-pool2 实现对象池
+ * 测试 对象池 的使用
  * 需要从对象池取一个对象时，调用borrowObject（背后会调用activeObject激活对象），
  * 类似的，对象使用完之后，需要调用returnObject将对象放回对象池（背后会调用passivateObject使对象钝化）
  */
