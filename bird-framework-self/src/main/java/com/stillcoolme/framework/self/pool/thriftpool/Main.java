@@ -10,7 +10,6 @@ import java.util.concurrent.FutureTask;
  * Author: stillcoolme
  * Date: 2020/2/15 16:07
  * Description:
- *  参考 https://www.cnblogs.com/yjmyzz/p/thrift-client-pool-demo.html
  *  启动报错 java.net.ConnectException: Connection refused: connect
  *  因为服务端还没启动，所以拒绝客户端连接，那为什么服务端启动不了呢？？？
  */
@@ -78,10 +77,10 @@ public class Main {
 
     private static List<ServerInfo> getServers() {
         List<ServerInfo> servers = new ArrayList<ServerInfo>();
-        servers.add(new ServerInfo("192.168.43.148", 9000));
-        servers.add(new ServerInfo("192.168.43.148", 9001));
+        servers.add(new ServerInfo("127.0.0.1", 9000));
+        servers.add(new ServerInfo("127.0.0.1", 9001));
         //这一个故意写错的，模拟服务器挂了，连接不上的情景
-        servers.add(new ServerInfo("192.168.43.148", 1002));
+        servers.add(new ServerInfo("127.0.0.1", 1002));
         return servers;
     }
 }
