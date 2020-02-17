@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### 四个特性
 
 封装，抽象，继承，多态
@@ -12,3 +13,7 @@
 [图例](https://github.com/gdhucoder/Algorithms4/blob/master/designpattern/pic/umlcheatsheet.jpg)
 
 ![](src/main/resources/file/umlcheatsheet.jpg)
+=======
+## 参考
+* <https://github.com/iluwatar/java-design-patternsv>
+>>>>>>> b0bf6bce77c6f26ba9dc1225f7d09612954a4098
