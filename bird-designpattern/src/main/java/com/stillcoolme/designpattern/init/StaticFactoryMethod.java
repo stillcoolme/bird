@@ -17,6 +17,9 @@ import com.stillcoolme.designpattern.model.Client;
  */
 public class StaticFactoryMethod {
 
+    // ================================================
+    // 方案一
+    // ================================================
     /**
      * 接受参数的静态工厂方法
      * @param clientType
@@ -32,6 +35,7 @@ public class StaticFactoryMethod {
 
 
     // ================================================
+    // 方案二
     // ================================================
     /**
      * 获取单例对象
@@ -42,6 +46,9 @@ public class StaticFactoryMethod {
         return Holder.client;
     }
 
+    /**
+     * 静态内部持有类
+     */
     private static class Holder{
         private static Client client;
         static {
