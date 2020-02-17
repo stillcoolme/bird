@@ -1,11 +1,12 @@
-## 写某个XX类的 Builder 类
+## 将 Builder 类 直接写在 某个XX类里面
+## 写一个某个XX类的 Builder 类
 
 这样外部应用使用的是`XXBuilder.setFiled().setFiled().build()`
 
 具体实现就是包含在`XXBuilder`里面不用暴露给外部。
 
 ```java
-// 下面示例 XX 就是 ThreadFactory
+// 下面示例 XX 就是 ThreadFactory， XX 应该是 接口，后面所有实现都能用这个 XXBuilder
 class ThreadFactoryBuilder {
     // 可以设置的属性
     private Boolean daemon = null;
@@ -28,7 +29,7 @@ class ThreadFactoryBuilder {
         return doBuild(this);
     }   
     
-    // 真正构造 XX
+    // 真正构造 XX 的，是私有方法！
     private static ThreadFactory doBuild(ThreadFactoryBuilder builder) {
         return new ThreadFactory() {
           @Override
@@ -47,3 +48,6 @@ class ThreadFactoryBuilder {
 
 }
 ```
+
+## 缺点
+第二种方法，用的时候还是要`new XXBuilder`啊，本来就是为了不要`new XX()`出现`new`。

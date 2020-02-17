@@ -12,6 +12,11 @@ public class Person{
         System.out.println("haha");
     }
 
+    public Person(String name) {
+        super ();
+        this.name = name;
+    }
+
     public Person(String name, int age, char sex) {
         super ();
         this .name = name;

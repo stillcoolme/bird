@@ -3,6 +3,8 @@ package com.stillcoolme.utils;
 import com.stillcoolme.bean.Person;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -75,4 +77,44 @@ public class Map8Utils {
         }
     }
 
+    /**
+     * 合并map
+     */
+    public static void mergeMap() {
+        Map<String, Person> map1 = new HashMap<>();
+        Map<String, Person> map2 = new HashMap<>();
+        Person person1 = new Person("Henry");
+        map1.put(person1.getName(), person1);
+        Person person2 = new Person("Annie");
+        map1.put(person2.getName(), person2);
+        Person person3 = new Person("John");
+        map1.put(person3.getName(), person3);
+
+        Person person4 = new Person("George");
+        map2.put(person4.getName(), person4);
+        Person person5 = new Person("Henry");
+        map2.put(person5.getName(), person5);
+
+        Map<String, Person> map3 = new HashMap<>(map1);
+        map2.forEach((key, value) ->
+                map3.merge(key, value, (v1, v2) -> new Person(v1.getName())));
+        map3.forEach((k, v) -> System.out.println(k + ": " + v.getName()));
+        int s = 2;
+        s = s >> 1;
+        System.out.println("==========");
+        // 方法二
+        Map<String, Person> map4 = Stream.of(map1, map2)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (v1, v2) -> new Person(v2.getName())
+                        )
+                );
+        map4.forEach((k, v) -> System.out.println(k + ": " + v.getName()));
+    }
+
+    public static void main(String[] args) {
+        mergeMap();
+    }
 }

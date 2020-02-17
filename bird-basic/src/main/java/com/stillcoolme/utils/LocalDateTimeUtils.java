@@ -16,9 +16,27 @@ import java.util.TimeZone;
  * @date: 2019/12/2 8:28
  * @description:
  *  SimpleDateFormat 线程不安全（https://blog.csdn.net/csdn_ds/article/details/72984646）
- *  所以，如果是JDK8的应用，可以使用Instant代替Date，LocalDateTime代替Calendar，DateTimeFormatter代替Simpledateformatter，官方给出的解释：simple beautiful strong immutable thread-safe。
+ *  所以，如果是JDK8的应用，
+ *  可以使用Instant代替Date，
+ *  LocalDateTime代替Calendar，DateTimeFormatter代替Simpledateformatter，
+ *  官方给出的解释：simple beautiful strong immutable thread-safe。
  */
 public class LocalDateTimeUtils {
+
+
+    public static void main(String[] asvg){
+//        localDateTimeToEpochMillis()
+        System.out.println(epochMillisToLocalDateTime(1576129680001L).toString());
+
+        System.out.println(ZonedDateTime.now());
+
+        System.out.println(ZonedDateTime.ofInstant(new Timestamp(1576129680001L).toInstant(), ZoneId.systemDefault()));
+
+        System.out.println(Instant.parse("1576129680001"));
+
+
+    }
+
 
     /**
      * the milli second of a day
@@ -153,9 +171,6 @@ public class LocalDateTimeUtils {
      */
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
-    public static void main(String[] asvg){
-        System.out.println(getIntTimeStamp());
-    }
     /**
      * localDateTime 转 自定义格式string
      *
@@ -469,6 +484,27 @@ public class LocalDateTimeUtils {
         return localDateTime.plus(num, chronoUnit);
     }
 
+
+    /**
+     * localDateTime 转 毫秒数
+     * 获得的 epochMillis 就是从 UTC时间 1970-01-01T00:00:00Z 到 localDateTime 的毫秒数
+     * @param localDateTime
+     * @return
+     */
+    public static long localDateTimeToEpochMillis(LocalDateTime localDateTime) {
+        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
+    /**
+     * 毫秒数 转 localDateTime
+     * @param millis
+     * @return
+     */
+    public static LocalDateTime epochMillisToLocalDateTime(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+    }
+
     /**
      * Date 转 LocalDateTime
      *
@@ -476,6 +512,7 @@ public class LocalDateTimeUtils {
      * @return LocalDateTime
      */
     public static LocalDateTime dateToLocalDateTime(Date date) {
+        // date.getTime() % 1000 取后三位的毫秒数
         long nanoOfSecond = (date.getTime() % 1000) * 1000000;
         LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(date.getTime() / 1000, (int) nanoOfSecond, ZoneOffset.of("+8"));
 

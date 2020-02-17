@@ -15,6 +15,7 @@
 
 * add      增加一个元索，如果队列已满，则抛出一个IIIegaISlabEepeplian异常
 * remove   移除并返回队列头部的元素，如果队列为空，则抛出一个NoSuchElementException异常
+
 * offer    添加一个元素并返回true，如果队列已满，则返回false
 * poll     移除并返回队列头部的元素，如果队列为空，则返回null
 * peek     返回队列头部的元素，如果队列为空，则返回null
@@ -30,6 +31,8 @@
 https://mp.weixin.qq.com/s/raIWLUM1kdbYvz0lTWPTvw
 
 https://mp.weixin.qq.com/s/wGqqSFpBnjpytw8J2Sniyw
+
+[树的系统讲解](https://mp.weixin.qq.com/s/q1jZOQyXlcHeboFRCxx_dg)
 
 注意：B-tree 不念 B減樹，而是直接念 Btree。一般像是 MySQL PostgreSQL 都是用 Btree 的方式建立索引。
 
@@ -60,6 +63,7 @@ B+ Tree 更加矮胖
 B+ Tree 中的内部节点，只存放关键字与子节点的指針，不存其他的 Satellite Information，因此最大化了內部節點的分支因子，所以說以同樣大小的硬碟分頁可以容納更多的節點元素。
 
 換句話說，以數據量相同的情況下， B+ Tree 會比 B-Tree 來的更加矮胖，有效的節省硬碟 I/O 次數。
+
 
  
 ### trie树（字典树）

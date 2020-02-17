@@ -15,8 +15,12 @@ import java.util.concurrent.*;
 public class JavaFutureTest {
 
     //定义一个线程池，用于处理所有任务
-    final static ExecutorService service = new ThreadPoolExecutor(10,
-            20, 3, TimeUnit.SECONDS, new LinkedBlockingQueue<>(10));
+    final static ExecutorService service = new ThreadPoolExecutor(
+            10,
+            20,
+            3,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(10));
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Long t1 = System.currentTimeMillis();
