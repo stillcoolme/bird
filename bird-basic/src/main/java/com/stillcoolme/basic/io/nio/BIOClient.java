@@ -1,4 +1,4 @@
-package com.stillcoolme.basic.io.nio.io;
+package com.stillcoolme.basic.io.nio;
 
 import java.io.IOException;
 import java.net.Socket;
