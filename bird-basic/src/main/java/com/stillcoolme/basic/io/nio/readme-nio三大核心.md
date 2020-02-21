@@ -2,13 +2,9 @@
 
 本文将介绍 Java NIO 中三大组件 **Buffer、Channel、Selector** 的使用。
 
-本来要一起介绍**非阻塞 IO** 和 JDK7 的**异步 IO** 的，不过因为之前的文章真的太长了，有点影响读者阅读，所以这里将它们放到另一篇文章中进行介绍。
-
-
-
 ## Buffer
 
-一个 Buffer 本质上是内存中的一块，我们可以将数据写入这块内存，之后从这块内存获取数据。
+一个 Buffer 本质上是可以读写数据 的内存块。
 
 java.nio 定义了以下几个 Buffer 的实现，这个图读者应该也在不少地方见过了吧。
 
@@ -206,8 +202,7 @@ Channel 经常翻译为通道，类似 IO 中的流，用于读取和写入。�
 
 
 ### FileChannel
-
-我想文件操作对于大家来说应该是最熟悉的，不过我们在说 NIO 的时候，其实 FileChannel 并不是关注的重点。而且后面我们说非阻塞的时候会看到，FileChannel 是不支持非阻塞的。
+FileChannel 是阻塞的。
 
 **初始化：**
 
@@ -240,8 +235,6 @@ while(buffer.hasRemaining()) {
     fileChannel.write(buffer);
 }
 ```
-
-
 
 ### SocketChannel
 

@@ -31,7 +31,6 @@ public class FaceMetadataContext {
      * @param <T>  Node类型
      */
     @NoArgsConstructor
-    @Slf4j
     public static class SingletonBuilder<PK, T> {
         private BuildMode buildMode;
         private String zkPath;
