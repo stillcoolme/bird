@@ -139,7 +139,9 @@ epoll是最新的一种多路IO复用的函数。
 
 >  零拷贝(Zero-Copy)是指计算机在执行操作时，CPU不需要先将数据从某处内存复制到一个特定区域，从而节省CPU时钟周期和内存带宽 —-维基百科 
 
-**传统IO网络文件传输**过程是这样的：
+在高并发场景下，零拷贝的提升是很关键的，著名框架`Netty`, `Kafka`都大量使用了零拷贝的API，是其高性能的原因之一。 
+
+传统IO网络文件传输**过程是这样的：
 
 1. DMA read 读取磁盘文件内容 到 内核缓冲区（ direct memory access直接内存拷贝，不使用CPU copy而直接与系统内存交换数据）
 2. CPU copy 内核缓冲区数据 到 应用进程缓冲区 (JVM)
@@ -165,7 +167,7 @@ epoll是最新的一种多路IO复用的函数。
 直接I/O和传输优化都涉及到硬件层面我们暂且不讲，主要讲避免上下文切换和数据来回拷贝，Linux内核提供了：
 
 mmap: 内存映射文件。通过内存映射，将文件的一段直接映射到内核缓冲区 ，内核和应用进程共享一块内存地址，就可以共享内核数据，不用从内核空间往用户空间拷贝了。
-sendfile: 从内核缓冲区直接复制到socket缓冲区。sendfile 则**没有映射**, 保留了`mmap`的**不需要来回拷贝**优点，适用于应用进程不需要对读取的数据做任何处理的场景。
+sendfile: **没有映射**，从内核缓冲区直接复制到socket缓冲区。 保留了`mmap`的**不需要来回拷贝**优点，适用于应用进程不需要对读取的数据做任何处理的场景。   文件内容直接发送到网卡, 或者从网卡直接读到文件里
 
 #### mmap
 
@@ -214,7 +216,7 @@ public class FileChannnelTest {
 			MappedByteBuffer mbb = fc.map(MapMode.READ_ONLY, 0, file.length());
 			// 使用UTF-8的字符集来创建解码器
 			Charset charset = Charset.forName("UTF-8");
-			// 直接将buffer里的数据全部输出
+			// 直接将buffer里的数据全部输出！！
 			fo.write(mbb);
 			mbb.clear();
 			// 创建解码器
@@ -232,36 +234,39 @@ public class FileChannnelTest {
 
 
 
-### NIO的直接内存
+MappedByteBuffer 便是 JAVA 中 MMAP 的操作类。
+
+DirectByteBuffer  extend  MappedByteBuffer interface DirectBuffer
+
+### NIO的直接内存（堆外内存）
 
 首先，它的作用位置处于传统IO（BIO）与零拷贝之间，为何这么说？
 
 - 传统IO，可以把磁盘的文件经过内核空间，读到JVM空间，然后进行**各种操作**，最后再写到磁盘或是发送到网络，效率较慢但支持数据文件操作。
 - 零拷贝则是直接在内核空间完成文件读取并转到磁盘（或发送到网络）。由于它没有读取文件数据到JVM这一环，因此程序无法操作该文件数据，尽管效率很高！
 
-而直接内存则介于两者之间，效率一般且**可操作文件数据**。直接内存（mmap技术）将文件直接映射到内核空间的内存，返回一个**操作地址**（address），它解决了文件数据需要拷贝到JVM才能进行操作的窘境。而是直接在内核空间直接进行操作，**省去了内核空间拷贝到用户空间**这一步操作。
+而直接内存则介于两者之间，效率一般且**可操作文件数据**。
+
+NIO可以操作Native方法分配堆外内存，然后把真实文件映射到堆外内存中，获得内存地址addr，通过Java堆中的`DirectByteBuffer`作为这块堆外内存的引用进行操作。
+
+​	由于MappedByteBuffer申请的是堆外内存，因此**不受Minor GC控制**，只能在发生Full GC时才能被回收。
+
+​	而`DirectByteBuffer`改善了这一情况，同时它实现了DirectBuffer接口，维护一个Cleaner对象来完成内存回收。既可以通过**Full GC**来回收内存，也可以调用`clean()`方法来进行回收！！
+
+```java
+// new HeapByteBuffer(capacity, capacity); 
+// HeapByteBuffer本质是一个数组，分配在堆内存中（受GC管控，易于回收），又会复制数据到堆外，贼变态
+ByteBuffer allocate(int capacity);    
+
+// new DirectByteBuffer(capacity);   直接分配堆外内存
+ByteBuffer.allocateDirect(int capacity);  
+```
 
 
 
-NIO的直接内存是由`MappedByteBuffer`实现的。核心即是`map()`方法，该方法把文件映射到内存中，获得内存地址addr，然后通过这个addr构造MappedByteBuffer类，以暴露各种文件操作API。
+==================
 
-由于MappedByteBuffer申请的是堆外内存，因此**不受Minor GC控制**，只能在发生Full GC时才能被回收。而`DirectByteBuffer`改善了这一情况，它是MappedByteBuffer类的子类，同时它实现了DirectBuffer接口，维护一个Cleaner对象来完成内存回收。因此它既可以通过**Full GC**来回收内存，也可以调用`clean()`方法来进行回收。
-
-另外，**直接内存**的大小可通过jvm参数来设置：`-XX:MaxDirectMemorySize`。
-
-NIO的MappedByteBuffer还有一个兄弟叫做`HeapByteBuffer`。顾名思义，它用来在堆中申请内存，本质是一个数组。由于它位于堆中，因此可受GC管控，易于回收。
-
-
-
-
-
-文件传输(File Transfer): 文件内容直接发送到网卡, 或者从网卡直接读到文件里
-内存映射文件(Memory-mapped Files): 将文件的一块映射到内存
-
-
-
-之后我们具体分析了Selector, SocketChannel, DirectBuffer的底层实现，指出其本质上使用的依然是底层的epoll,poll, select, fcntl这些api,
-只是jvm做了一层封装而已。后面我们又分析了Linux中的zero copy技术和NIO对它的支持，底层使用的还是mmap和send_file系统调用。
+本节 我们具体分析了Selector, SocketChannel, DirectBuffer的底层实现，指出其本质上使用的依然是底层的epoll,poll, select, fcntl这些api，只是jvm做了一层封装而已。后面我们又分析了Linux中的zero copy技术和NIO对它的支持，底层使用的还是mmap和send_file系统调用。
 
 
 
@@ -493,5 +498,6 @@ public static AsynchronousFileChannel open(Path file,
 
 ### 参考
 
-
 [我不是猪八戒](https://juejin.im/post/5e04ebe9e51d4557ed5439e9#heading-6)
+
+[DirectByteBuffer参考](http://sound2gd.wang/2018/07/21/Java-NIO分析-10-堆外内存管理之DirectBuffer详解/)

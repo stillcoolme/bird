@@ -2,7 +2,6 @@ package com.stillcoolme.designpattern.init.builder;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 public class FaceMetadataContext {
 
@@ -54,6 +53,7 @@ public class FaceMetadataContext {
 
         /**
          * 构建实例
+         *
          * @return 实例
          */
         public synchronized FaceMetadataContext build() {
