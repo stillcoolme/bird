@@ -8,8 +8,13 @@ import java.util.List;
  * 启动参数如下：
  *  -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=D://log
  * 为了更快的突出内存问题将堆的最大内存固定在 20M，
- * 同时在 JVM 出现 OOM 的时候自动 dump 内存到 D://log (不配路径则会生成在当前目录)。
- * 将dump文件上传到 https://heaphero.io/index.jsp 观察
+ * 同时在 JVM 出现 OOM 的时候自动 dump 内存到 D://log (不配路径则会生成在当前项目目录)。
+ * 将dump文件上传到 https://heaphero.io/index.jsp 观察 或者 通过MAT工具来观察
+ *
+ * 想看运行时的就使用 jvisualvm 来分析
+ *
+ * jmap也可以获得dump文件，但这个命令在生产上一定要慎用！因为dump的时候会暂停应用
+ * jmap -dump:format=b,file=heapdump.phrof pid
  */
 public class HeapOOM {
 
