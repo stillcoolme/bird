@@ -3,6 +3,7 @@ package com.stillcoolme.basic.reflect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.stream.Stream;
 
 /**
  * 通过反射实现的动态代理；动态代理还可通过ASM那些来实现，则是通过生成业务类的子类作为代理类（cglib)
@@ -10,17 +11,20 @@ import java.lang.reflect.Proxy;
 public class DynamicProxy {
 
     public static void main(String[] args) {
-        SayHelloImpl sayHelloImpl = new SayHelloImpl();
+        SayHello sayHelloImpl = new SayHelloImpl();
         MyInvocationHandler handler = new MyInvocationHandler(sayHelloImpl);
         // 调用者得到的还是原来的接口，却不知道具体实现已经被修改了。
         SayHello sayHello = (SayHello) Proxy.newProxyInstance(sayHelloImpl.getClass().getClassLoader(), SayHelloImpl.class.getInterfaces(), handler);
-        sayHello.sayHello();
+        sayHello.sayHello("girl");
     }
 
 }
 
 interface SayHello{
     public void sayHello();
+
+    public void sayHello(String text);
+
 }
 
 /**
@@ -34,6 +38,11 @@ class SayHelloImpl implements SayHello{
     public void sayHello() {
         System.out.println("SayHello: hello!!!");
     }
+
+    @Override
+    public void sayHello(String text) {
+        System.out.println(text);
+    }
 }
 
 /**
@@ -46,6 +55,7 @@ class MyInvocationHandler implements InvocationHandler{
     public MyInvocationHandler(Object target){
         this.target = target;
     }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // 新的执行逻辑
