@@ -10,6 +10,7 @@ package com.stillcoolme.designpattern;
  * 3. 双重检查加锁（推荐），只是在实例未被创建时再加锁！！在加锁处理里面还需要判断一次实例是否已存在。
  * 4. 使用validate解决方法3的指令重排问题
  * 5. 静态内部类，老版《Effective Java》中推荐的方式。
+ *   https://www.race604.com/java-double-checked-singleton/
  **/
 public class SingletonLazy {
 
@@ -60,7 +61,8 @@ public class SingletonLazy {
     }
 
     /**
-     * 方法3中的 instance =  new SingletonLazy(); 这句，并非是一个原子操作，事实上在 JVM 中这句话大概做了下面 3 件事情：
+     * 方法3中的 instance =  new SingletonLazy(); 这句，
+     * 并非是一个原子操作，事实上在 JVM 中这句话大概做了下面 3 件事情：
      * 1）给 instance 分配内存；
      * 2）执行 new SingletonLazy(); 调用 SingletonLazy 的构造函数来初始化成员变量，形成实例；
      * 3）将 instance 对象指向分配的内存空间（执行完这步 instance 才是非 null 了）
@@ -80,17 +82,20 @@ public class SingletonLazy {
      */
     /**
      * 相比方法3，只要将singleton声明为volatile即可
-     * // private volatile static Singleton singleton = null;
+     * // private volatile static SingletonLazy singleton = null;
      */
+    private volatile static SingletonLazy singleton = null;
     public static SingletonLazy getInstanceD() {
-        if (instance == null)  {
+        SingletonLazy inst = singleton;  // <<< 在这里创建临时变量
+        if (inst == null)  {
             synchronized (SingletonLazy.class) {
-                if (instance == null)  {
-                    instance = new SingletonLazy();
+                if (inst == null)  {
+                    inst = new SingletonLazy();
+                    singleton = inst;
                 }
             }
         }
-        return instance;
+        return inst;    // <<< 在这里返回临时变量
     }
 
     /**
@@ -106,6 +111,7 @@ public class SingletonLazy {
     public static SingletonLazy getInstanceE() {
         return SingletonLazyHolder.INSTANCE;
     }
+
     // SingletonLazyHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它只有在getInstance()被调用时才会真正创建；同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本。
     private static class SingletonLazyHolder{
         private final static SingletonLazy INSTANCE = new SingletonLazy();
