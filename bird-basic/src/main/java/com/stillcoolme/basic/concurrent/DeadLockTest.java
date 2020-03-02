@@ -13,6 +13,7 @@ public class DeadLockTest extends Thread{
         this.second = second;
     }
 
+    @Override
     public void run(){
         synchronized (first){
             System.out.printf(this.getName() + " obtian " + first + "\n");

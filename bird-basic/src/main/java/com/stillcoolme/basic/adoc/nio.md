@@ -286,11 +286,11 @@ DirectByteBuffer  extend  MappedByteBuffer interface DirectBuffer
 
 而直接内存则介于两者之间，效率一般且**可操作文件数据**。
 
-NIO可以操作Native方法分配堆外内存，然后把真实文件映射到堆外内存中，获得内存地址addr，通过Java堆中的`DirectByteBuffer`作为这块堆外内存的引用进行操作。
+NIO操作Native方法分配堆外内存，然后把真实文件映射到堆外内存中，获得内存地址addr，通过Java堆中的`DirectByteBuffer`对象 记录着一块调用 malloc或mmap申请到的 native memory，作为这块堆外内存的引用进行操作。
 
-​	由于MappedByteBuffer申请的是堆外内存，因此**不受Minor GC控制**，只能在发生Full GC时才能被回收。
+`MappedByteBuffer`申请的是堆外内存，因此**不受Minor GC控制**，只能在发生Full GC时才能被回收。
 
-​	而`DirectByteBuffer`改善了这一情况，同时它实现了DirectBuffer接口，维护一个Cleaner对象来完成内存回收。既可以通过**Full GC**来回收内存，也可以调用`clean()`方法来进行回收！！
+而`DirectByteBuffer`改善了这一情况，同时它实现了DirectBuffer接口，维护一个Cleaner对象来完成内存回收。既可以通过**Full GC**来回收内存，也可以调用`clean()`方法来进行回收！！
 
 ```java
 // new HeapByteBuffer(capacity, capacity); 
@@ -540,3 +540,5 @@ public static AsynchronousFileChannel open(Path file,
 [我不是猪八戒](https://juejin.im/post/5e04ebe9e51d4557ed5439e9#heading-6)
 
 [DirectByteBuffer参考](http://sound2gd.wang/2018/07/21/Java-NIO分析-10-堆外内存管理之DirectBuffer详解/)
+
+[初步看看源码]( https://juejin.im/post/5c1b54d8f265da611510c143 )

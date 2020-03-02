@@ -10,6 +10,8 @@ java.nio 定义了以下几个 Buffer 的实现，这个图读者应该也在不
 
 ![6](pic/6.png)
 
+![](https://user-gold-cdn.xitu.io/2018/12/20/167cac38a23be8c5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
 其实核心是最后的 **ByteBuffer**，前面的一大串类只是包装了一下它而已，我们使用最多的通常也是 ByteBuffer。
 
 我们应该将 Buffer 理解为**一个数组**，IntBuffer、CharBuffer、DoubleBuffer 等分别对应 int[]、char[]、double[] 等。
