@@ -7,6 +7,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.apache.curator.framework.recipes.shared.SharedCount;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
@@ -20,6 +21,24 @@ import org.apache.zookeeper.data.Stat;
  */
 @Slf4j
 public class CuratorUtils {
+
+    static String ZK_NAMESPACE = "test";
+    static String ZK_CONN_STR = "10.2.5.2:2181";
+
+    public static CuratorFramework getClient() {
+        return SingletonHolder.zk;
+    }
+
+    private static class SingletonHolder {
+        private static final CuratorFramework zk;
+        static {
+            if (ZK_NAMESPACE != null && !ZK_CONN_STR.isEmpty()) {
+                zk = buildClient(ZK_CONN_STR, ZK_NAMESPACE);
+            } else {
+                zk = buildClient(ZK_CONN_STR, null);
+            }
+        }
+    }
 
     /**
      * 创建会话
@@ -45,12 +64,12 @@ public class CuratorUtils {
     }
 
     /**
-     * 创建Node
+     * 创建Node，EPHEMERAL 为临时节点，程序结束就删除
      *
      * @return path
      * @throws Exception
      */
-    public static String createNode(CuratorFramework client, String path, CreateMode createMode) throws Exception {
+    public static String createNodeIfNotExists(CuratorFramework client, String path, CreateMode createMode) throws Exception {
         if (checkPathExists(client, path)) {
             return path;
         }
@@ -90,10 +109,27 @@ public class CuratorUtils {
      * @return [创建成功:true; 创建失败:false]
      */
     public static boolean checkAndCreateNode(CuratorFramework zk, String path, CreateMode createMode) {
+        return checkAndCreateNode(zk, path, createMode, null);
+    }
+
+    /**
+     * 检查ZNode是否存在, 不存在则创建
+     *
+     * @param zk
+     * @param path
+     * @param createMode
+     * @return [创建成功:true; 创建失败:false]
+     */
+    public static boolean checkAndCreateNode(CuratorFramework zk, String path, CreateMode createMode, byte[] data) {
         try {
             //创建节点
             if (!CuratorUtils.checkPathExists(zk, path)) {
-                CuratorUtils.createNode(zk, path, createMode);
+                CuratorUtils.createNodeIfNotExists(zk, path, createMode);
+
+                if (data != null) {
+                    writeToPath(zk, path, data);
+                }
+
                 return true;
             } else {
                 log.info("Zk path Already Exists:{}", path);
@@ -113,12 +149,13 @@ public class CuratorUtils {
      * @param createPath
      * @throws Exception
      */
-    public static void lockAndCreateNode(CuratorFramework zk, String lockPath, String createPath) throws Exception {
-        lockAndCreateNode(zk, lockPath, createPath, null);
+    public static void lockAndCreateNode(CuratorFramework zk, String lockPath, String createPath, CreateMode createMode) throws Exception {
+        lockAndCreateNode(zk, lockPath, createPath, null, createMode);
     }
 
     /**
      * 锁住并创建ZNode
+     *
      * @param zk
      * @param lockPath
      * @param createPath
@@ -126,13 +163,13 @@ public class CuratorUtils {
      * @return [创建并写入成功:true; else:false]
      * @throws Exception
      */
-    public static boolean lockAndCreateNode(CuratorFramework zk, String lockPath, String createPath, byte[] data) throws Exception {
+    public static boolean lockAndCreateNode(CuratorFramework zk, String lockPath, String createPath, byte[] data, CreateMode createMode) throws Exception {
         // 不可重入分布式锁
         InterProcessSemaphoreMutex lock = new InterProcessSemaphoreMutex(zk, lockPath);
         lock.acquire();
 
         try {
-            boolean created = checkAndCreateNode(zk, createPath, CreateMode.EPHEMERAL);
+            boolean created = checkAndCreateNode(zk, createPath, createMode);
             if (created && data != null) {
                 writeToPath(zk, createPath, data);
                 return true;
@@ -194,69 +231,19 @@ public class CuratorUtils {
 
     /**
      * 检查节点是否存在, 若存在则删除
+     *
      * @param client
      * @param path
      * @throws Exception
      */
-    public static void checkAndDeletePath(CuratorFramework client, String path) throws  Exception{
+    public static void checkAndDeletePath(CuratorFramework client, String path) throws Exception {
         boolean exists = checkPathExists(client, path);
         if (exists) {
             log.info("checkAndDelete - Path存在, 正在删除");
             deletePath(client, path);
-        }else{
+        } else {
             log.info("checkAndDelete - Path不存在, 无需删除");
         }
-    }
-
-    //--------------------NodeCache 监听器--------------------
-
-    /**
-     * 添加NodeCache监听器
-     *
-     * @param client
-     * @param path
-     * @throws Exception
-     */
-    public static void addNodeCacheListener(CuratorFramework client, String path, NodeCacheListener nodeCacheListener) throws Exception {
-        if (nodeCacheListener == null) {
-            addNodeCacheListener(client, path);
-        } else {
-            NodeCache nodeCache = new NodeCache(client, path);
-            nodeCache.getListenable().addListener(nodeCacheListener);
-            nodeCache.start();
-        }
-    }
-
-    /**
-     * 添加NodeCache监听器
-     *
-     * @param nodeCache
-     * @param nodeCacheListener
-     * @throws Exception
-     */
-    public static void addNodeCacheListener(NodeCache nodeCache, NodeCacheListener nodeCacheListener) throws Exception {
-        nodeCache.getListenable().addListener(nodeCacheListener);
-        nodeCache.start();
-    }
-
-    /**
-     * 添加NodeCache监听器
-     *
-     * @param client
-     * @param path
-     */
-    public static NodeCache addNodeCacheListener(CuratorFramework client, String path) throws Exception {
-        log.info("addNodeCacheListener, Path:{}", path);
-        final NodeCache nodeCache = new NodeCache(client, path);
-        nodeCache.getListenable().addListener(new NodeCacheListener() {
-            @Override
-            public void nodeChanged() throws Exception {
-                // do something
-            }
-        });
-
-        nodeCache.start();
-        return nodeCache;
     }
 
     //--------------------ConnectionStateListener 监听器--------------------
@@ -270,5 +257,39 @@ public class CuratorUtils {
     public static void addConnectionStateListener(CuratorFramework client, ConnectionStateListener stateListener) {
         log.info("addConnectionStateListener");
         client.getConnectionStateListenable().addListener(stateListener);
+    }
+
+    //--------------------SharedCount--------------------
+    public static void sharedCountIncrement(SharedCount sharedCount) {
+        sharedCountAdd(sharedCount, 1);
+    }
+
+    public static int sharedCountAdd(SharedCount sharedCount, int delta) {
+        try {
+            boolean isSucceed = false;
+            while (!isSucceed) {
+
+                isSucceed = sharedCount.trySetCount(sharedCount.getVersionedValue(), sharedCount.getCount() + delta);
+                if (isSucceed) {
+                    // TODO 多线程问题, 可能get到之前的count
+                    return sharedCount.getCount();
+                }
+
+                Thread.sleep(10);
+            }
+        } catch (Exception e) {
+            log.error("sharedCount Increment 出错", e);
+        }
+
+        return 0;
+    }
+
+    public static void main(String[] args) throws Exception {
+        CuratorFramework zkClient = CuratorUtils.getClient();
+        CuratorUtils.createNodeIfNotExists(zkClient, "/zjh", CreateMode.EPHEMERAL_SEQUENTIAL);
+        CuratorUtils.createNodeIfNotExists(zkClient, "/zjh", CreateMode.EPHEMERAL_SEQUENTIAL);
+        while (true) {
+
+        }
     }
 }
