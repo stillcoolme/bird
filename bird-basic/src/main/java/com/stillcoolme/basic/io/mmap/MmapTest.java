@@ -11,6 +11,7 @@ import java.nio.channels.FileChannel;
  * Author: stillcoolme
  * Date: 2019/9/18 15:00
  * Description:
+ *  通过 NIO 的 FileChannle.map 实现了 mmap
  */
 public class MmapTest {
 

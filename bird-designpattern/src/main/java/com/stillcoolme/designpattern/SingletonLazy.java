@@ -111,8 +111,8 @@ public class SingletonLazy {
     public static SingletonLazy getInstanceE() {
         return SingletonLazyHolder.INSTANCE;
     }
-
-    // SingletonLazyHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它只有在getInstance()被调用时才会真正创建；同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本。
+    // SingletonLazyHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它只有在getInstance()被调用时才会真正创建；
+    // 同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本。
     private static class SingletonLazyHolder{
         private final static SingletonLazy INSTANCE = new SingletonLazy();
     }
