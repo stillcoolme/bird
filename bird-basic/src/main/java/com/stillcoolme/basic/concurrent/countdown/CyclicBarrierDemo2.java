@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
  * Author: stillcoolme
  * Date: 2020/3/4 22:08
  * Description:
+ *  编写两个线程，一个线程打印1~25，另一个线程打印字母A~Z，打印顺序为12A34B56C……Y5152Z
  */
 public class CyclicBarrierDemo2 {
 
