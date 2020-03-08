@@ -11,9 +11,7 @@ public class FaceMetadataContext {
     public FaceMetadataContext(String zkStorePath) {
 
     }
-
-    // --⬇---------单例Builder----------------
-
+    // Builder 可不是单例的！！！
     /**
      * 单例Builder(全局唯一)
      *
@@ -30,7 +28,7 @@ public class FaceMetadataContext {
      * @param <T>  Node类型
      */
     @NoArgsConstructor
-    public static class SingletonBuilder<PK, T> {
+    private static class SingletonBuilder<PK, T> {
         private BuildMode buildMode;
         private String zkPath;
 

@@ -1,10 +1,10 @@
-package com.stillcoolme.designpattern;
+package com.stillcoolme.designpattern.init.singleton;
 
 /**
  * @author: stillcoolme
  * @date: 2019/7/20 9:16
  * @description:
- * 单例模式懒汉式：在第一次调用的时候初始化
+ * 单例模式懒汉式：在第一次调用的时候初始化，即 支持延迟加载
  * 1. 适用于单线程环境（不推荐）
  * 2. 方法同步，适用于多线程环境，但效率不高（不推荐）
  * 3. 双重检查加锁（推荐），只是在实例未被创建时再加锁！！在加锁处理里面还需要判断一次实例是否已存在。
@@ -105,18 +105,21 @@ public class SingletonLazy {
      * 由于静态内部类的特性，只有在其被第一次引用的时候才会被加载，所以可以保证其线程安全性。
      * 而且通过反射，是不能从外部类获取内部类的属性的，所以安全不会被反射入侵。
      * 总结：
-     * 优势：兼顾了懒汉模式的内存优化（使用时才初始化）以及饿汉模式的安全性（不会被反射入侵）。
+     * 优势：线程安全，而且兼顾了懒汉模式的内存优化（使用时才初始化）以及饿汉模式的安全性（不会被反射入侵）。
      * 劣势：需要两个类去做到这一点，虽然不会创建静态内部类的对象，但是其 Class 对象还是会被创建，而且是属于永久代的对象。
+     *
+     * SingletonHolder 是一个 私有 静态 内部类，当外部类 IdGenerator 被加载的时候，并不会创建 SingletonHolder 实例对象。
+     * 只有当调用 getInstance() 方法时，SingletonHolder 才会被加载，这个时候才会创建 instance。
+     * insance 的唯一性、创建过程的线程安全性，都由 JVM 来保证。同时读取实例的时候不会进行同步，没有性能缺陷。
+     * 所以，这种实现方法既保证了线程安全，又能做到延迟加载。
      */
-    public static SingletonLazy getInstanceE() {
-        return SingletonLazyHolder.INSTANCE;
-    }
-    // SingletonLazyHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它只有在getInstance()被调用时才会真正创建；
-    // 同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本。
-    private static class SingletonLazyHolder{
+    private static class SingletonHolder {
         private final static SingletonLazy INSTANCE = new SingletonLazy();
     }
 
+    public static SingletonLazy getInstanceE() {
+        return SingletonHolder.INSTANCE;
+    }
 
     public static void main(String[] args) {
         SingletonLazy singletonLazy1 = SingletonLazy.getInstanceE();
