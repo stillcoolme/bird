@@ -61,6 +61,15 @@ public class FileUtils {
         return filePathList;
     }
 
+    /**
+     *
+     * Reader/Writer与InputStream/OutputStream的区别
+     * 1. 主要区别在于被读和被写入的基本数据类型；InputStream OutputStream 是面向字节的，Reader Writer 使用的字符和字符串。
+     * 2. 大多数Reader 有一个构造函数的InputStream作为参数，并且大多数Writer 有一个构造函数这需要一个OutputStream作为参数。
+     * 3. InputStreamReader、OutputStreamWriter 负责进行 InputStream 到 Reader 的适配和由 OutputStream 到 Writer 的适配。
+     * @param fileName
+     * @return
+     */
     public static List<String> readFile(String fileName) {
         List<String> list = new ArrayList<>();
         FileInputStream fis = null;
@@ -71,7 +80,7 @@ public class FileUtils {
             String str1 = "";
             fis = new FileInputStream(fileName);// FileInputStream
             // 从文件系统中的某个文件中获取字节
-            isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
+            isr = new InputStreamReader(fis);   // InputStreamReader 是字节流通向字符流的桥梁 ！！！
             br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象
             while ((str = br.readLine()) != null) {
                 list.add(str);

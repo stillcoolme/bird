@@ -1,0 +1,22 @@
+{
+  "beans": {
+    "bean": [
+      {
+        "id": "client",
+        "class": "com.stillcoolme.framework.self.di.model.Client",
+        "scope": "singleton",
+        "lazy-init": "true",
+        "constructor-arg": [{
+          "type": "String",
+          "value": "127.0.0.1"
+        }]
+      },{
+        "id": "myClient",
+        "class": "com.stillcoolme.framework.self.di.model.MyClient",
+        "constructor-arg": [{
+          "ref": "client"
+        }]
+      }
+    ]
+  }
+}

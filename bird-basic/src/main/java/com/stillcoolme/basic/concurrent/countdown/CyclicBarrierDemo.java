@@ -7,20 +7,6 @@ import java.util.concurrent.*;
  * @date: 2019/9/6 15:55
  * @description:
  *
- * CyclicBarrier也是一种多线程并发控制的实用工具，相比于CountDownLatch可以实现多次的并行执行。
- *
- * CountDownLatch 和 CyclicBarrier 两者各有不同侧重点的：
- * 1. CountDownLatch强调一个线程等多个线程完成某件事情。
- *  CyclicBarrier是多个线程互等，到都完成，再携手同时执行。
- *
- * 2. 调用CountDownLatch的countDown方法后，当前线程并不会阻塞，会继续往下执行；
- *  而调用CyclicBarrier的await方法，会阻塞当前线程，直到CyclicBarrier指定的线程全部都到达了指定点的时候，才能继续往下执行；
- *
- * 4. CountDownLatch方法比较少，操作比较简单，而CyclicBarrier提供的方法更多，比如能够通过getNumberWaiting()，isBroken()这些方法获取当前多个线程的状态，
- *  并且CyclicBarrier的构造方法可以传入barrierAction，指定当所有线程都到达时执行的业务功能；
- *
- * 5. CountDownLatch是不能复用的，而CyclicBarrier是可以复用的。
- *
  */
 public class CyclicBarrierDemo {
 
