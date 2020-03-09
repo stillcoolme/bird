@@ -240,18 +240,6 @@ static int hash(int h) {
 
 详情请查看：<https://coolshell.cn/articles/9606.html>
 
-## HashMap的负载因子不设置成1！？
-
-在HashMap中，临界值（threshold） = 负载因子（loadFactor） * 容量（capacity）。
-
-**为什么要扩容，这其实和避免哈希冲突有关。**
-
-* 如果一个HashMap中冲突太高，那么数组的链表就会退化为链表。这时候查询速度会大大降低。 
-
-* 扩容不仅对容量扩充，还需要对其中所有的元素进行rehash！这个过程其实是很耗时。**所以负载因子也不能设置的太低！！**
-
- 
-
 ## ConcurrentHashMap 和 Hashtable 的区别
 
 ConcurrentHashMap 和 Hashtable 的区别主要体现在实现线程安全的方式上不同。

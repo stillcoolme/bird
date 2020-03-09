@@ -1,13 +1,14 @@
 package com.stillcoolme.basic.concurrent;
 
-import java.util.concurrent.locks.Lock;
-
 /**
  * @author: stillcoolme
  * @date: 2019/10/11 10:32
  * @description:
  *  加volatile，是因为每个线程读取static变量时，
-
+ *  会创建一个local cache，也就是copy了一份static变量，
+ *  local cache是计算机级别的东西，不是JVM的，是CPU的cache机制导致的，
+ *
+ *  多线程环境下，一个线程对共享变量的操作对其他线程是不可见的。就算是static变量也会像上面说的有系统层面的local cache。。。。
  *  Java提供了volatile来保证可见性，当一个变量被volatile修饰后，表示线程本地内存无效，
  *  当一个线程修改共享变量后他会立即被更新到主存(Main Memory)中，其他线程读取共享变量时，会直接从主存中读取。
  *  当然，synchronize和Lock都可以保证可见性。

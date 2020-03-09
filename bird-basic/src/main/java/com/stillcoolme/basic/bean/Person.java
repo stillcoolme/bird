@@ -72,8 +72,22 @@ public class Person{
                 name.equals(person.name);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age, sex);
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(name, age, sex);
+//    }
+
+    public static void main(String[] args) {
+        Person aa = new Person("aa");
+        Person aa2 = new Person("aa");
+        if(aa.equals(aa2)) {
+            System.out.println(true);
+        }
+//        if(aa.hashCode() == aa2.hashCode()) {
+//            System.out.println(true);
+//        }
+
     }
+
+
 }
