@@ -69,20 +69,18 @@ public class XmlBeanConfigParser implements BeanConfigParser {
             JSONArray argJsonObject = (JSONArray) bean.get("constructor-arg");
             List<BeanDefinition.ConstructorArg> constructorArgs = new ArrayList();
             for (int j = 0; j < argJsonObject.size(); j++) {
-                BeanDefinition.ConstructorArg constructorArg = new BeanDefinition.ConstructorArg();
                 JSONObject args = (JSONObject) argJsonObject.get(j);
-                Object ref = args.get("ref");
-                if(ref != null) {
-                    constructorArg.setRef(true);
-                    constructorArg.setArg(ref);
-                    constructorArgs.add(constructorArg);
-                    continue;
-                }
+                String ref = (String) args.get("ref");
+                String type = (String) args.get("type");
+                String value = (String) args.get("value");
                 try {
-                    Class type = Class.forName("java.lang." + args.get("type"));
-                    String value = (String) args.get("value");
-                    constructorArg.setArg(value);
-                    constructorArg.setType(type);
+                    BeanDefinition.ConstructorArg constructorArg = BeanDefinition.ConstructorArg
+                            .newBuilder().setIsRef(ref != null ? true : false)
+                            .setType(type != null ? Class.forName("java.lang." + args.get("type")) : null)
+                            .setArg(ref != null ? ref :
+                                        (value != null ? value : null)
+                            )
+                            .doBuilder();
                     constructorArgs.add(constructorArg);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
