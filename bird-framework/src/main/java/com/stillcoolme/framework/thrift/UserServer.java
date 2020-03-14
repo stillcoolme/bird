@@ -26,7 +26,7 @@ public class UserServer {
             TServer.Args tArgs = new TServer.Args(serverTransport);
             tArgs.processor(tprocessor);
             tArgs.protocolFactory(new TBinaryProtocol.Factory());
-            TServer server = new TSimpleServer(tArgs);
+            TServer server = new TSimpleServer(tArgs);  // Strom drpc 中使用的是 THsHaServer：半同步/半异步Server，多线程处理业务逻辑调用，同样依赖于TFramedTransport；
             server.serve();
 
         } catch (Exception e) {

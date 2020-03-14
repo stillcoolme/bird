@@ -24,6 +24,7 @@ public class UserClient {
             TBinaryProtocol protocol = new TBinaryProtocol(transport);
             // TProtocol protocol = new TCompactProtocol(transport);
             // TProtocol protocol = new TJSONProtocol(transport);
+            // 拿到客户端的引用
             UserService.Client client = new UserService.Client(protocol);
             transport.open();
             User user = new User();

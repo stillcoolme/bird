@@ -10,6 +10,8 @@
 - 协议层和传输层是运行时库的一部分。有了Thrift，就可以定义一个服务或改变通讯和传输协议，而无需重新编译代码。除了客户端部分之外，Thrift还包括服务器基础设施来集成协议和传输，如阻塞、非阻塞及多线程服务器。
 - IO层在栈中作为基础部分对于不同的语言则有不同的实现。
 
+![](https://raw.githubusercontent.com/stillcoolme/mypic/master/2020/202003/thrift-layer.jpg)
+
 ![img](https:////upload-images.jianshu.io/upload_images/5086559-6529adc5b5516f8f.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/400/format/webp)
 
 
@@ -155,3 +157,15 @@ public class UserServer {
 
 先启动`UserServer`，再启动`UserClient`获得调用的返回结果。可以发现，通过`thrift`我们只要继承`thrift`文件接口，然后在服务端编写好业务实现，就可以提供给远程客户端调用，轻松实现`RPC`。
 
+
+
+## 进阶使用
+
+
+
+对于开发人员而言，使用原生的`Thrift`框架，仅需要关注以下四个核心**内部接口/类**：`Iface`, `AsyncIface`, `Client`和`AsyncClient`。（唉，我怎么没早看出这个啊。。。）
+
+- **Iface**：**服务端**通过实现`HelloWorldService.Iface`接口，向**客户端**的提供具体的**同步**业务逻辑。
+- **AsyncIface**：**服务端**通过实现`HelloWorldService.Iface`接口，向**客户端**的提供具体的**异步**业务逻辑。
+- **Client**：**客户端**通过`HelloWorldService.Client`的实例对象，以**同步**的方式**访问服务端**提供的服务方法。
+- **AsyncClient**：**客户端**通过`HelloWorldService.AsyncClient`的实例对象，以**异步**的方式**访问服务端**提供的服务方法。
