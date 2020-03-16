@@ -28,7 +28,7 @@ package com.stillcoolme.designpattern.callback;
  * （2）学生解决完毕问题之后 调用老师的回调方法tellAnswer !
  *  构成了一种双向调用的关系。
  */
-public class Main {
+public class App {
 
     public static void main(String[] args) {
 

@@ -200,6 +200,8 @@ class LinkedList<E>  extends AbstractSequentialList<E> implements List<E>, Deque
 
 ### **4.2 线程安全  并发队列**
 
+线程池实现，就涉及到各种 BlockingQueue
+
 #### 4.2.1 ConcurrentLinkedQueue/Deque
 
 无界的并发优化的Queue，基于链表，实现了依赖于CAS的无锁算法。
