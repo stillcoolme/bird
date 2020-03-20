@@ -440,3 +440,10 @@ jvm 把描述类的数据从 Class 文件加载到内存，并对数据进行校
 ### 参考
 
 [看完这篇垃圾回收，和面试官扯皮没问题了](https://mp.weixin.qq.com/s?__biz=MzI5MTU1MzM3MQ==&mid=2247483910&idx=1&sn=28134eb9eea657da0d54337d69230c29&scene=21#wechat_redirect)
+
+
+
+解释：
+
+* 并行(Parallel)：多条垃圾收集线程并行工作，而用户线程仍处于等待状态
+* 并发(Concurrent)：垃圾收集线程与用户线程一段时间内同时工作(交替执行)

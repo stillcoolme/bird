@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * JDK自带的Future是阻塞的，不会先执行下面的逻辑
  * Author: stillcoolme
  * Date: 2019/7/26 9:38
  * Description:
+ *  JDK自带的Future是阻塞的，不会先执行下面的逻辑
+ *  另外 CompletableFuture 异步编程  https://my.oschina.net/u/2526533/blog/3190293
  */
 public class FutureTest {
 

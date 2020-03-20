@@ -6,7 +6,7 @@ package com.stillcoolme.basic.jvm;
  * Description:
  *  通过 jconsole 看线程状态
  */
-public class LockDemo {
+public class DeadLockDemo {
 
     /**
      * 线程锁等待演示
@@ -52,7 +52,7 @@ public class LockDemo {
     }
 
     public static void main(String[] args) {
-        createLockThread(new String("test"));
+        createLockThread("test");
 
         for (int i = 0; i < 100; i++) {
             new Thread(new SynAddRunnable(1, 2)).start();
