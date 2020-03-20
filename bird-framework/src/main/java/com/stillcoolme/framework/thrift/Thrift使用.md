@@ -169,3 +169,7 @@ public class UserServer {
 - **AsyncIface**：**服务端**通过实现`HelloWorldService.Iface`接口，向**客户端**的提供具体的**异步**业务逻辑。
 - **Client**：**客户端**通过`HelloWorldService.Client`的实例对象，以**同步**的方式**访问服务端**提供的服务方法。
 - **AsyncClient**：**客户端**通过`HelloWorldService.AsyncClient`的实例对象，以**异步**的方式**访问服务端**提供的服务方法。
+
+
+## 参考
+* [thrift相关](https://mp.weixin.qq.com/s/s4UDfrtlG04gPTEtr_DyJQ)

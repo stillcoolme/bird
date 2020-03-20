@@ -25,6 +25,27 @@ https://blog.csdn.net/guanghuichenshao/article/details/79375967
 
  `阻塞`和`非阻塞`关注的是**应用进程在等待调用结果时的状态**, 而`同步`和`异步`关注的是**通信** 
 
+https://www.cnblogs.com/George1994/p/6702084.html
+
+网络IO的模型大致包括下面几种
+
+同步模型（synchronous IO）
+阻塞IO（bloking IO）
+非阻塞IO（non-blocking IO）
+多路复用IO（multiplexing IO）
+信号驱动式IO（signal-driven IO）
+
+异步IO（asynchronous IO）
+异步IO
+
+网络IO的本质是socket的读取，socket在linux系统被抽象为流，IO可以理解为对流的操作。对于一次IO访问，数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间，所以一般会经历两个阶段：
+
+等待所有数据都准备好或者一直在等待数据，有数据的时候将数据拷贝到系统内核；
+将内核缓存中数据拷贝到用户进程中；
+对于socket流而言：
+
+等待网络上的数据分组到达，然后被复制到内核的某个缓冲区；
+把数据从内核缓冲区复制到应用进程缓冲区中；
 
 
 ## BIO
@@ -302,6 +323,8 @@ ByteBuffer.allocateDirect(int capacity);
 ```
 
 
+
+[堆外内存回收](https://blog.csdn.net/aitangyong/article/details/39403031 )
 
 ==================
 
