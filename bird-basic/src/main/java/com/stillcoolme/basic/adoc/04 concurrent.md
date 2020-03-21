@@ -387,6 +387,7 @@ TimSort可以通过分支合并框架充分利用现代处理器的多核特性�
 * [美团技术重排序与内存可见性问题]( https://tech.meituan.com/2014/09/23/java-memory-reordering.html )
 *  [synchronized](https://blog.csdn.net/javazejian/article/details/72828483#synchronized代码块底层原理) 
 * [coundownlatch说明aqs](https://www.cnblogs.com/fengzheng/p/9153720.html )
+* [远洋号--各种并发模型](https://mp.weixin.qq.com/s/5ZFAC1IWOGqPB2mClU05uQ)
 
 ## 看书
 

@@ -1,24 +1,15 @@
 [toc]
 
-## 为什么
-线程池解决了什么问题，简单来说使用线程池有以下几个目的：
-
-1. 程是稀缺资源，不能频繁的创建。将其放入一个池子中，可以给其他任务进行复用。
-2. 解耦作用；线程创建与执行完全分开，方便维护
-
-1.提升性能：可以从计算机的频率说起。。另外，它们通常在执行大量异步任务时，由于减少了每个任务的调用开销，并且它们提供了一种限制和管理资源（包括线程）的方法，使得性能提升明显； 
-
-2.统计信息：每个ThreadPoolExecutor保持一些基本的统计信息，例如完成的任务数量。为了在广泛的上下文中有用，此类提供了许多可调参数和可扩展性钩子。
-
-
-
 ## 是什么
-Executor 是 任务执行的接口；
+1. Executor 是 任务执行的接口；
+2. ExecutorService 继承 Executor 接口 提供生命周期方法；
+3. ThreadPoolExecutor 的顶层接口是 ExecutorService，使用线程池中的线程执行每个提交的任务。
 
-ExecutorService 继承 Executor 接口 提供生命周期方法；
+## 为什么
+线程池解决了什么问题：
 
-ThreadPoolExecutor 的顶层接口是 ExecutorService，使用线程池中的线程执行每个提交的任务。
-
+1. 线程是稀缺资源，不能频繁的创建。将其放入一个池子中进行资源管理，可以给其他任务进行复用，使得性能提升明显； 
+2. 统计信息：每个ThreadPoolExecutor保持一些基本的统计信息，例如完成的任务数量。为了在广泛的上下文中有用，此类提供了许多可调参数和可扩展性钩子。
 
 ## 构造线程池
 
@@ -55,8 +46,6 @@ ThreadPoolExecutor.CallerRunsPolicy():     //重试添加当前的任务，他�
 ThreadPoolExecutor.DiscardOldestPolicy():     //抛弃旧的任务
 ThreadPoolExecutor.DiscardPolicy():     //抛弃当前的任务
 ```
-
-
 
 总结： 
 1. 用ThreadPoolExecutor自定义线程池，看线程是的用途，如果任务量不大，可以用无界队列，如果任务量非常大，要用有界队列，防止OOM !

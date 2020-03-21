@@ -1,10 +1,8 @@
 
 
-## 实战项目 IT技术论坛
+## 实战IT技术论坛
 
 IT技术论坛中相关的数据，会在es中建立数据的索引
-
-深度讲解搜索，数据分析，数据建模
 
 ### 2 实战使用term filter来搜索数据（动态mapping）
 
@@ -414,6 +412,7 @@ GET /forum/article/_search
 
 （1）range，sql中的between，或者是>=1，<=1
 （2）range做范围过滤
+
 
 
 ### 3 filter执行原理深度剖析（bitset机制与caching机制）
