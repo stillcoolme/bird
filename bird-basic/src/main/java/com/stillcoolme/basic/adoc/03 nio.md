@@ -565,3 +565,5 @@ public static AsynchronousFileChannel open(Path file,
 [DirectByteBuffer参考](http://sound2gd.wang/2018/07/21/Java-NIO分析-10-堆外内存管理之DirectBuffer详解/)
 
 [初步看看源码]( https://juejin.im/post/5c1b54d8f265da611510c143 )
+
+[零拷贝技术](https://juejin.im/post/5cad6f1ef265da039f0ef5df)
