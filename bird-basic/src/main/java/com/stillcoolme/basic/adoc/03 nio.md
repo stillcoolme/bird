@@ -5,6 +5,16 @@
 1. 何为TCP协议；
 2. 何为Socket通信，Socker通信怎么建立连接；
 
+然后，理解Netty首先要理解NIO，理解NIO首先要理解reactor模型、多路复用select\poll\epoll等等原理。尝试按照这个来详细学习网络编程的来龙去脉。
+
+[系统讲解](https://blog.csdn.net/lemon89/article/details/78290389)
+
+[美团nio](https://tech.meituan.com/2016/11/04/nio.html )
+
+ `IO多路复用`就是通过一种机制，一个进程可以监听多个文件描述符，一个某个描述符就绪（一般是读就绪或写就绪），就能够通知程序进行相应的读写操作。select、poll、epoll本质上都是同步IO，因为他们需要在读写事件就绪后自己负责读写，即这个读写过程是阻塞的，而异步IO则无需自己负责读写，异步IO的实现会把数据从内核拷贝到用户空间。 
+
+
+
 ## 同步、异步、阻塞、非阻塞
 
 https://baijiahao.baidu.com/s?id=1623908582750588151&wfr=spider&for=pc

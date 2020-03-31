@@ -2,6 +2,8 @@
 
 人家问es是什么？结合自己项目里面使用来说呗
 
+[如何高逼格的给同事做 Elasticsearch 技术分享](https://mp.weixin.qq.com/s?__biz=MzA3MTUzOTcxOQ==&mid=2452966988&idx=1&sn=2b7227769be57b08d6f190134f7bea1f&scene=21#wechat_redirect)
+
 ![](https://raw.githubusercontent.com/janehzhang/mypic/master/2020/202003/es-mysql-compare.png)
 
 ![](https://img-blog.csdn.net/20160717132008382)
@@ -1560,7 +1562,6 @@ scroll 会一次性给你生成**所有数据的一个快照**，然后每次滑
 
 初始化时必须指定 `scroll` 参数，告诉 es 要保存此次搜索的上下文多长时间。你需要确保用户不会持续不断翻页翻几个小时，否则可能因为超时而失败。
 
-除了用 `scroll api`，你也可以用 `search_after` 来做，`search_after` 的思想是使用前一页的结果来帮助检索下一页的数据，显然，这种方式也不允许你随意翻页，你只能一页页往后翻。初始化时，需要使用一个唯一值的字段作为 sort 字段。
+除了用 `scroll api`，你也可以用 `search_after` 来做，适合并发，`search_after` 的思想是使用前一页的结果来帮助检索下一页的数据，显然，这种方式也不允许你随意翻页，你只能一页页往后翻。初始化时，需要使用一个唯一值的字段作为 sort 字段。
 
-
-
+ https://toutiao.io/posts/yzh0h7/preview 

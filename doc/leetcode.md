@@ -277,6 +277,8 @@ redis正是基于以上的HLL算法实现的[HyperLogLog](https://redis.io/comma
 
 ### BloomFilter
 
+[海量数据处理之BloomFilter](https://cloud.tencent.com/developer/article/1373922)
+
 用于检索一个元素是否在一个集合中的算法，和缓存是互补的关系把集合中不在的数据挡掉（判断不在的话一定不在，判断在的话可能不在）。空间效率和查询时间远远超过一般的算法，缺点是有一定的误识别率和删除困难。
 
 * 原理：用一个映射函数做映射，一个很长的二进制向量来表示0和1，然后将经过映射的元素对应的向量位置置1。

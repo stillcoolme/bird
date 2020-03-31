@@ -41,20 +41,6 @@ Spark的作业和任务调度系统是其核心，能够有效地进行调度根
 
 读过源码？可以说说 SparkShuffle 啊
 
-Shuffle 是连接 MapTask 和 ReduceTask 过程的桥梁，MapTask 的输出必须要经过 Shuffle 过程才能变成 ReduceTask 的输入，在分布式集群中，ReduceTask 需要跨节点去拉取 MapTask 的输出结果，这中间涉及到数据的网络传输和磁盘IO，所以Shuffle的好坏将直接影响整个应用程序的性能，通常我们将Shuffle过程分成两部分：MapTask端的结果输出成为ShuffleWrite, ReduceTask端的数据拉取称为ShuffleRead。
-
-**普通Shuffle原理**
-
-
-
-
-
-Spark2.x中已经将Hash Shuffle废弃，我自己也去看了Spark2.2.0的源码，在Spark-env初始化中只保留了两种Shuffle：Sort、Tungsten-Sort
-
-
-
-
-
 
 
 
