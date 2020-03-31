@@ -25,7 +25,9 @@ Java的线程模型建立在**抢占式线程调度**的基础上：
 
 > 使用数据副本：数据副本是避免共享数据的好方法，复制出来的对象只是以只读的方式对待。Java 5的java.util.concurrent包中增加一个名为CopyOnWriteArrayList的类，它是List接口的子类型，所以你可以认为它是ArrayList的线程安全的版本，它使用了写时复制的方式创建数据副本进行操作来避免对共享数据并发访问而引发的问题。
 
+## 线程生命周期
 
+[线程生命周期介绍](https://www.cnblogs.com/sunddenly/p/4106562.html)
 
 ![](https://img-blog.csdn.net/2018070117435683?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BhbmdlMTk5MQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
@@ -34,9 +36,6 @@ Java的线程模型建立在**抢占式线程调度**的基础上：
 并发编程中，需要处理两个关键问题：线程之间如何通信？如何同步？
 
 线程之间通信的方式可以概括为两种：共享内存，消息传递。
-
-
-
 
 
 在继续下面的探讨之前，我们还是重温一下几个概念：

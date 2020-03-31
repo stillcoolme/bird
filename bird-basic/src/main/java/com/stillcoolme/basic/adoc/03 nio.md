@@ -188,7 +188,7 @@ epoll是最新的一种多路IO复用的函数。
 2. 直接I/O: 应用进程直接操作硬件存储！
 3. 优化`页缓存`和`应用进程缓冲区`的传输
 
-1和2都是**避免AppContext 和 kernelContext 之间的缓冲区拷贝**, 3是从传输的角度优化，因为DMA进行数据传输基本不需要CPU参与，但是 AppContext 的缓冲区和内核的`页缓存`传输没有类似DMA的手段, 3就是从这个角度优化。
+1 和 2 都是**避免AppContext 和 kernelContext 之间的缓冲区拷贝**, 3是从传输的角度优化，因为DMA进行数据传输基本不需要CPU参与，但是 AppContext 的缓冲区和内核的`页缓存`传输没有类似DMA的手段, 3就是从这个角度优化。
 
 直接I/O和传输优化都涉及到硬件层面我们暂且不讲。
 
@@ -254,7 +254,7 @@ sendfile: **没有映射**，从内核缓冲区直接复制到socket缓冲区。
 
 在 Linux 内核 2.4 及后期版本中，针对SockerBuffer 描述符做了相应调整：DMA自带了收集功能，对于用户使用还是一样，但内部操作已经发生了改变。具体过程：
 
-1. 使用 DMA 将文件内容拷贝到内核读取缓冲区。
+1. transferTo() 方法 使用 DMA 将文件内容拷贝到内核读取缓冲区。
 2. 避免了内容的整体拷贝，**只把包含数据位置和长度信息的描述符追加到套接字缓冲区**，DMA 引擎直接把数据从内核缓冲区传到协议引擎（网卡），从而消除了最后一次 CPU参与的拷贝动作。
 
 <img src="pic/sendfile2.jpg" style="zoom:67%;" />
@@ -263,7 +263,7 @@ sendfile: **没有映射**，从内核缓冲区直接复制到socket缓冲区。
 
 NIO中通过`FileChannel`来提供`Zero-Copy`的支持，底层 sendfile 的实现对应到Java层中FileChannel 的 transferTo 方法 ：该方法将数据从 FileChannel 传输到指定的 可写Channel；
 
-
+[面试官问我零拷贝的实现原理](https://mp.weixin.qq.com/s/j73tRFksYAR6S0p9Ijrv_A)
 
 >  mmap 和 sendfile 区别
 
