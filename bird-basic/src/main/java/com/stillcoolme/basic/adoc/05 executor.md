@@ -6,10 +6,13 @@
 3. ThreadPoolExecutor 的顶层接口是 ExecutorService，使用线程池中的线程执行每个提交的任务。
 
 ## 为什么
-线程池解决了什么问题：
+随着计算机行业的飞速发展，摩尔定律逐渐失效，多核CPU成为主流。使用多线程并行计算逐渐成为开发人员提升服务器性能的基本武器。线程池解决了什么问题：
 
-1. 线程是稀缺资源，不能频繁的创建。将其放入一个池子中进行资源管理，可以给其他任务进行复用，使得性能提升明显； 
+1. 线程是稀缺资源，不能频繁的创建，线程过多会带来额外的开销。将其放入一个池子中进行资源管理，可以给其他任务进行复用，一方面避免了处理任务时创建销毁线程开销的代价，另一方面避免了线程数量膨胀导致的过分调度问题，保证了对内核的充分利用，使得性能提升明显； 
+
 2. 统计信息：每个ThreadPoolExecutor保持一些基本的统计信息，例如完成的任务数量。为了在广泛的上下文中有用，此类提供了许多可调参数和可扩展性钩子。
+
+   
 
 ## 构造线程池
 
@@ -78,21 +81,24 @@ public static ExecutorService newFixedThreadPool(int nThreads) {
                                   new LinkedBlockingQueue<Runnable>());
 }
 ```
-3. newScheduledThreadPool：创建一个定长线程池，适用定时及周期性任务执行
+3. newSingleThreadExecutor：创建一个线程容量为1的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序执行。里边使用的是LinkedBlockingQueue
+
+   ```
+   public static ExecutorService newSingleThreadExecutor() {
+           return new FinalizableDelegatedExecutorService
+               (new ThreadPoolExecutor(1, 1,
+                                       0L, TimeUnit.MILLISECONDS,
+                                       new LinkedBlockingQueue<Runnable>()));
+       }
+   ```
+
+4. newScheduledThreadPool：创建一个定长线程池，适用定时及周期性任务执行
 ```
 public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) {
         return new ScheduledThreadPoolExecutor(corePoolSize);
     }
 ```
-4. newSingleThreadExecutor：创建一个线程容量为1的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序执行。里边使用的是LinkedBlockingQueue
-```
-public static ExecutorService newSingleThreadExecutor() {
-        return new FinalizableDelegatedExecutorService
-            (new ThreadPoolExecutor(1, 1,
-                                    0L, TimeUnit.MILLISECONDS,
-                                    new LinkedBlockingQueue<Runnable>()));
-    }
-```
+
 
 
 ### 线程池关闭

@@ -352,9 +352,9 @@ G1 收集器是面向服务端的垃圾收集器，主要有以下几个特点
 
 - 与 CMS 相比，布景降低停顿时间，而且建立了**可预测**的停顿时间模型，用户可以指定期望GC停顿时间。
 
-  G1 将整个Java堆划分为多个大小相等的Region，虽然还保留新生代，老年代的概念，但是新生代和老年代不再是物理隔离的了，分别都是 n 个不连续的大小相同的 Region。
+  G1 将整个Java堆划分为多个大小相等的Region，虽然还保留新生代，老年代的概念，但是**新生代和老年代不再是物理隔离的了，分别都是 n 个不连续的大小相同的 Region。**就不用担心各代要分配多少内存了！！
 
-  除了和传统的新老生代，幸存区的空间区别，Region还多了一个H，它代表Humongous，这表示这些Region存储的是巨大对象（humongous object，H-obj），即大小大于等于region一半的对象，这样超大对象就直接分配到了老年代，防止了反复拷贝移动。那么 G1 分配成这样有啥好处呢？
+  除了和传统的新老生代，幸存区的空间区别，Region还多了一个H，它代表Humongous，这表示这些Region存储的是巨大对象（humongous object，H-obj），即**大小大于等于region一半的对象 而且  短期存在的巨型对象**，这样超大对象就直接分配到了老年代，防止了反复拷贝移动。那么 G1 分配成这样有啥好处呢？
 
   之所以能建立**可预测**的停顿时间模型，是因为**G1可以有计划地避免在整个Java堆中进行全区域的垃圾收集**，分配成各个 Region，方便 G1 跟踪各个 Region 里垃圾堆积的价值大小（回收获得空间大小），在后台根据价值大小维护一个优先列表，根据允许的收集时间，优先收集回收价值最大的 Region（名字由来）。
 
@@ -372,6 +372,20 @@ G1 收集器是面向服务端的垃圾收集器，主要有以下几个特点
 ![img](https://mmbiz.qpic.cn/mmbiz_png/OyweysCSeLUrYqPicjVwjuMChPrPicNHdX8S08rDRVliaVW84ibCM9kzCtIxCIYqFGGbiad6VPBV9qSZEqOJtTuyyicQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
 可以看到整体过程与 CMS 收集器非常类似，筛选阶段会根据各个 Region 的回收价值和成本进行排序，根据用户期望的 GC 停顿时间来制定回收计划。
+
+
+
+G1提供了两种GC模式，Young GC和Mixed GC，两种都是Stop The World(STW)的。
+
+**G1 Young GC**
+
+Young GC主要是对Eden区进行GC，它在Eden空间耗尽时会被触发。
+
+在这种情况下，Eden空间的数据移动到Survivor空间中，如果Survivor空间不够，Eden空间的部分数据会直接晋升到年老代空间。Survivor区的数据移动到新的Survivor区中，也有部分数据晋升到老年代空间中。最终Eden空间的数据为空，GC停止工作，应用线程继续执行。
+
+[太麻烦了](https://ouyblog.com/2018/04/G1%E6%94%B6%E9%9B%86%E5%99%A8)
+
+
 
 ### 实战
 
