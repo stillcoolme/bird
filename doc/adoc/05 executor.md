@@ -111,7 +111,7 @@ public static ExecutorService newSingleThreadExecutor() {
 
 1. shutdown方法执行线程池关闭后，继续提交新任务会调用handler策略拒绝任务；
 2. shutdown方法执行线程池关闭后，等待队列里的任务依然能继续执行；要使用 shutdownNow() 才能将不继续执行。
-3. 正在执行的任务是否会立即中断？需要先了解线程中断机制interrupt()，shutdown()方法不会 interrupt 运行中线程；shutdownNow() 则会interrupt 方法，通知线程interrupt，线程如果没有对interrupt相关的处理就会执行完 。
+3. 正在执行的任务是否会立即中断？需要先了解线程中断机制interrupt()，shutdown()方法不会 interrupt 运行中线程；shutdownNow() 则调用 interrupt 方法，通知线程interrupt，线程如果没有对interrupt相关的处理就会执行完 。
    
 > interrupt() 常识
 

@@ -1,4 +1,4 @@
-package com.stillcoolme.leetcode.lesson.algorithm.lru;
+package com.stillcoolme.leetcode.lesson.structure.lru;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

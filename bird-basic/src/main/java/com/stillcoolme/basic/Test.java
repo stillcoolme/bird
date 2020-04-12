@@ -9,7 +9,29 @@ import java.util.LinkedList;
  */
 public class Test {
 
+    public static int binarySearch(int[] array, int target) {
+        if (array == null) {
+            return -1;
+        }
+        int min = 0;
+        int max = array.length;
+        int firstMax = 0;
+        while (min <= max) {
+            int middle = (max + min) / 2;
+            if (array[middle] > target) {
+                firstMax = middle;
+                max = middle - 1;
+            } else if (array[middle] < target) {
+                min = middle + 1;
+            } else {
+                return middle;
+            }
+        }
+        return firstMax;
+    }
+
     public static void main(String[] args) {
-        "ss".equals("dd");
+        String a = "123"; String b = "123";
+        System.out.println(a == b);
     }
 }

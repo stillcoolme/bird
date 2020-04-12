@@ -1,38 +1,3 @@
-<!-- TOC -->
-
-- [剖析面试最常见问题之Java集合框架](#剖析面试最常见问题之java集合框架)
-    - [说说List,Set,Map三者的区别？](#说说listsetmap三者的区别)
-    - [Arraylist 与 LinkedList 区别?](#arraylist-与-linkedlist-区别)
-        - [补充内容:RandomAccess接口](#补充内容randomaccess接口)
-        - [补充内容:双向链表和双向循环链表](#补充内容双向链表和双向循环链表)
-    - [ArrayList 与 Vector 区别呢?为什么要用Arraylist取代Vector呢？](#arraylist-与-vector-区别呢为什么要用arraylist取代vector呢)
-    - [说一说 ArrayList 的扩容机制吧](#说一说-arraylist-的扩容机制吧)
-    - [HashMap 和 Hashtable 的区别](#hashmap-和-hashtable-的区别)
-    - [HashMap 和 HashSet区别](#hashmap-和-hashset区别)
-    - [HashSet如何检查重复](#hashset如何检查重复)
-    - [HashMap的底层实现](#hashmap的底层实现)
-        - [JDK1.8之前](#jdk18之前)
-        - [JDK1.8之后](#jdk18之后)
-    - [HashMap 的长度为什么是2的幂次方](#hashmap-的长度为什么是2的幂次方)
-    - [HashMap 多线程操作导致死循环问题](#hashmap-多线程操作导致死循环问题)
-    - [ConcurrentHashMap 和 Hashtable 的区别](#concurrenthashmap-和-hashtable-的区别)
-    - [ConcurrentHashMap线程安全的具体实现方式/底层具体实现](#concurrenthashmap线程安全的具体实现方式底层具体实现)
-        - [JDK1.7（上面有示意图）](#jdk17上面有示意图)
-        - [JDK1.8 （上面有示意图）](#jdk18-上面有示意图)
-    - [comparable 和 Comparator的区别](#comparable-和-comparator的区别)
-        - [Comparator定制排序](#comparator定制排序)
-        - [重写compareTo方法实现按年龄来排序](#重写compareto方法实现按年龄来排序)
-    - [集合框架底层数据结构总结](#集合框架底层数据结构总结)
-        - [Collection](#collection)
-            - [1. List](#1-list)
-            - [2. Set](#2-set)
-        - [Map](#map)
-    - [如何选用集合?](#如何选用集合)
-
-<!-- /TOC -->
-
-# 剖析面试最常见问题之Java集合框架
-
 ## 说说List,Set,Map三者的区别？
 
 - **List(对付顺序的好帮手)：** List接口存储一组不唯一（可以有多个元素引用相同的对象），有序的对象
@@ -234,7 +199,11 @@ static int hash(int h) {
 
 我们首先可能会想到采用%取余的操作来实现。但是，重点来了：**“取余(%)操作中如果除数是2的幂次则等价于与其除数减一的与(&)操作（也就是说 hash%length==hash&(length-1)的前提是 length 是2的 n 次方；）。”** 并且 **采用二进制位操作 &，相对于%能够提高运算效率，这就解释了 HashMap 的长度为什么是2的幂次方。**
 
-## HashMap 多线程操作导致死循环问题
+## HashMap什么时候会进行 rehash？
+
+
+
+## 结合源码说说 HashMap在高并发场景中为什么会出现死循环？ 
 
 主要原因在于 并发下的Rehash 会造成元素之间会形成一个循环链表。不过，jdk 1.8 后解决了这个问题，但是还是不建议在多线程下使用 HashMap,因为多线程下使用 HashMap 还是会存在其他问题比如数据丢失。并发环境下推荐使用 ConcurrentHashMap 。
 

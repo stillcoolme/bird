@@ -59,6 +59,8 @@ spark中Yarn的工作流程和一些总结
 
 ### Client和Cluster模式
 
+[Spark中yarn模式两种提交任务方式](https://www.cnblogs.com/LHWorldBlog/p/8414342.html)
+
 spark上yarn有两种管理模式，**YARN-Client**和**YARN-Cluster**。
 
 主要区别是：SparkContext初始化位置不同，也就是了Driver所在位置的不同。
