@@ -94,11 +94,11 @@ iterator（）时顺着哈希桶数组来遍历，看起来是个乱序。
 
 扩展HashMap，每个Entry增加双向链表，号称是最占内存的数据结构。
 
-LinkedHashMap 能够记录插入数据的先后顺序。
+它虽然增加了时间和空间上的开销，但是通过维护一个运行于所有条目的双向链表，记录插入数据的先后顺序，LinkedHashMap保证了元素迭代的顺序。 
 
-支持iterator（）时按Entry的插入顺序来排序（如果设置accessOrder属性为true，则所有读写访问都排序）。
+*  按照访问顺序输出，就是被访问的entry会被链表链接到尾部。所以可以用来实现 LRUCache；
 
-插入时，Entry把自己加到Header Entry的前面去。如果所有读写访问都要排序，还要把前后Entry的before/after拼接起来以在链表中删除掉自己，所以此时读操作也是线程不安全的了。
+
 
 ### 2.3 TreeMap
 

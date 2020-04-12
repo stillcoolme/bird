@@ -64,6 +64,8 @@ public interface RandomAccess {
 
 详见笔主的这篇文章:[通过源码一步一步分析ArrayList 扩容机制](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/ArrayList-Grow.md)
 
+
+
 ## HashMap 和 Hashtable 的区别
 
 1. **线程是否安全：** HashMap 是非线程安全的，HashTable 是线程安全的；HashTable 内部的方法基本都经过`synchronized` 修饰。（如果你要保证线程安全的话就使用 ConcurrentHashMap 吧！）；
@@ -205,9 +207,29 @@ static int hash(int h) {
 
 ## 结合源码说说 HashMap在高并发场景中为什么会出现死循环？ 
 
-主要原因在于 并发下的Rehash 会造成元素之间会形成一个循环链表。不过，jdk 1.8 后解决了这个问题，但是还是不建议在多线程下使用 HashMap,因为多线程下使用 HashMap 还是会存在其他问题比如数据丢失。并发环境下推荐使用 ConcurrentHashMap 。
+主要原因在于 并发下的Rehash 会造成元素之间会形成一个循环链表。不过，jdk 1.8 后解决了这个问题，但是还是不建议在多线程下使用 HashMap，因为多线程下使用 HashMap 还是会存在其他问题比如数据丢失。并发环境下推荐使用 ConcurrentHashMap 。
 
 详情请查看：<https://coolshell.cn/articles/9606.html>
+
+## HashMap扩容过程
+
+[Java 8系列之重新认识HashMap](https://tech.meituan.com/2016/06/24/java-hashmap.html)
+
+ **什么时候扩容：**当向容器添加元素的时候，会判断当前容器的元素个数，如果大于等于阈值(知道这个阈字怎么念吗？不念fa值，念yu值四声)---即当前数组的长度乘以加载因子的值的时候，就要自动扩容啦。 
+
+先将原来的小数组进行复制，复制到一个更大的数组。 HashMap 默认的初始化大小为16。之后每次扩充，容量变为原来的2倍。创建时如果给定了容量初始值，HashMap 会将其扩充为2的幂次方大小。
+
+jdk7
+
+使用了单链表的头插入方式，同一位置上新元素总会被放在链表的头部位置；这样先放在一个索引上的元素终会被放到Entry链的尾部(如果发生了hash冲突的话） 
+
+jdk8
+
+使用的是2次幂的扩展(指长度扩为原来2倍)，所以，元素的位置要么是在原位置，要么是在原位置再移动2次幂的位置。 
+
+
+
+
 
 ## ConcurrentHashMap 和 Hashtable 的区别
 
@@ -234,7 +256,9 @@ ConcurrentHashMap 和 Hashtable 的区别主要体现在实现线程安全的方
 
 ![JDK1.8的ConcurrentHashMap](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/JDK1.8-ConcurrentHashMap-Structure.jpg)
 
-## ConcurrentHashMap线程安全的具体实现方式/底层具体实现
+
+
+## 线程安全的底层具体实现
 
 ### JDK1.7（上面有示意图）
 
@@ -262,14 +286,6 @@ ConcurrentHashMap取消了Segment分段锁，采用 CAS 和 synchronized 来保�
 synchronized只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升N倍。
 
  **说实话，Java8 ConcurrentHashMap 源码真心不简单，最难的在于扩容，数据迁移操作不容易看懂。** 
-
-
-
-
-
-
-
-
 
 
 
