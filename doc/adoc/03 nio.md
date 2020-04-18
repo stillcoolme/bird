@@ -547,6 +547,17 @@ public static AsynchronousFileChannel open(Path file,
 
 
 
+## Netty
+
+对于开发者来说，它具有以下特点：
+
+- 对 NIO 进行封装，开发者不需要关注 NIO 的底层原理，只需要调用 Netty 组件就能够完成工作。
+- 对网络调用透明，从 Socket 建立 TCP 连接到网络异常的处理都做了包装。
+- 对数据处理灵活， Netty 支持多种序列化框架，通过“ChannelHandler”机制，可以自定义“编/解码器”。
+- 对性能调优友好，Netty 提供了线程池模式以及 Buffer 的重用机制（对象池化），不需要构建复杂的多线程模型和操作队列。
+
+
+
 
 
 ## 应用

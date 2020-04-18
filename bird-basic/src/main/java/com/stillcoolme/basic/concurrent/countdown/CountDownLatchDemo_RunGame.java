@@ -42,8 +42,9 @@ public class CountDownLatchDemo_RunGame {
                     System.out.println(Thread.currentThread().getName() + " 运动员等待裁判员响哨！！！");
                     startSignal.await();
                     System.out.println(Thread.currentThread().getName() + "正在全力冲刺");
-                    endSignal.countDown();
+                    Thread.sleep(1000);
                     System.out.println(Thread.currentThread().getName() + "  到达终点");
+                    endSignal.countDown();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

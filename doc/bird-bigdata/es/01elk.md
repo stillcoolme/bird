@@ -8,7 +8,7 @@
 
 ![](https://img-blog.csdn.net/20160717132008382)
 
-索引打开关闭，打开才缓存到内存才可以查数据
+索引打开关闭，打开才缓存到内存才可以查数据。
 
 
 
@@ -24,31 +24,30 @@ Elasticsearch 中的**数据会整理为索引**。
 
 分片是 Elasticsearch 在集群内分发数据的单位。Elasticsearch 在对数据进行再平衡（例如发生故障后）时移动分片的速度取决于分片的大小和数量，以及网络和磁盘性能。
 
-
-
 [我应该设计多少分片](https://www.elastic.co/cn/blog/how-many-shards-should-i-have-in-my-elasticsearch-cluster?nsukey=EB%2BtCgHd6my4k5BptSe45EzhKue86h5teaT6mHtRUTv9wMEzkEMkYtrOz5LCy3poLIJY2aPhd3DQvv09BY8KPdwfuscVJ1y5mRBUmGYHJ6Pordh4o8EBejeH7ARChzH8BrlPTxUWvLxd0kVS1YqXHHC%2FfItNpexWZKnQFeTStrcVgFgdOtaP3Ei%2FxZ%2B2JbDb )
-
-
-
-
-
-
-
-
 
 ### 倒排索引
 
-
-
 建立倒排索引的时候，会执行一个 normalization 操作，也就是说对拆分出的各个单词进行相应的处理，以提升后面搜索的时候能够搜索到相关联的文档的概率：时态的转换，单复数的转换，同义词的转换，大小写的转换
 
+### 易忘记的概念
+
+text 和 keyword：ElasticSearch 5.0以后，string类型有重大变更，移除了string类型，被拆分成两种新的数据类型: text 会分词，用于全文搜索的，而 keyword 不会被分词，用于关键词搜索。
+
+match 和 termterm：查询的时候，match是模糊查询，有个评分过程会增加耗时，只要有的所查字段的文档都会被查出来。
 
 
-### 索引管理
+
+## 索引管理
+
+### 索引查询
 
 ```shell
 # 查看所有索引
 GET /_cat/indices
+# 查询
+GET /索引名/_search
+
 # 创建索引，不指定映射类型
 PUT /website/article/1
 {
@@ -617,8 +616,6 @@ dfs_query_then_fetch，可以提升revelance sort精准度
 
 * 一方面会建立倒排索引，以供**搜索**用；
 * 一方面会建立正排索引，也就是doc values，以供**排序，聚合，过滤**等操作使用
-
-doc values是被保存在磁盘上的，此时如果内存足够，os会自动将其缓存在内存中，性能还是会很高；
 
 ```shell
 doc1: { "name": "jack", "age": 27 }
@@ -1565,3 +1562,45 @@ scroll 会一次性给你生成**所有数据的一个快照**，然后每次滑
 除了用 `scroll api`，你也可以用 `search_after` 来做，适合并发，`search_after` 的思想是使用前一页的结果来帮助检索下一页的数据，显然，这种方式也不允许你随意翻页，你只能一页页往后翻。初始化时，需要使用一个唯一值的字段作为 sort 字段。
 
  https://toutiao.io/posts/yzh0h7/preview 
+
+
+
+
+
+### 索引别名
+
+1. 用于作为几个拆分的索引的总查询名
+2. 方便应对新需求对索引的修改，迁移索引只要将别名指向新索引就行了
+
+https://www.cnblogs.com/jajian/p/10152681.html
+
+
+
+## 异常
+
+ElasticSearch 7.x 默认不再支持指定索引类型，建索引的时候只要指定索引名，不然会报错：`Root mapping definition has unsupported parameters`
+
+```json
+put /store_index
+{
+    "settings":{    
+    "number_of_shards" : 3,   
+    "number_of_replicas" : 0    
+    },    
+     "mappings":{    
+      "books":{                 //  7.x 不用再指定这个了！
+        "properties":{        
+            "title":{"type":"text"},
+            "name":{"type":"text","index":false},
+            "publish_date":{"type":"date","index":false},           
+            "price":{"type":"double"},           
+            "number":{
+                "type":"object",
+                "dynamic":true
+            }
+        }
+      }
+     }
+ }
+```
+
