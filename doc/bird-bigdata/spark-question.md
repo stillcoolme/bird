@@ -1,3 +1,5 @@
+为什么相同 key 的会在同一分区，因为都是用的一样的分区函数啊！
+
 ## 浪尖大纲
 
 广播变量的原理及演变过程，使用场景，使用广播变量一定划算吗？大变量咋办呢？
@@ -109,6 +111,8 @@ Spark的作业和任务调度系统是其核心，能够有效地进行调度根
 
 ### RDD特性
 
+RDD是用来表示数据结构，不是用来存储数据。你要清楚，就是元数据。。
+
 1. A list of partitions   一系列的分片
 
 RDD是一个由多个partition（某个节点里的某一片连续的数据）组成的的list；分区可以增加计算的并行度。
@@ -125,7 +129,7 @@ RDD会记录它的依赖 ，为了容错，故障恢复（重算，cache，check
 
 3. A function for computing each split， 每个分片一个计算函数
 
-RDD的每个partition上面都会有function，也就是函数应用，其作用是实现**同一个stage内部的RDD partition 之间以 pipeline 的形式运行转换**，避免了数据落盘 和 线程切换。
+RDD的每个partition上面都会有function，也就是函数应用，其作用是实现**同一个stage内部的RDD partition 之间以 pipeline 的形式运行转换**，避免了数据落盘 和 线程切换。（pipeline 这概念我觉得和rdd一样重要）
 
 注意 mapPartition 和 map， foreachPartition 和 foreach 的区别！
 
@@ -141,29 +145,201 @@ RDD的每个partition上面都会有function，也就是函数应用，其作用
 
 为rdd指定数据本地性：process，node，rack，any，no。数据本地可能会造成 task 任务倾斜于某个executor，调优要注意
 
-### 宽依赖窄依赖
+### 望文生义
 
-依据 Shuffle 为界来进行 Stage 的划分。
+**1.1 Resilient**
 
-讲到这可以先回顾一下Spark了，主要三个概念：
+Spark的核心数据结构有弹性能复原。说明spark在设计之初就考虑把spark应用在大规模的分布式集群中，任何一台正在计算Task的服务器都可能出故障，那么这个子任务自然在这台服务器无法继续执行，这时RDD所具有的“弹性”就派上了用场，它**可以使这个失败的子任务在集群内进行迁移，从而保证整体任务(Job)对故障机器的平滑过渡。**
 
-**1. Shuffle**
+可能有些同学有疑问了，难道还有系统不具有弹性，是硬邦邦的？还真有，比如很多的即席查询系统，例如presto或者impala，因为**在其上运行的查询，都是秒级的时延，所以如果子任务失败，直接把查询重跑一遍即可。**而spark处理的任务，可能时常要运行分钟级甚至小时级别，那么整个任务完全重跑的代价非常大，而某些task重跑的代价就比较小了，所以spark的数据结构一定要有“弹性”，能自动容错，保证任务只跑一遍。
 
-Spark job 中 shuffle个数决定着stage个数。
+**1.2 Distributed**
 
-**2. 分区**
+spark的数据结构怎么个分布式法呢？这就涉及到了spark中**分区(partition)的概念**，也就是数据的切分规则，根据一些特定的规则切分后的数据子集，就**可以在独立的task中进行处理**，而这些task又是分散在集群多个服务器上**并行的同时的执行**，这就是spark中Distributed的含义。
 
-Spark 算子中 RDD的分区数 决定着 stage任务的并行度。
+spark源码中RDD是个表示数据的基类，在这个基类之上衍生了很多的子RDD，不同的子RDD具有不同的功能，但是他们都要具备的能力就是能够被切分(partition)，比如从HDFS读取数据，那么会有hadoopRDD，这个hadoopRDD的切分规则就是如果一个HDFS文件可按照block(64M或者128M)进行切分，例如txt格式，那么一个Block一个partition，spark会为这个Block生成一个task去处理这个Block的数据，而如果HDFS上的文件不可切分，比如压缩的zip或者gzip格式，那么一个文件对应一个partition。
 
-**3.** **分区传递**
+例如，进行分发(shuffle)，要把相同key的数据“归类”到一起，如果把所有key放到同一个partition里，那么就只能有一个task来进行归类处理，性能会很差，所以这个过程的并行化，就是靠把key进行切分，不同的key在不同的partition中被处理，来实现的group过程并行化。
 
-复杂的入union，join等暂不提。简单的调用链如下：
+**1.3 Datasets**
 
-rdd.map-->filter-->reducebykey-->map。
+看到这个词，很多人会错误的以为RDD是spark的数据存储结构，其实并非如此，RDD中的Datasets并非真正的“集合”，而是**表示spark中数据处理的逻辑。**    
 
-例子中假设rdd有6个分区，map到fliter的分区数传递是不变，filter到redcuebykey分区就变了，reducebykey的分区有个默认计算公式，星球里讲过了，假设我们在使用reducebykey的时候传入了一个分区数12。
+怎么理解呢？这需要结合两个概念来理解，
 
-分区数，map是6，filter也是6，reducebykey后面的map就是12。map这类转换完全继承了父RDD的分区器和分区数，默认无法人为设置并行度，只有在shuffle的时候，我们才可以传入并行度。
+第一是spark中RDD 的transform操作，
+
+另一个是spark中的pipeline。
+
+首先看RDD的transform，来看论文中的一个transform图每个长方形都是一个RDD，但是他们**表示的数据结构不同**，注意，这里用的是”表示“，而不是”存储“，例如lines这个RDD，就是最原始的文本行，而errors这个RDD，则只表示以”ERROR“开头的文本行，而HDFSerrors这个RDD则表示包含了”HDFS“关键字的文本行。这就是一个RDD的”变形“过程。
+
+我们回到上边纠结的”表示“和”存储“两个字眼上，看看用不同的字眼表达会有什么不同的结果。如果我们用”存储“，那么上一个RDD经过transform后，需要存储下来，等到全部处理完之后交给下一个处理逻辑(类似我们很久以前用迅雷下载电影，要先下载才能观看，两个过程是串行的)。那么问题来了，在一批数据达到之前，下一个处理逻辑必须要等待，这其实是没有必要的。**所以在上一个处理逻辑处理完一条数据后，如果立马交给下一个处理逻辑，这样就没有等待的过程，整体系统性能会有极大的提升**，而这正是用”表示“这个词来表达的效果(类似后来的流媒体，不需要先下载电影，可以边下载边观看)，这也就是是spark中的pipeline(流水线）处理方式。
+
+**2 spark的lineage**
+
+RDD的三个单词分析完了，球友们可能也有一个疑问，那就是对于pipeline的处理方式，感觉各个处理逻辑的数据都是”悬在空中“，没有落磁盘那么踏实。确实，如果是这种方式的话，spark怎么来保证这种”悬在空中“的流式数据在服务器故障后，能做到”可恢复“呢？这就引出了spark中另外一个重要的概念：lineage(血统)。一个RDD的血统，就是如上图那样的一系列处理逻辑，spark会为每个RDD记录其血统，借用范伟的经典小品的桥段，spark知道每个RDD的子集是”怎么没的“（变形变没的）以及这个子集是 ”怎么来的“（变形变来的），那么当数据子集丢失后，spark就会根据lineage，复原出这个丢失的数据子集，从而保证Datasets的弹性。
+
+**3 注意**
+
+1) 当然如果RDD被cache和做了checkpoint可以理解为spark把一个RDD的数据“存储了下来”，属于后续优化要讲解的内容。
+
+2) RDD在transform时，并非每处理一条就交给下一个RDD，而是使用小批量的方式传递，也属于优化的内容，后续讲解。
+
+
+
+
+
+### RDD、DataFrame和DataSet 区别
+
+面试题啊，三者的不同？三者都没有存储真实数据，真实数据存储在 block 里面。
+
+三者共性：
+
+1. 基础都是rdd，都有rdd五大特性，都有惰性机制；
+2. DataFrame和Dataset均可使用模式匹配获取各个字段的值和类型，DataFrame 是 case Row(col1:String, col2:String)
+
+不同点：
+
+1. 元数据存储
+
+   1. RDD[Person]是以Person为类型参数，但是Person类的内部结构对于RDD而言却是不可知的。
+   2. DataFrame 则是Row对象的集合，提供了详细的结构信息Schema，但每行Row要通过解析才能获取各个字段的值，每行的值无法直接访问。
+   3. Dataset强类型，在需要访问列中的某个字段时是非常方便的。
+
+   ```scala
+   testDF.foreach{
+     line =>
+       val col1 = line.getAs[String]("col1")
+       val col2 = line.getAs[String]("col2")
+   }
+   
+   val testDS: Dataset[Coltest]=rdd.map{line=>
+         Coltest(line._1,line._2)
+       }.toDS
+   testDS.map{
+         line=>
+           println(line.col1)
+           println(line.col2)
+   }
+   
+   DataSet 可以这样取数据   _._1
+   DataFrame 则要这样取数据    _.getString(0)
+   ```
+
+   
+
+**RDD**
+
+* RDD五大特性；
+* **类型安全，面向对象编程风格，序列化以及反序列化开销大。**
+
+**DataFrame**
+
+DataFrame的数据集都是按指定列存储，即结构化数据。类似于传统数据库中的表。
+
+**DataSet**
+
+在Spark 2.x中，Dataset具有两个完全不同的API特征：强类型API和弱类型API。
+
+* DataFrame是特殊的Dataset，其每行是一个弱类型JVM object，只要指定字段名。Dataset是强类型JVM object的集合，封装Scala的case class或者Java class，指定 字段名 和 类型。
+* 数据以编码的二进制形式存储，将对象的schema映射为SparkSQL类型，不需要反序列化就可以进行shuffle等操作，每条记录存储的则是强类型值。
+
+dataframe  和  dataset 相同点
+
+- 都是基于RDD的，所以都有RDD的特性，如懒加载，分布式，不可修改，分区等等。但执行sql性能比RDD高，因为spark自动会使用优化策略执行。
+- 均支持 sparksql 的操作，还能注册临时表，进行sql语句操作
+- `DataFrame`和`Dataset`均可使用模式匹配获取各个字段的值和类型
+- `DataFrame`也叫`Dataset[Row]`，每一行的类型是Row
+
+dataframe  和  dataset 不同点
+
+因为`DataFrame`也叫`Dataset[Row]`，所以我们理解了**Row**和**普通对象**的区别就好办了
+
+- **Row**的数据结构类似一个**数组**，只有顺序，切记。**普通对象**的数据结构也就是对象。
+- 因此，访问**Row**只能通过如：`getInt(i: Int)`解析数据 或者 通过模式匹配得到数据；而**普通对象**可以通过 `.`号 直接访问对象中成员变量。
+- 同理，**Row**中数据没类型，没办法在编译的时候检查是否有类型错误（弱类型的概念）；相反**普通对象**可以（强类型）。
+
+
+
+
+### 三者转换
+
+![](https://raw.githubusercontent.com/stillcoolme/mypic/master/2020/202003/df-convert.png)
+
+![dataframe2dataset.png](https://i.loli.net/2020/01/16/PkpdJSz4EYGv9sR.png)
+
+**注意**
+
+- 原始RDD类型是 `RDD[(Int, String)]`
+- DataFrame -> RDD 时，变成了`RDD[Row]`
+- DataSet -> RDD时，变成了`RDD[User]`
+- DataSet<Row> -> RDD时，变成`RDD[Row]`
+
+```scala
+// RDD转DataFrame，用元组把一行的数据写在一起，然后在toDF中指定字段名
+import spark.implicits._
+val testDF = rdd.map {line=>
+      (line._1,line._2)
+    }.toDF("col1","col2")
+
+// RDD转Dataset：
+import spark.implicits._
+case class Coltest(col1:String,col2:Int)extends Serializable //定义字段名和类型
+val testDS = rdd.map {line=>
+   Coltest(line._1,line._2)
+}.toDS
+
+// DataFrame 转  Dataset
+df.as(Encoders.String())
+df.as(Encoders.bean())
+```
+
+
+
+
+
+**使用**
+
+```scala
+// 创建一个 DataFrame、DataSet<Row>
+val df: DataFrame = spark.read().textFile("file1.txt");  
+或者
+val df: DataFrame = spark.read.json("people.json")
+```
+
+**SQL风格（主要）**
+
+```
+// 通过SQL语句实现对表的操作
+df.createOrReplaceTempView("people")
+spark.sql("SELECT * FROM people").show()
+```
+
+**DSL风格（次要）**
+
+```
+// 使用DataFrame的api
+df.select("name").show()
+df.select($"name", $"age" + 1).show()
+```
+
+
+
+### 窄依赖宽依赖
+
+依据 Shuffle 为界来进行 Stage 的划分，也是 宽依赖窄依赖的划分。
+
+**1. Shuffle**: Spark job 中 shuffle个数决定着stage个数。
+
+**2. 分区**: Spark 算子中 RDD的分区数 决定着 stage任务的并行度。
+
+Spark数据分区（partitionBy分区、partitioner获取分区方式、自定义分区）
+
+https://blog.csdn.net/u012369535/article/details/90114003
+
+将 partitionBy 讲的很好。。。
+
+**3.** **分区传递**: 假设 rdd 有6个分区，map到fliter的分区数不变，filter到redcuebykey分区就变了，reducebykey的分区有个默认计算公式，假设我们在使用reducebykey的时候传入了一个分区数12。reducebykey后面的map就是12。map这类转换完全继承了父RDD的分区器和分区数，默认无法人为设置并行度，只有在shuffle的时候，我们才可以传入并行度。
 
 ```java
 // 根据父rdd的 partitioner 来
@@ -172,21 +348,37 @@ override val partitioner = if (preservesPartitioning) firstParent[T].partitioner
 override def getPartitions: Array[Partition] = firstParent[T].partitions
 ```
 
+对于由窄依赖变换（例如map和filter）返回的RDD，会延续父RDD的分区信息，以pipeline的形式计算。每个对象仅依赖于父RDD中的单个对象。
 
+> 两种算子
 
+Transformation
 
+1. 针对已有的RDD创建一个新的RDD（RDD是只读不可变的）
+2. lazy特性。没有Action的话，不会触发spark程序的执行的，它们只是记录了元数据信息，对RDD所做的操作。Spark通过这种lazy特性，**来进行底层的spark应用执行的优化，避免产生过多中间结果。**
+
+Action
+
+1. 对RDD进行最后的操作，比如遍历、reduce、保存到文件等，并可以返回结果给Driver程序。
+2. action操作执行，会触发一个spark job的运行，让最开始的Transformation读取数据之类的开始执行。
 
 
 
 ### DAG的生成，划分，task的调度执行
 
-
+划分成一个Stage (pipeline流水线，每个task计算一个分区）
 
 
 
 ## Shuffle
 
 读过源码？可以说说 SparkShuffle 啊。
+
+**在Spark中Task的类型分为2种：ShuffleMapTask和ResultTask。**
+
+**ShuffleMapTask的输出是shuffle所需数据**，ResultTask的输出是最后结果result。
+
+
 
 
 
@@ -241,105 +433,6 @@ spark上yarn有两种管理模式，**YARN-Client**和**YARN-Cluster**。
 
 
 
-## RDD、DataFrame和DataSet
-
-面试题啊，三者的不同？
-
-三者都没有存储真实数据，真实数据存储在 block 里面。
-
-**RDD**
-
-RDD五大特性；
-
-**类型安全，面向对象编程风格，序列化以及反序列化开销大。**
-
-使用RDD的一般场景：
-
-- 只需要使用low-level的transformation和action来控制你的数据集；
-- 你的数据集非结构化，比如：流媒体或者文本流；
-- 你想使用函数式编程来操作你的数据，而不是用特定领域语言(DSL)表达；
-- 你不在乎schema，比如，当通过名字或者列处理(或访问)数据属性不在意列式存储格式；
-- 你放弃使用DataFrame和Dataset来优化结构化和半结构化数据集。
-
-与dataframe的区别：RDD是分布式的 Java对象的集合，比如，RDD[Person]是以Person为类型参数，但是，Person类的内部结构对于RDD而言却是不可知的。DataFrame是一种以RDD为基础的分布式数据集，也就是分布式的Row对象的集合（每个Row对象代表一行记录），提供了详细的结构信息，也就是我们经常说的模式（schema），Spark SQL可以清楚地知道该数据集中包含哪些列、每列的名称和类型。
-
-**DataFrame**
-
-DataFrame与RDD相同之处，都是不可变分布式弹性数据集。
-
-不同之处在于，DataFrame的数据集都是按指定列存储，即结构化数据。类似于传统数据库中的表。
-
-DataFrame允许开发者把结构化数据集导入DataFrame，并做了higher-level的抽象；
-
-类似传统数据库的二维表格，除了数据以外，还记录数据的结构信息，即schema。也就是普通RDD添加结构化信息得到。
-
-**DataSet**
-
-在Spark 2.x中，Dataset具有两个完全不同的API特征：强类型API和弱类型API。
-
-其中，DataFrame是特殊的Dataset，其每行是一个弱类型JVM object。相对应地，Dataset是强类型JVM object的集合，封装Scala的case class或者Java class。
-
-* 面向对象编程风格存储的是对象，所以强类型的，类型安全。继承了RDD和DataFrame的优点。
-* 数据以编码的二进制形式存储，将对象的schema映射为SparkSQL类型，不需要反序列化就可以进行shuffle等操作，每条记录存储的则是强类型值。
-
-dataframe  和  dataset 相同点
-
-- 都是基于RDD的，所以都有RDD的特性，如懒加载，分布式，不可修改，分区等等。但执行sql性能比RDD高，因为spark自动会使用优化策略执行。
-- 均支持 sparksql 的操作，还能注册临时表，进行sql语句操作
-- `DataFrame`和`Dataset`均可使用模式匹配获取各个字段的值和类型
-- `DataFrame`也叫`Dataset[Row]`，每一行的类型是Row
-
-dataframe  和  dataset 不同点
-
-因为`DataFrame`也叫`Dataset[Row]`，所以我们理解了**Row**和**普通对象**的区别就好办了
-
-- **Row**的数据结构类似一个**数组**，只有顺序，切记。**普通对象**的数据结构也就是对象。
-- 因此，访问**Row**只能通过如：`getInt(i: Int)`解析数据 或者 通过模式匹配得到数据；而**普通对象**可以通过 `.`号 直接访问对象中成员变量。
-- 同理，**Row**中数据没类型，没办法在编译的时候检查是否有类型错误（弱类型的概念）；相反**普通对象**可以（强类型）。
-
-
-
-
-### 三者的转换
-
-![](https://raw.githubusercontent.com/stillcoolme/mypic/master/2020/202003/df-convert.png)
-
-![dataframe2dataset.png](https://i.loli.net/2020/01/16/PkpdJSz4EYGv9sR.png)
-
-
-
-**注意**
-
-- 原始RDD类型是 `RDD[(Int, String)]`
-- DataFrame -> RDD 时，变成了`RDD[Row]`
-- DataSet -> RDD时，变成了`RDD[User]`
-- DataSet<Row> -> RDD时，变成`RDD[Row]`
-
-**使用**
-
-```scala
-// 创建一个 DataFrame、DataSet<Row>
-val df: DataFrame = spark.read().textFile("file1.txt");  
-或者
-val df: DataFrame = spark.read.json("people.json")
-```
-
-**SQL风格（主要）**
-
-```
-// 通过SQL语句实现对表的操作
-df.createOrReplaceTempView("people")
-spark.sql("SELECT * FROM people").show()
-```
-
-**DSL风格（次要）**
-
-```
-// 使用DataFrame的api
-df.select("name").show()
-df.select($"name", $"age" + 1).show()
-```
-
 
 
 ## 内存分配相关
@@ -361,6 +454,8 @@ spark官网说了这么段话：在gc的统计信息中，如果老年代接近�
  假如我们单纯的减少 spark.memory.storageFraction 是行不通的，因为**存储内存可以占用执行内存进行缓存**，缓解不了老年代被吃满的状况，所以只能调整spark.memory.fraction。 
 
 spark最骚的操作是，没有加内存解决不了的问题，假如有那是没加够。
+
+
 
 ## 面试具体问题
 
@@ -397,8 +492,8 @@ spark最骚的操作是，没有加内存解决不了的问题，假如有那是
    
    指定    val OFF_HEAP = new StorageLevel(true, true, true, false, 1) 
    
-5. 
-
+   
+   
 2. 4399的校招笔试题：海量日志数据，找出最近一周登录游戏最多的ip，讲一下解决方案。大佬们谈谈想法？
 
    经典TOPN问题， 1 日志按天分区; 2 刷选7天内的数据; 3 根据ip计数和group by; 4 同一分区里排序，取最大那条; 5 综合所有分区排序取第最大的那条。

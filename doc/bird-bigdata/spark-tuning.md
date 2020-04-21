@@ -75,6 +75,24 @@ executor-cores = 2，对应每个worker给每个executor能用的最多个cpu co
 应该去查看spark作业，要提交到的资源队列，大概有多少资源？
 一个原则，你能使用的资源有多大，就尽量去调节到最大的大小（executor的数量，几十个到上百个不等；
 
+### 提高并行度
+
+**2. 如何设置一个Spark Application的并行度？**
+
+**spark.defalut.parallelism默认是没有值的，如果设置了值比如说10，是在shuffle的过程才会起作用**（val rdd2 = rdd1.reduceByKey(_+_) //rdd2的分区数就是10，rdd1的分区数不受这个参数的影响）
+
+**new SparkConf().set(“spark.defalut.parallelism”,”“500)**
+
+ **3、如果读取的数据在HDFS上，增加block数**，默认情况下split与block是一对一的，而split又与RDD中的partition对应，所以增加了block数，也就提高了并行度。
+
+**4、RDD.repartition**，给RDD重新设置partition的数量
+
+**5、reduceByKey的算子指定partition的数量**
+
+​         val rdd2 = rdd1.reduceByKey(_+_,10)  val rdd3 = rdd2.map.filter.reduceByKey(_+_)
+
+ **6、**val rdd3 = rdd1.**join**（rdd2）**rdd3里面partiiton的数量是由父RDD中最多的partition数量来决定，因此使用join算子的时候，增加父RDD中partition的数量。**
+
 
 
 
@@ -318,9 +336,6 @@ set(spark.shuffle.memoryFraction，0.2)  // 每次提高0.1，看看效果。
 
 ### 生产环境怎么定位
 
-定位：在自己的程序里面找找，哪些地方用了会产生shuffle的算子，groupByKey、countByKey、reduceByKey、join。
-看log，看看是执行到了第几个stage。哪一个stage，task特别慢或者只有一部分task在工作，就能够从spark代码的stage划分，通过stage定位到你的代码，哪里发生了数据倾斜。
-
 **#某个task执行特别慢的情况**
 
 首先要看的，就是数据倾斜发生在第几个stage中，找到那个 shuffle 的 stage。
@@ -375,6 +390,12 @@ key=sessionid, value: action_seq=1|user_id=1|search_keyword=火锅|category_id=0
 然后在spark中，拿到key=sessionid，values<Iterable>。
 
 ```
+
+ 
+
+Spark应用程序怎么监控？
+1)、webUI：4040端口：包括任务调度状态，RDD大小和内存使用的统计信息；正在运行executor信息；
+2)、辅助监控工具，如：ganglia；
 
 
 

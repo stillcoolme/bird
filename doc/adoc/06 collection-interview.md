@@ -258,7 +258,7 @@ ConcurrentHashMap 和 Hashtable 的区别主要体现在实现线程安全的方
 
 
 
-## 线程安全的底层具体实现
+## ConcurrentHashMap的底层具体实现
 
 ### JDK1.7（上面有示意图）
 
@@ -286,6 +286,67 @@ ConcurrentHashMap取消了Segment分段锁，采用 CAS 和 synchronized 来保�
 synchronized只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升N倍。
 
  **说实话，Java8 ConcurrentHashMap 源码真心不简单，最难的在于扩容，数据迁移操作不容易看懂。** 
+
+
+
+## ConcurrentHashMap 的读操作不需要加锁？
+
+- JDK1.8的实现降低锁的粒度。JDK1.7版本锁的粒度是基于Segment的，包含多个HashEntry，采用Segment + HashEntry + ReentrantLock的方式；而JDK1.8锁的粒度就是HashEntry（首节点），采用Node + CAS + Synchronized来保证并发安全进行实现。
+- JDK1.8版本的数据结构变得更加简单，使得操作也更加清晰流畅，因为已经使用synchronized来进行同步，所以不需要分段锁的概念，也就不需要Segment这种数据结构了，由于粒度的降低，实现的复杂度也增加了
+- JDK1.8使用红黑树来优化链表，基于长度很长的链表的遍历是一个很漫长的过程，而红黑树的遍历效率是很快的，代替一定阈值的链表，这样形成一个最佳拍档。
+
+**get操作源码**
+
+1. 首先计算hash值，定位到该table索引位置，如果是首节点符合就返回
+2. 如果遇到扩容的时候，会调用标志正在扩容节点ForwardingNode的find方法，查找该节点，匹配就返回
+3. 以上都不符合的话，就往下遍历节点，匹配就返回，否则最后就返回null
+
+```java
+//会发现源码中没有一处加了锁
+public V get(Object key) {
+    Node<K,V>[] tab; Node<K,V> e, p; int n, eh; K ek;
+    int h = spread(key.hashCode()); //计算hash
+    if ((tab = table) != null && (n = tab.length) > 0 &&
+        (e = tabAt(tab, (n - 1) & h)) != null) {//读取首节点的Node元素
+        if ((eh = e.hash) == h) { //如果该节点就是首节点就返回
+            if ((ek = e.key) == key || (ek != null && key.equals(ek)))
+                return e.val;
+        }
+        //hash值为负值表示正在扩容，这个时候查的是ForwardingNode的find方法来定位到nextTable来
+        //eh=-1，说明该节点是一个ForwardingNode，正在迁移，此时调用ForwardingNode的find方法去nextTable里找。
+        //eh=-2，说明该节点是一个TreeBin，此时调用TreeBin的find方法遍历红黑树，由于红黑树有可能正在旋转变色，所以find里会有读写锁。
+        //eh>=0，说明该节点下挂的是一个链表，直接遍历该链表即可。
+        else if (eh < 0)
+            return (p = e.find(h, key)) != null ? p.val : null;
+        while ((e = e.next) != null) {//既不是首节点也不是ForwardingNode，那就往下遍历
+            if (e.hash == h &&
+                ((ek = e.key) == key || (ek != null && key.equals(ek))))
+                return e.val;
+        }
+    }
+    return null;
+}
+```
+
+get() 没有加锁的话，ConcurrentHashMap是如何保证读到的数据不是脏数据的呢? 答案就是 volatile。
+
+那这 volatile 是加在 数组上面那个吗？`transient volatile Node<K,V>[] table;`。不是的，volatile修饰数组的意义是：为了使得Node数组在扩容的时候对其他线程具有可见性。volatile int array[10]是指array的地址是volatile的而不是数组元素的值是volatile的。
+
+**用volatile修饰的Node！！**
+
+get 操作可以无锁是由于Node的元素val和指针next是用volatile修饰的，在多线程环境下线程A修改结点的val或者新增节点的时候是对线程B可见的。
+
+```java
+static class Node<K,V> implements Map.Entry<K,V> {
+    final int hash;
+    final K key;
+    //可以看到这些都用了volatile修饰
+    volatile V val;
+    volatile Node<K,V> next;
+}
+```
+
+
 
 
 

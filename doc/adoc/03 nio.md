@@ -11,7 +11,13 @@
 
 [美团nio](https://tech.meituan.com/2016/11/04/nio.html )
 
- `IO多路复用`就是通过一种机制，一个进程可以监听多个文件描述符，一个某个描述符就绪（一般是读就绪或写就绪），就能够通知程序进行相应的读写操作。select、poll、epoll本质上都是同步IO，因为他们需要在读写事件就绪后自己负责读写，即这个读写过程是阻塞的，而异步IO则无需自己负责读写，异步IO的实现会把数据从内核拷贝到用户空间。 
+I/O 多路复用模型
+
+**这里“多路”指的是多个网络连接，“复用”指的是复用同一个线程。**多路I/O复用模型是利用 select、poll、epoll 可以同时监察多个流的 I/O 事件的能力（监听多个文件描述符），在空闲的时候，会把当前线程阻塞掉，当有一个或多个流有 I/O 事件（某个描述符就绪）时，就从阻塞态中唤醒，于是程序就会轮询一遍所有的流（epoll 是只轮询那些真正发出了事件的流），并且只依次顺序的处理就绪的流，这种做法就避免了大量的无用操作。
+
+select、poll、epoll本质上都是同步IO，因为他们需要在读写事件就绪后自己负责读写，即这个读写过程是阻塞的，而异步IO则无需自己负责读写，异步IO的实现会把数据从内核拷贝到用户空间。 
+
+
 
 
 
@@ -37,16 +43,19 @@ https://blog.csdn.net/guanghuichenshao/article/details/79375967
 
 https://www.cnblogs.com/George1994/p/6702084.html
 
-网络IO的模型大致包括下面几种
+## 网络IO的模型
 
-同步模型（synchronous IO）
-阻塞IO（bloking IO）
-非阻塞IO（non-blocking IO）
+https://mp.weixin.qq.com/s/fZEmkH962XKcvXGCLlDqHg
+
+同步阻塞IO（bloking IO）
+
+同步非阻塞IO（non-blocking IO）
+
 多路复用IO（multiplexing IO）
+
 信号驱动式IO（signal-driven IO）
 
 异步IO（asynchronous IO）
-异步IO
 
 网络IO的本质是socket的读取，socket在linux系统被抽象为流，IO可以理解为对流的操作。对于一次IO访问，数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间，所以一般会经历两个阶段：
 

@@ -24,6 +24,13 @@ public class ListUtils {
         return new ArrayList<>(Arrays.asList(array));
     }
 
+    // list 转 array
+    public static String[] arrayToList2(List<String> list) {
+        String[] array = list.toArray(new String[list.size()]);
+        return array;
+    }
+
+
     // compareList By float
     public static void ListCompare() {
         List<Result> list = new ArrayList<>();

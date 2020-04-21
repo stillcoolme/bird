@@ -3,8 +3,6 @@
 
 剑指offer：面试前应该熟练掌握链表、树、栈、队列和哈希表等数据结构。如果能对链表的插入和删除节点烂熟于胸，对二叉树的各种遍历方法的循环和递归写法了如指掌，那么真正到了面试的时候也就游刃有余了。同时还会考察查找、排序算法。
 
-
-
 ### 链表
 * 反转链表，两两元素反转，判断链表是否有环
   
@@ -84,6 +82,23 @@ Find：确定元素属于哪一个子集。它被用来确定两个元素是否�
 Union：将两个子集合并成同一个集合。
 
 ## 大数据相关
+
+### hash
+
+[海量数据解决思路之Hash算法](https://blog.51cto.com/zengzhaozheng/1409705)
+
+对大文件进行统计，机器内存又不够，一般就是分而治之。首先就通过 hash 函数进行分，将相同 key 的 hash 到相同的文件！
+
+[july](https://blog.csdn.net/v_july_v/article/details/7382693)，处理海量数据问题，无非就是：
+
+1. 分而治之/hash映射 + hash统计 + 堆/快速/归并排序；
+2. 双层桶划分
+3. Bloom filter/Bitmap；
+4. Trie树/数据库/倒排索引；
+5. 外排序；
+6. 分布式处理之Hadoop/Mapreduce。
+
+
 
 ### bitmap
 
@@ -334,7 +349,7 @@ cache = CacheBuilder.newBuilder() .maximumSize(1000) .expireAfterWrite(100, Time
 
 ### 一致性Hash
 
-### 
+
 
 ## 算法
 
@@ -347,15 +362,14 @@ k: “桶”的个数
 In-place: 占用常数内存，不占用额外内存
 Out-place: 占用额外内存
 
+考察算法不仅仅是如何简单实现，面试官往往会刨根问底。
 
+* 比如那些是不稳定的？（快排、堆排）
+* 对于不同数据集，各种排序的最好或最差情况？
+* 从某个角度如何进一步优化（比如空间占用，假设业务场景需要最小辅助空间，这个角度堆排就比归并优异）？
+* 从简单了解到进一步思考，能观察面试者处理问题和沟通时的思路。
 
-常见的冒泡排序、快速排序、归并排序、堆排序等属于比较排序。在排序的最终结果里，元素之间的次序依赖于它们之间的比较。每个数都必须和其他数进行比较，才能确定自己的位置。
-
-[常用排序算法](https://www.cnblogs.com/guoyaohua/p/8600214.html)
-
-[juejin](https://juejin.im/post/5b95da8a5188255c775d8124#heading-7)
-
-https://ms2008.github.io/2017/03/16/lua-quick-sort/
+[面试必备：八种排序算法原理及Java实现](https://juejin.im/post/5b95da8a5188255c775d8124#heading-7)
 
 #### 冒泡排序
 
@@ -444,6 +458,79 @@ public static void sort(int[] array, int low, int high) {
 4. 重复步骤3直到某一指针达到序列尾
 5. 将另一序列剩下的所有元素直接复制到合并序列尾
    
+
+#### 堆排序（Heap Sort）
+
+堆排序（Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。
+
+堆排序的基本思想：将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。将其与末尾元素进行交换，此时末尾就为最大值。然后将剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值。如此反复执行，便能得到一个有序序列了。
+
+**算法描述**
+
+- 将初始待排序关键字序列(R1,R2….Rn)构建成大顶堆，此堆为初始的无序区；
+- 将堆顶元素R[1]与最后一个元素R[n]交换，此时得到新的无序区(R1,R2,……Rn-1)和新的有序区(Rn),且满足R[1,2…n-1]<=R[n]；
+- 由于交换后新的堆顶R[1]可能违反堆的性质，因此需要对当前无序区(R1,R2,……Rn-1)调整为新堆，然后再次将R[1]与无序区最后一个元素交换，得到新的无序区(R1,R2….Rn-2)和新的有序区(Rn-1,Rn)。不断重复此过程直到有序区的元素个数为n-1，则整个排序过程完成。
+
+![img](https://images2017.cnblogs.com/blog/849589/201710/849589-20171015231308699-356134237.gif)
+
+
+
+```java
+//声明全局变量，用于记录数组array的长度；
+static int len;
+    /**
+     * 堆排序算法
+     *
+     * @param array
+     * @return
+     */
+    public static int[] HeapSort(int[] array) {
+        len = array.length;
+        if (len < 1) return array;
+        //1.构建一个最大堆
+        buildMaxHeap(array);
+        //2.循环将堆首位（最大值）与末位交换，然后在重新调整最大堆
+        while (len > 0) {
+            swap(array, 0, len - 1);
+            len--;
+            adjustHeap(array, 0);
+        }
+        return array;
+    }
+    /**
+     * 建立最大堆
+     *
+     * @param array
+     */
+    public static void buildMaxHeap(int[] array) {
+        //从最后一个非叶子节点开始向上构造最大堆
+        for (int i = (len/2 - 1); i >= 0; i--) { //感谢 @让我发会呆 网友的提醒，此处应该为 i = (len/2 - 1) 
+            adjustHeap(array, i);
+        }
+    }
+    /**
+     * 调整使之成为最大堆
+     *
+     * @param array
+     * @param i
+     */
+    public static void adjustHeap(int[] array, int i) {
+        int maxIndex = i;
+        //如果有左子树，且左子树大于父节点，则将最大指针指向左子树
+        if (i * 2 < len && array[i * 2] > array[maxIndex])
+            maxIndex = i * 2;
+        //如果有右子树，且右子树大于父节点，则将最大指针指向右子树
+        if (i * 2 + 1 < len && array[i * 2 + 1] > array[maxIndex])
+            maxIndex = i * 2 + 1;
+        //如果父节点不是最大值，则将父节点与最大值交换，并且递归调整与父节点交换的位置。
+        if (maxIndex != i) {
+            swap(array, maxIndex, i);
+            adjustHeap(array, maxIndex);
+        }
+    }
+```
+
+
 
 
 

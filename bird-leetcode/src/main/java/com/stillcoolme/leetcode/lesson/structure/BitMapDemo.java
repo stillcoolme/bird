@@ -6,6 +6,7 @@ import java.util.BitSet;
  * Author: stillcoolme
  * Date: 2020/3/21 23:09
  * Description:
+ *  spark里的bloomfilter https://mp.weixin.qq.com/s/80DdrpmGIpYUThxWqf6kew
  */
 public class BitMapDemo {
 
