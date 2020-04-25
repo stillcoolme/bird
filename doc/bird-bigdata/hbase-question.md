@@ -1,5 +1,14 @@
-* 一个RegionServer 下，有多个Region。
-* 一个Region下，对应一个列簇一个MemStore。
+* 一个RegionServer 下，有各表的多个Region。
+
+* 一个Region下，对应一个列簇。
+
+* 一个列簇  对应 Store（一个MemStore + 多个StoreFile（因为MemStore不断 flush 出来））。
+
+  
+
+1. MemStore Flush：形成有序的StoreFIle
+2. StoreFIle Compact：mirror将storeFile合并而已，major合并删除的数据
+3. Region Split：进行Region移动
 
 
 
@@ -68,53 +77,47 @@ LSM 的中心思想就是**将随机写转换为顺序写来大幅提高写入�
 
 整个RegionServer内存（Java进程内存）分为两部分：JVM内存和堆外内存。
 
-其中JVM内存中 LRUBlockCache 和堆外内存 BucketCache 一起构成了读缓存**CombinedBlockCache**，用于缓存读到的Block数据，其中LRUBlockCache用于缓存元数据Block，BucketCache用于缓存实际用户数据Block；
-
-MemStore 用于写流程，缓存用户写入KeyValue数据；还有部分用于RegionServer正常运行所必须的内存；
-
-
+* 其中JVM内存中 LRUBlockCache 和堆外内存 BucketCache 一起构成了读缓存**CombinedBlockCache**，用于缓存读到的Block数据，其中LRUBlockCache用于缓存元数据Block，BucketCache用于缓存实际用户数据Block；
+* MemStore 用于写流程，缓存用户写入KeyValue数据；还有部分用于RegionServer正常运行所必须的内存；
 
 ### HBase写流程
 
-   1) **zk中存储了meta表的region信息**，从meta表获取相应region信息，**然后找到meta表的数据**
+1. Client先访问zookeeper获得 meta表 所在的 RegionServer 位置，然后到对应的 RegionServer 找到meta表里 存的 行键范围数据。（ .META. 表所在的 RegionServer 信息存储到了 zk 中的 /hbase/meta-region-server）
 
-   2) 根据namespace、表名和rk根据meta表的数据找到写入数据对应的region信息
+2. 根据namespace、表名和rk  从 meta表的数据找到写入数据对应的region信息，找到对应的 RegionServer；
 
-   3) 找到对应的 RegionServer；
+   （一些通用的细节就是校验是否可读，异常的处理，缓存元数据下次用）
 
-   4) 向对应的Regionserver发起写请求，并将对应的数据发送到该Regionserver检查操作，看Region是不是只读状态，BlockMemorySize大小限制等。 
+ ![这里写图片描述](https://img-blog.csdn.net/20180313102723251?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvSGFpeFdhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast) 
 
-把数据依次写入MemoryStore 和HLog（WAL），只有这两个都写入成功，此次写入才算成功。需要获取相关的锁，而且写入MemoryStore 和HLog是原子性的，要么都成功，要么都失败。
+3. 向对应的 Regionserver发起写请求，把数据依次写入 HLog（WAL）和 MemoryStore，只有这两个都写入成功，此次写入才算成功。（这可不是LSM啊，别说错了。。）
+4. 当 MemStore 写入数据达到一个阈值128M后，触发 flush 操作，溢写成 StoreFile (底层是HFile）；若MemStore中的数据有丢失，则可以从HLog上恢复；
+5. 溢写的 StoreFile 文件过多时（应为MemStore是小块内存），触发Compact合并操作，合并为一个大的 StoreFile，（majorCompact同时进行版本的合并和数据删除）。
+6. StoreFile Compact后，形成越来越大的Region，**达到 hbase.hregion.max.filesize 后**，触发Split操作，Region分成两个，相当于把一个大的region分割成两个region，HBase给两个Region分配相应的 Regionserver 进行管理，从而分担压力。
 
-   5) MemStore达到一个阈值后把数据flush成StoreFile；若MemStore中的数据有丢失，则可以从HLog上恢复
+注意：
 
-   6) 多个 StoreFile 文件达到一定的大小后，触发Compact合并操作，合并为一个大的 StoreFile，同时进行版本的合并和数据删除。
-
-   7）Compact后，形成越来越大的Region后，触发Split操作，Region分成两个，相当于把一个大的region分割成两个region。将Region一分为二，HBase给两个Region分配相应的Regionserver进行管理，从而分担压力。
-
-
+* MemStore的最小flush单元是 Region 级别 而不是单个MemStore。可想而知，如果一个HRegion中Memstore过多，每次flush的开销必然会很大，因此我们也建议在进行表设计的时候尽量减少ColumnFamily的个数。
 
 ### HBase读流程
 
 和写流程相比，HBase读数据是一个更加复杂的操作流程。
 
-其一是因为整个HBase存储引擎基于LSM-Like树实现，因此**一次范围查询可能会涉及多个分片、多块缓存甚至多个数据存储文件**；其二是因为HBase中更新操作以及删除操作实现都很简单，更新操作并没有更新原有数据，而是使用时间戳属性实现了多版本，就需要过滤已经更新删除的数据。
+其一是因为整个HBase存储引擎基于LSM树实现，因此**一次范围查询可能会涉及多个分片、多块缓存甚至多个数据存储文件**；其二是因为HBase中更新操作以及删除操作实现都很简单，更新操作并没有更新原有数据，而是使用时间戳属性实现了多版本，就需要过滤已经更新删除的数据。
 
-   1) 客户端从zk的 /meta-region-server节点，读取元数据表所在的 RegionServer 节点信息，元数据表会缓存到本地
+1. 定位 RS 和 写的流程一样；
+2. Client也会缓存 .META. 表信息，以后可以直接连到 RegionServer 。如果集群发生某些变化导致hbase:meta元数据更改，客户端再根据本地元数据表请求的时候就会发生异常，此时客户端需要重新加载一份最新的元数据表到本地。
+3. 然后服务器端接收到该请求之后， 通过 StoreFileScanner，先从BucketCache LRU (StoreFIle的热点数据）中找数据，如果没有，才到 MemStore 和 StoreFile磁盘文件上找。因为 StoreFile 使用了LSM树型结构，导致它需要磁盘寻道时间在可预测范围内；而上文也提到了读取HFile速度也会很快，因为节省了寻道开销。1）、hbase可以划分多个region，2）、键是排好序的；3）、按列存储；
 
-   2）从hbase:meta中根据rowkey确定数据所在的RegionServer
+​     还有 RowScanner，TimeScanner，BloomFilter的方式来过滤数据。
 
-   3）将请求发送给rowkey所在的RegionServer行get/scan操作
 
-   4）Client也会缓存 .META. 表信息，以后可以直接连到RegionServer 。如果集群发生某些变化导致hbase:meta元数据更改，客户端再根据本地元数据表请求的时候就会发生异常，此时客户端需要重新加载一份最新的元数据表到本地。
 
-  5）然后服务器端接收到该请求之后需要进行复杂的处理， StoreFileScanner和MemstoreScanner是整个scan的最终执行者。  构建scanner体系（实际上就是做一些scan前的准备工作），在此体系基础上一行一行检索。
+墓碑标记和数据不在一个地方，读取数据的时候怎么知道这个数据要删除呢？
 
-Scanner：分成RowScanner，TimeScanner，BloomFilter的方式来过滤数据。
+如果这个数据比它的墓碑标记更早被读到，那在这个时间点是不知道这个数据会被删 除的，只有当扫描器接着往下读，读到墓碑标记的时候才知道这个数据是被标记为删除的，不需要返回给用户。
 
-**常说HBase数据读取要读Memstore、StoreFile 和 Blockcache**，为什么上面Scanner只有StoreFileScanner和MemstoreScanner两种？没有BlockcacheScanner?
-
-HBase中数据仅仅独立地存在于Memstore和StoreFile中，Blockcache中的数据只是StoreFile中的部分数据（热点数据），即所有存在于 Blockcache 的数据必然存在于StoreFile中。因此 MemstoreScanner 和 StoreFileScanner 就可以覆盖到所有数据。实际读取时**StoreFileScanner 通过 索引 定位到待查找key所在的block之后，首先检查该block是否存在于Blockcache中，如果存在直接取出，如果不存在再到对应的 StoreFile 中读取。**
+所以 HBase 的 Scan 操作在取到所需要的所有行键对应的信息之后还会继续扫描下去，直到被扫描的数据大于给出的限定条件为止，这样它才能知道哪些数据应该被返回给用户，而哪些应该被舍弃。所以**你增加过滤条件也无法减少 Scan 遍历的行数，都要扫一遍！！，只有缩小 STARTROW 和 ENDROW 之间的行键范围才可以明显地加快扫描的速度**。
 
 ​    
 
@@ -136,21 +139,167 @@ Hmaster 采用了 RIT 机制并结合Zookeeper中Node的状态来保证操作的
 
 [RIT简介](https://github.com/mattshma/bigdata/blob/master/hbase/docs/hbase_rit.md)
 
-
-
 ### HLog
 
 HBase在实现WAL方式时会产生日志信息，即HLog。每一个RegionServer节点上都有一个HLog，所有该RegionServer节点上的Region写入数据均会被记录到该HLog中。HLog的主要职责就是当遇到RegionServer异常时，能够尽量的恢复数据。
 
-在HBase运行的过程当中，HLog的容量会随着数据的写入越来越大，HBase会通过HLog过期策略来进行定期清理HLog，每个RegionServer内部均有一个HLog的监控线程。
+WAL 是一个环状的滚动日志结构，因为这种结构写入效果最高，而且可以保证空间不会持续变大。
 
-当数据从MemStore Flush到底层存储(HDFS)上后，说明该时间段的HLog已经不需要了，就会被移到“oldlogs”这个目录中，HLog监控线程监控该目录下的HLog，当该文件夹中的HLog达到“hbase.master.logcleaner.ttl”(单位是毫秒)属性所配置的阀值后，监控线程会立即删除过期的HLog数据。
+WAL 的检查间隔由 hbase.regionserver.logroll.period 定义，默认值为 1h。检查的内容是把当前 WAL 中的操作跟实际持久化到 HDFS 上的操作比较，看哪些操作已经被持久化了，被持久化的操作就会被移动到 .oldlogs 文件夹内（这个文件夹也是在 HDFS 上的）。
 
 
 
 ### Memstore
 
-HBase通过MemStore来缓存Region数据，大小可以通过“hbase.hregion.memstore.flush.size”(单位byte)属性来进行设置。RegionServer在写完HLog后，数据会接着写入到Region的MemStore。由于MemStore的存在，HBase的数据写入并非是同步的，不需要立刻响应客户端。由于是异步操作，具有高性能和高资源利用率等优秀的特性。数据在写入到MemStore中的数据后都是预先按照RowKey的值来进行排序的，这样便于查询的时候查找数据。
+HBase通过MemStore来缓存Region数据，大小可以通过 hbase.hregion.memstore.flush.size 128M 属性来进行设置。RegionServer在写完HLog后，数据会接着写入到Region的MemStore。由于MemStore的存在，HBase的数据写入并非是同步的，不需要立刻响应客户端。由于是异步操作，具有高性能和高资源利用率等优秀的特性。数据在写入到MemStore中的数据后都是预先按照RowKey的值来进行排序的，这样便于查询的时候查找数据。
+
+
+
+由于数据在写入 Memstore 之前，要先被写入 WAL，所以**增加 Memstore 的大小并不能加速写入速度。Memstore 存在的意义是维持数据按照 rowkey 顺序排列，而不是做一个缓存。**
+
+设计 MemStore 的原因有以下几点：
+
+- 由于 HDFS 上的文件不可修改，为了让数据顺序存储从而提高读取效率，HBase 使用了 LSM 树结构来存储数据，数据会先在 Memstore 中**整理成 LSM 树**，最后再刷写到 HFile 上。
+- **优化数据的存储**，比如一个数据添加后就马上删除了，这样在刷写的时候就可以直接不把这个数据写到 HDFS 上。
+
+#### Memstore Flush条件
+
+注意：
+
+* MemStore的最小flush单元是 Region 级别 而不是单个MemStore。可想而知，如果一个HRegion中Memstore过多，每次flush的开销必然会很大，因此我们也建议在进行表设计的时候尽量减少ColumnFamily的个数。
+* 以下各条件都可以出 Flush：
+  * Memstore级别限制：当Region中任意一个MemStore的大小达到了上限（hbase.hregion.memstore.flush.size，**默认128MB**），会触发Memstore刷新。
+  * Region级别限制：**当Region中所有Memstore的大小总和达到了上限**（hbase.hregion.memstore.block.multiplier * hbase.hregion.memstore.flush.size，默认 2* 128M = 256M），会触发memstore刷新。
+  * Region Server级别限制：当一个Region Server中所有Memstore的大小总和达到了上限（hbase.regionserver.global.memstore.upperLimit ＊ hbase_heapsize，默认 40%的JVM内存使用量），会触发部分Memstore刷新。Flush顺序是按照Memstore由大到小执行，先Flush Memstore最大的Region，再执行次大的，直至总体Memstore内存使用量低于阈值（hbase.regionserver.global.memstore.lowerLimit ＊ hbase_heapsize，默认 38%的JVM内存使用量）。
+  * 当一个Region Server中HLog数量达到上限（可通过参数hbase.regionserver.maxlogs配置）时，系统会选取最早的一个 HLog对应的一个或多个Region进行flush
+  * HBase定期刷新Memstore：默认周期为1小时，确保Memstore不会长时间没有持久化。为避免所有的MemStore在同一时间都进行flush导致的问题，定期的flush操作有20000左右的随机延时。
+
+
+
+#### Memstore Flush流程
+
+为了减少flush过程对读写的影响，HBase采用了类似于两阶段提交的方式，将整个flush过程分为三个阶段：
+
+1. prepare阶段：**遍历当前Region中的所有Memstore**，将Memstore中当前**数据集kvset做一个快照snapshot**，然后**再新建一个新的kvset**。**后期的所有写入操作都会写入新的kvset中**，而整个flush阶段读操作会首先分别遍历kvset和snapshot，如果查找不到再会到HFile中查找。**prepare阶段需要加一把updateLock对写请求阻塞**，结束之后会释放该锁。因为此阶段没有任何费时操作，因此持锁时间很短。
+2. flush阶段：遍历所有Memstore，**将prepare阶段生成的snapshot持久化为临时文件**，临时文件会统一放到目录.tmp下。这个过程因为涉及到磁盘IO操作，因此相对比较耗时。
+3. commit阶段：遍历所有的Memstore，**将flush阶段生成的临时文件移到指定的ColumnFamily目录下，针对HFile生成对应的storefile和Reader**，把storefile添加到HStore的storefiles列表中，**最后再清空prepare阶段生成的snapshot。**
+
+
+
+**影响甚微**
+
+正常情况下，大部分Memstore Flush操作都不会对业务读写产生太大影响，比如这几种场景：HBase定期刷新Memstore、触发Memstore级别限制、触发HLog数量限制以及触发Region级别限制等，这几种场景只会阻塞对应Region上的写请求，阻塞时间很短，毫秒级别。
+
+**影响较大**
+
+然而一旦触发**Region Server级别限制导致flush，就会对用户请求产生较大的影响**。
+
+会阻塞所有落在该Region Server上的更新操作，阻塞时间很长，甚至可以达到分钟级别。
+
+一般情况下Region Server级别限制很难触发，但在一些极端情况下也不排除有触发的可能，下面分析一种可能触发这种flush操作的场景：
+
+相关JVM配置以及HBase配置：
+
+maxHeap = 71
+
+hbase.regionserver.global.memstore.upperLimit = 0.35
+
+hbase.regionserver.global.memstore.lowerLimit = 0.30
+
+基于上述配置，可以得到触发Region Server级别的总Memstore内存和为24.9G
+
+
+
+### StoreFile
+
+
+
+#### Compact
+
+**触发时机**
+
+HBase中可以触发compaction的因素有很多，最常见的因素有这么三种：
+
+Memstore Flush、
+
+后台线程周期性检查、
+
+手动触发。
+
+1. Memstore Flush: 应该说**compaction操作的源头就来自flush操作**，memstore flush会产生HFile文件，文件越来越多就需要compact。因此在每次执行完Flush操作之后，都会对当前Store中的文件数进行判断，一旦文件数＃ > ，就会触发compaction。需要说明的是，**compaction都是以Store为单位进行的**，而在Flush触发条件下，整个Region的所有Store都会执行compact，所以会在短时间内执行多次compaction。
+
+2. 后台线程周期性检查：后台线程CompactionChecker定期触发检查是否需要执行compaction，检查周期为：hbase.server.thread.wakefrequency*hbase.server.compactchecker.interval.multiplier。和flush不同的是，该线程优先检查文件数＃是否大于，一旦大于就会触发compaction。如果不满足，它会接着检查是否满足major compaction条件，简单来说，如果当前store中hfile的最早更新时间早于某个值mcTime，就会触发major compaction，HBase预想通过这种机制定期删除过期数据。上文mcTime是一个浮动值，浮动区间默认为［7-7*0.2，7+7*0.2］，其中7为hbase.hregion.majorcompaction，0.2为hbase.hregion.majorcompaction.jitter，可见默认在7天左右就会执行一次major compaction。用户如果想禁用major compaction，只需要将参数hbase.hregion.majorcompaction设为0
+
+3. 手动触发
+
+###### 
+
+文件数量通常取决于Compaction的执行策略，一般和两个配置参数有关：
+
+hbase.hstore.compactionThreshold  一个store中的文件数超过多少就应该进行合并；
+
+和hbase.hstore.compaction.max.size，参数合并的文件大小最大是多少，超过此大小的文件不能参与合并。
+
+这两个参数不能设置太’松’（前者不能设置太大，后者不能设置太小），导致Compaction合并文件的实际效果不明显，进而很多文件得不到合并。这样就会导致HFile文件数变多。
+
+
+
+**选择合适的HFile合并**
+
+选择合适的文件进行合并是整个compaction的核心，
+
+一旦触发，HBase会将该Compaction交由一个独立的线程处理，**该线程首先会从对应store中选择合适的hfile文件进行合并**，这一步是整个Compaction的核心，选取文件需要遵循很多条件，
+
+比如文件数不能太多、不能太少、文件大小不能太大等等，
+
+最理想的情况是，选取那些承载IO负载重、文件小的文件集，实际实现中，HBase提供了多个文件选取算法：
+
+RatioBasedCompactionPolicy 从老到新选择文件策略、
+
+ExploringCompactionPolicy 在上面的基础上扫描全部来找合适的 和
+
+StripeCompactionPolicy等，
+
+用户也可以通过特定接口实现自己的Compaction算法；
+
+选出待合并的文件后，HBase会根据这些hfile文件总大小挑选对应的线程池处理，最后对这些文件执行具体的合并操作。
+
+
+
+**挑选合适的线程池**
+
+HBase实现中有一个专门的线程CompactSplitThead负责接收compact请求以及split请求，
+
+而且为了能够独立处理这些请求，这个线程内部构造了多个线程池：
+
+largeCompactions、
+
+smallCompactions以及splits等，
+
+其中splits线程池负责处理所有的split请求，
+
+largeCompactions和smallCompaction负责处理所有的compaction请求，其中前者用来处理大规模compaction，后者处理小规模compaction。这里需要明白三点：
+
+\1. 上述设计目的是为了能够将请求独立处理，提供系统的处理性能。
+
+\2. 哪些compaction应该分配给largeCompactions处理，哪些应该分配给smallCompactions处理？是不是Major Compaction就应该交给largeCompactions线程池处理？不对。这里有个分配原则：待compact的文件总大小如果大于值throttlePoint（可以通过参数hbase.regionserver.thread.compaction.throttle配置，默认为2.5G），分配给largeCompactions处理，否则分配给smallCompactions处理。
+
+\3. largeCompactions线程池和smallCompactions线程池默认都只有一个线程，用户可以通过参数hbase.regionserver.thread.compaction.large和hbase.regionserver.thread.compaction.small进行配置
+
+**执行HFile文件合并**
+
+选出了待合并的HFile集合，一方面也选出来了合适的处理线程，万事俱备，只欠最后真正的合并。合并流程说起来也简单，主要分为如下几步：
+
+1. 分别读出待合并hfile文件的KV，并顺序写到位于./tmp目录下的临时文件中
+2. 将临时文件移动到对应region的数据目录
+3. 将compaction的输入文件路径和输出文件路径封装为KV写入WAL日志，并打上compaction标记，最后强制执行sync
+4. 将对应region数据目录下的compaction输入文件全部删除
+
+上述四个步骤看起来简单，但实际是很严谨的，具有很强的容错性和完美的幂等性：
+
+1. 如果RS在步骤2之前发生异常，本次compaction会被认为失败，如果继续进行同样的compaction，上次异常对接下来的compaction不会有任何影响，也不会对读写有任何影响。唯一的影响就是多了一份多余的数据。
+2. 如果RS在步骤2之后、步骤3之前发生异常，同样的，仅仅会多一份冗余数据。
+3. 如果在步骤3之后、步骤4之前发生异常，RS在重新打开region之后首先会从WAL中看到标有compaction的日志，因为此时输入文件和输出文件已经持久化到HDFS，因此只需要根据WAL移除掉compaction输入文件即可
 
 
 
@@ -170,22 +319,39 @@ HBase每张表在底层存储上是由至少一个Region组成，Region实际上
 
 通生产环境的每个Regionserver节点上会有很多Region存在，我们一般比较关心每个节点上的Region数量，主要为了防止HBase分区过多影响到集群的稳定性：
 
-1. 频繁刷写。Region的一个列族对应一个MemStore，假设HBase表都有统一的1个列族配置，则每个Region只包含一个MemStore。通常HBase的一个MemStore默认大小为128 MB，见参数*hbase.hregion.memstore.flush.size*。当可用内存足够时，每个MemStore可以分配128 MB空间。当可用内存紧张时，假设每个Region写入压力相同，则理论上每个MemStore会平均分配可用内存空间。
+1. 频繁刷写。Region的一个列族对应一个MemStore，通常HBase的一个MemStore默认大小为128 MB，达到yu值就会 flush 成 StoreFile。
 
-2. 压缩风暴。   当用户的region大小以恒定的速度保持增长时，region拆分会在同一时间发生，因为同时需要压缩region中的存储文件，这个过程会重写拆分之后的region,这将会引起磁盘I/O上升。
+2. 压缩风暴。   当用户的region大小以恒定的速度保持增长时，region拆分会在同一时间发生，因为同时需要压缩region中的存储文件，这个过程会重写拆分之后的region，这将会引起磁盘I/O上升。
    与其依赖HBase 自动管理拆分，用户还不如关闭这个行为然后手动调用 split 和 major.compact 命令。 
 
    在不同 region 上交错地运行，这样可以尽可能分散I/O 负载，并且避免拆分/合并风暴。用户可以实现一个可以，调用split()和majorCompact()方法的客户端。也可以使用Shell 交互地调用相关命令，或者使用crond定时地运行它们。 
 
 3. MSLAB内存消耗较大
 
-   MSLAB（MemStore-local allocation buffer）存在于每个MemStore中，主要是为了解决HBase内存碎片问题，默认会分配 2 MB 的空间用于缓存最新数据。如果Region数量过多，MSLAB总的空间占用就会比较大。比如当前节点有1000个包含1个列族的Region，MSLAB就会使用1.95GB的堆内存，即使没有数据写入也会消耗这么多内存。
+   MSLAB（MemStore-local allocation buffer）存在于每个MemStore中，主要是为了解决HBase内存碎片问题，默认会分配 2 MB 的空间用于缓存最新数据。如果Region数量过多，MSLAB总的内存占用就会比较大。
+   
+4. HMaster要花大量的时间来分配和移动Region，且过多Region会增加ZooKeeper的负担。
 
 
 
-生产环境中，如果一个regionserver节点的Region数量在 20~200 我们认为是比较正常的，但是我们也要重点参考理论合理计算值。如果每个Region的负载比较均衡，分区数量在2~3倍的理论合理计算值通常认为也是比较正常的。
+**hbase.hregion.max.filesize 达到后 Region 会进行 Split**。不宜过大（同一个region内发生多次compaction的机会增加）或过小（频繁 split），经过实战，生产高并发运行下，最佳大小5-10GB！关闭某些重要场景的hbase表的major_compact！在非高峰期的时候再去调用major_compact，这样可以减少split的同时，显著提供集群的性能，吞吐量、非常有用。
 
-假设我们集群单节点Region数量比2~3倍计算值还要多，因为实际存在单节点分区数达到1000+/2000+的集群，遇到这种情况我们就要密切观察Region的刷写压缩情况了，主要从日志上分析，因为Region越多HBase集群的风险越大。经验告诉我们，如果单节点Region数量过千，集群可能存在较大风险。
+#### 如何切分
+
+1. Region切分的触发条件是什么？
+2. Region切分的切分点在哪里？
+3. 如何切分才能最大的保证Region的可用性？
+4. 如何做好切分过程中的异常处理？切分过程中要不要将数据移动？
+
+
+
+- ConstantSizeRegionSplitPolicy：0.94版本前默认切分策略。这是最容易理解但也最容易产生误解的切分策略，从字面意思来看，当region大小大于某个阈值（hbase.hregion.max.filesize）之后就会触发切分，实际上并不是这样，真正实现中这个阈值是对于某个store来说的，即一个region中最大store的大小大于设置阈值之后才会触发切分。
+  - 另外一个问题是这里所说的store大小应该是未压缩文件总大小。
+  - 这个策略在生产线上这种切分策略却有相当大的弊端：切分策略对于大表和小表没有明显的区分。设置较大对大表比较友好，但是小表就有可能不会触发分裂，极端情况下可能就1个，这对业务来说并不是什么好事。如果设置较小则对小表友好，但一个大表就会在整个集群产生大量的region，这对于集群的管理、资源使用、failover来说都不是一件好事。
+- IncreasingToUpperBoundRegionSplitPolicy: 0.94版本~2.0版本默认切分策略。这种切分策略微微有些复杂，总体来看和ConstantSizeRegionSplitPolicy思路相同，一个region中最大store大小大于设置阈值就会触发切分。
+  - 但是这个阈值并不像ConstantSizeRegionSplitPolicy是一个固定的值，而是会在一定条件下不断调整，调整规则和region所属表**在当前regionserver上的region个数有关系** ：(#regions) * (#regions) * (#regions) * flush size * 2，当然阈值并不会无限增大，最大值为用户设置的MaxRegionFileSize。这种切分策略很好的弥补了ConstantSizeRegionSplitPolicy的短板，能够自适应大表和小表。而且在大集群条件下对于很多大表来说表现很优秀，但并不完美，这种策略下很多小表会在大集群中产生大量小region，分散在整个集群中。而且在发生region迁移时也可能会触发region分裂。
+
+- SteppingSplitPolicy: 2.0版本默认切分策略。这种切分策略的切分阈值又发生了变化，相比IncreasingToUpperBoundRegionSplitPolicy简单了一些，依然和待分裂region所属表在当前regionserver上的region个数有关系，如果region个数等于1，切分阈值为flush size * 2，否则为MaxRegionFileSize。这种切分策略对于大集群中的大表、小表会比IncreasingToUpperBoundRegionSplitPolicy更加友好，小表不会再产生大量的小region，而是适可而止。
 
 
 
@@ -268,9 +434,9 @@ Region预拆分
 
 框架的各式参数就像飞机里面的各个控制按钮！！
 
-**Region**
+**Region大小**
 
-*hbase.hregion.max.filesize：*默认10G，简单理解为Region中任意HStore所有文件大小总和大于该值就会进行分裂。
+*hbase.hregion.max.filesize：*默认10G，简单理解为Region中任意HStore所有文件大小总和大于该值 Region 就会进行分裂。
 
 解读：实际生产环境中该值不建议太大，也不能太小。太大会导致系统后台执行compaction消耗大量系统资源，一定程度上影响业务响应；太小会导致Region分裂比较频繁（分裂本身其实对业务读写会有一定影响），另外单个RegionServer中必然存在大量Region，太多Region会消耗大量维护资源，并且在rs下线迁移时比较费劲。综合考虑，建议线上设置为50G～80G左右。
 
@@ -314,15 +480,34 @@ Region预拆分
 
 #### 58同城的优化
 
-* 提高IO能力，抬高系统瓶颈：
-  * 磁盘升级， SATA => SSD （hadoop2.6.0以后支持异构存储，如果成本有限，可以考虑**仅支持一个wal目录的ssd**  ）
-  * 网卡升级， KM => 10KM  
-* 参数
-  * 减少HFile数量同时增加compaction对应资源数，避免堆积。
-    compaction文件数阈值 (hbase.hstore.compactionThreshold 10=>3)
-    compaction线程数量 (hbase.regionserver.thread.compaction.large/small)
+* 资源相关
   * 增加工作线程数(hbase.regionserver.handler.count)
   * 调整gc方式，cms => g1  ，优化大内存gc回收带来的毛刺  。
+
+#### 写优化
+
+* 调大memstore内存占比，是为了减少溢写，而不是因为内存大就加快写入速度；默认128M就溢写。
+* 批量写入；
+* Phoenix做预分区，分区过多Region过多也不好，保证写入请求均衡；
+* 关闭定期major compact；
+
+#### 读优化
+
+* BlockCache作为读缓存，对于读性能来说至关重要。BucketCache的offheap模式；
+* Major Compact 一周一次就好了，应为车辆大数据基本都是新增的数据，很少删除过期的。 
+* Short-Circuit Local Read功能。Short Circuit策略允许客户端绕过DataNode直接读取本地数据。开启 HDFS 的短路读模式。该特性由 HDFS-2246 引入。我们集群的 RegionServer 与 DataNode 混布，这样的好处是数据有本地化率的保证，数据第一个副本会优先写本地的 Datanode。在不开启短路读的时候，即使读取本地的 DataNode 节点上的数据，也需要发送RPC请求，经过层层处理最后返回数据，而短路读的实现原理是客户端向 DataNode 请求数据时，DataNode 会打开文件和校验和文件，将两个文件的描述符直接传递给客户端，而不是将路径传递给客户端。客户端收到两个文件的描述符之后，直接打开文件读取数据，该特性是通过 UNIX Domain Socket 进程间通信方式实现
+
+
+
+
+
+无非就这些问题：
+
+Full GC异常导致宕机问题、
+
+RIT问题、
+
+写吞吐量太低以及读延迟较大。
 
 
 
