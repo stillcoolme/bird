@@ -76,7 +76,7 @@ MemStore 用于写流程，缓存用户写入KeyValue数据；还有部分用于
 
 ### HBase写流程
 
-   1) **zk中存储了meta表的region信息**，从meta表获取相应region信息，**然后找到meta表的数据**
+   1) Client先访问zookeeper，从meta表获取相应region信息，**然后找到meta表的数据**
 
    2) 根据namespace、表名和rk根据meta表的数据找到写入数据对应的region信息
 
@@ -84,7 +84,7 @@ MemStore 用于写流程，缓存用户写入KeyValue数据；还有部分用于
 
    4) 向对应的Regionserver发起写请求，并将对应的数据发送到该Regionserver检查操作，看Region是不是只读状态，BlockMemorySize大小限制等。 
 
-把数据依次写入MemoryStore 和HLog（WAL），只有这两个都写入成功，此次写入才算成功。需要获取相关的锁，而且写入MemoryStore 和HLog是原子性的，要么都成功，要么都失败。
+把数据依次写入MemoryStore 和HLog（WAL），只有这两个都写入成功，此次写入才算成功。需要获取相关的锁，而且写入MemoryStore 和HLog是原子性的，要么都成功，要么都失败。（这可不是LSM啊，别说错了。。）
 
    5) MemStore达到一个阈值后把数据flush成StoreFile；若MemStore中的数据有丢失，则可以从HLog上恢复
 
