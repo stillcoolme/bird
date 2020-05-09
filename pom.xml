@@ -16,7 +16,7 @@
     <module>bird-framework-self</module>
     <module>bird-designpattern</module>
     <module>bird-framework2/bird-flink</module>
-      <module>bird-framework2/bird-es</module>
+    <module>bird-framework2/bird-es</module>
   </modules>
 
     <name>bird</name>
@@ -34,7 +34,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -46,7 +45,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.12</version>
+      <version>1.18.10</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

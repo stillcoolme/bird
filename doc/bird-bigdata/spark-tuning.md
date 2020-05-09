@@ -4,8 +4,6 @@
 
 [Spark性能优化指南——高级篇](https://tech.meituan.com/2016/05/12/spark-tuning-pro.html)
 
-
-
 调优前首先要对spark的作业流程清楚：
 
 * Driver到Executor的结构；
@@ -16,7 +14,7 @@ Master: Driver
                  |-- stage
                        |-- Task Task 
 ```
-* 一个Stage内，**最终的RDD有多少个partition，就会产生多少个task**，一个task处理一个partition的数据；
+* 一个Stage内，**最终的RDD有多少个partition，就会产生多少个task**，一个task处理一个partition的数据（partition都是key相同的，所以说某个task可能数据倾斜）；
 * 作业划分为task分到Executor上，然后一个cpu core执行一个task；
 * BlockManager负责Executor，task的数据管理，task来它这里拿数据；
 
@@ -54,8 +52,6 @@ Master: Driver
 --conf spark.storage.memoryFraction=0.5 \  # RDD持久化数据在Executor内存中能占的比例
 --conf spark.shuffle.memoryFraction=0.3 \  # 进行聚合操作使用的Executor内存的比例，默认0.2
 ```
-
-
 
 
 
@@ -333,6 +329,10 @@ set(spark.shuffle.memoryFraction，0.2)  // 每次提高0.1，看看效果。
 触发shuffle操作的算子：distinct、 groupByKey、reduceByKey、aggregateByKey、join、cogroup、repartition等 的   key值 分布不均匀。
 
 现象：1. 个别Task运行慢；2. 原本能够运行的作业OOM；
+
+
+
+
 
 ### 生产环境怎么定位
 

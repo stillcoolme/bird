@@ -40,9 +40,6 @@ public class RDDCountJob {
 
         System.out.println(count);
 
-        while (ture) {
-
-        }
     }
 
 }

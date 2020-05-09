@@ -31,7 +31,7 @@ public class ZKDistributeLock {
     public boolean tryLock(String key) {
         // 创建临时节点，创建成功则获得锁
         if (CuratorUtils.checkAndCreateNode(curatorClient, "/" + key, CreateMode.EPHEMERAL)) {
-            System.out.println("get the lock for product[id=" + key + "]......");
+            log.info("get the lock for product[id={}]......", key);
             return true;
         } else {
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -48,7 +48,7 @@ public class ZKDistributeLock {
                     System.out.println("等待锁释放");
                     countDownLatch.await();
                     if(CuratorUtils.checkAndCreateNode(curatorClient, "/" + key, CreateMode.EPHEMERAL)) {
-                        System.out.println("get the lock for product[id=" + key + "]......");
+                        log.info("get the lock for product[id={}]......", key);
                         countDownLatch = new CountDownLatch(1);
                         return true;
                     }
@@ -64,7 +64,7 @@ public class ZKDistributeLock {
     public void unlock(String key) {
         try {
             CuratorUtils.checkAndDeletePath(curatorClient, "/" + key);
-            System.out.println("release the lock for product[id=" + key + "]......");
+            log.info("get the lock for product[id={}]......", key);
         } catch (Exception e) {
             e.printStackTrace();
         }

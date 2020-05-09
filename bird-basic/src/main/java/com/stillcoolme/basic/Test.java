@@ -1,37 +1,22 @@
 package com.stillcoolme.basic;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.Properties;
 
 /**
  * @author: stillcoolme
  * @date: 2019/11/26 9:45
  * @description:
  */
+@Slf4j
 public class Test {
 
-    public static int binarySearch(int[] array, int target) {
-        if (array == null) {
-            return -1;
-        }
-        int min = 0;
-        int max = array.length;
-        int firstMax = 0;
-        while (min <= max) {
-            int middle = (max + min) / 2;
-            if (array[middle] > target) {
-                firstMax = middle;
-                max = middle - 1;
-            } else if (array[middle] < target) {
-                min = middle + 1;
-            } else {
-                return middle;
-            }
-        }
-        return firstMax;
-    }
-
     public static void main(String[] args) {
-        String a = "123"; String b = "123";
-        System.out.println(a == b);
     }
 }

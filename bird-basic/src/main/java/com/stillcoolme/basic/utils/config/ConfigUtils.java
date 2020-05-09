@@ -1,4 +1,4 @@
-package com.stillcoolme.basic.utils;
+package com.stillcoolme.basic.utils.config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,8 @@ public class ConfigUtils {
     public static Properties appProp;
 
     static{
-        appProp = MyProperties.getMyProperties("app.properties");
+        // classpath: 其实也就是 包的根路径
+        appProp = MyProperties.getMyProperties("classpath:app.properties");
     }
 
     static class MyProperties{

@@ -7,8 +7,9 @@
         <groupId>com.stillcoolme</groupId>
         <version>1.0.0</version>
     </parent>
-    <groupId>com.stillcoolme</groupId>
     <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stillcoolme</groupId>
     <artifactId>bird-basic</artifactId>
     <version>1.0.0</version>
 
@@ -19,13 +20,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <!--<scope>test</scope>-->
-        </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -52,6 +46,26 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>4.4.10</version>
+        </dependency>
+
+        <!-- 日志 -->
+        <!--log4j2核心包-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <!--用于与slf4j保持桥接-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <!--log4j2 异步依赖-->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.3.6</version>
         </dependency>
     </dependencies>
 

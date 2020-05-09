@@ -336,7 +336,7 @@ HBase每张表在底层存储上是由至少一个Region组成，Region实际上
 
 
 
-**hbase.hregion.max.filesize 达到后 Region 会进行 Split**。不宜过大（同一个region内发生多次compaction的机会增加）或过小（频繁 split），经过实战，生产高并发运行下，最佳大小5-10GB！关闭某些重要场景的hbase表的major_compact！在非高峰期的时候再去调用major_compact，这样可以减少split的同时，显著提供集群的性能，吞吐量、非常有用。
+**hbase.hregion.max.filesize 达到后 Region 会进行 Split**。不宜过大（同一个region内发生多次compaction的机会增 加）或过小（频繁 split），经过实战，生产高并发运行下，最佳大小5-10GB！关闭某些重要场景的hbase表的major_compact！在非高峰期的时候再去调用major_compact，这样可以减少split的同时，显著提供集群的性能，吞吐量、非常有用。
 
 #### 如何切分
 
@@ -497,19 +497,7 @@ Region预拆分
 
 * BlockCache作为读缓存，对于读性能来说至关重要。BucketCache的offheap模式；
 * Major Compact 一周一次就好了，应为车辆大数据基本都是新增的数据，很少删除过期的。 
-* Short-Circuit Local Read功能。Short Circuit策略允许客户端绕过DataNode直接读取本地数据。开启 HDFS 的短路读模式。该特性由 HDFS-2246 引入。我们集群的 RegionServer 与 DataNode 混布，这样的好处是数据有本地化率的保证，数据第一个副本会优先写本地的 Datanode。在不开启短路读的时候，即使读取本地的 DataNode 节点上的数据，也需要发送RPC请求，经过层层处理最后返回数据，而短路读的实现原理是客户端向 DataNode 请求数据时，DataNode 会打开文件和校验和文件，将两个文件的描述符直接传递给客户端，而不是将路径传递给客户端。客户端收到两个文件的描述符之后，直接打开文件读取数据，该特性是通过 UNIX Domain Socket 进程间通信方式实现
-
-
-
-
-
-无非就这些问题：
-
-Full GC异常导致宕机问题、
-
-RIT问题、
-
-写吞吐量太低以及读延迟较大。
+* Short-Circuit Local Read功能。允许客户端绕过DataNode直接读取本地数据。我们集群的 RegionServer 与 DataNode 混布，这样的好处是数据有本地化率的保证，数据第一个副本会优先写本地的 Datanode。在不开启短路读的时候，**即使读取本地的 DataNode 节点上的数据，也需要发送RPC请求，经过层层处理最后返回数据**，而短路读的实现原理是客户端向 DataNode 请求数据时，DataNode 会打开文件和校验和文件，**将两个文件的描述符直接传递给客户端，而不是将路径传递给客户端。客户端收到两个文件的描述符之后，直接打开文件读取数据**，该特性是通过 UNIX Domain Socket 进程间通信方式实现
 
 
 

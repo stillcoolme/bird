@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<configuration status="off" monitorInterval="120">
+    <!--自定义一些常量，之后使用${变量名}引用-->
+    <properties>
+        <property name="SERVICE_NAME">bird-basic</property>
+        <!-- 项目同级目录 -->
+        <property name="LOG_FILE_PATH">logs/${SERVICE_NAME}-log</property>
+        <property name="CHARSET">UTF-8</property>
+        <!--自定义的输出格式-->
+        <property name="PATTERN">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</property>
+    </properties>
+
+    <!--appenders:定义输出内容,输出格式,输出方式,日志保存策略等,常用其下三种标签[Console,File,RollingFile]-->
+    <appenders>
+        <!--console :控制台输出的配置-->
+        <Console name="ConsoleAppeder" target="SYSTEM_OUT">
+            <PatternLayout pattern="${PATTERN}" charset="${CHARSET}"/>
+        </Console>
+
+        <!--RollingFile 为全局同步 RandomAccessFile 为异步-->
+        <RollingRandomAccessFile name="RootAppeder"
+                                 fileName="${LOG_FILE_PATH}/${SERVICE_NAME}.log"
+                                 filePattern="${LOG_FILE_PATH}/$${date:yyyy-MM}/rattanapi-root-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${PATTERN}" charset="${CHARSET}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <!-- 最多保留30个文件 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+
+        <!--错误日志输出-->
+        <RollingRandomAccessFile name="ErrorAppeder"
+                                 fileName="${LOG_FILE_PATH}/${SERVICE_NAME}-error.log"
+                                 filePattern="${LOG_FILE_PATH}/$${date:yyyy-MM}/${SERVICE_NAME}-error-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <!-- 记录 error 级别以上的日志 -->
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${PATTERN}" charset="${CHARSET}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_FILE_PATH}" maxDepth="2" followLinks="true">
+                    <IfFileName glob="${LOG_FILE_PATH}/${SERVICE_NAME}-error.*.gz"/>
+                    <!--只保留7天，超过则删除-->
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+    </appenders>
+
+    <!--定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <loggers>
+        <!--Logger节点用来单独指定包路径下日志的形式，name为包路径，比如要为 com.stillcoolme.basic 包下输出 DEBUG 以上的日志-->
+<!--        <Logger additivity="false" name="com.stillcoolme.basic.concurrent.executor" level="DEBUG">
+            <AppenderRef ref="ConsoleAppeder"/>
+        </Logger>-->
+
+        <asyncRoot level="INFO">
+            <AppenderRef ref="ConsoleAppeder"/>
+            <AppenderRef ref="RootAppeder"/>
+            <AppenderRef ref="ErrorAppeder"/>
+        </asyncRoot>
+    </loggers>
+</configuration>
