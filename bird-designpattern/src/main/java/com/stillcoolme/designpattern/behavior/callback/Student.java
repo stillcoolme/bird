@@ -1,4 +1,4 @@
-package com.stillcoolme.designpattern.callback;
+package com.stillcoolme.designpattern.behavior.callback;
 
 /**
  * Author: stillcoolme
