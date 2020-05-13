@@ -19,7 +19,7 @@ import static com.stillcoolme.framework.spark.SparkBuilder.BASE_PATH;
 public class RDDCountJob {
 
     public static void main(String[] args) {
-        SparkSession sparkSession = SparkBuilder.getSparkSession();
+        SparkSession sparkSession = SparkBuilder.getLocalSparkSession();
 
         Dataset<Row> peopleDataset = sparkSession.read().json(BASE_PATH + "/people.json");
         peopleDataset.show();

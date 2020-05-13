@@ -16,7 +16,7 @@ public class SparkBuilder {
     static SparkSession sparkSession;
     static SQLContext sqlContext;
 
-    public static SparkSession getSparkSession() {
+    public static SparkSession getLocalSparkSession() {
         return getSparkSession(SparkBuilder.class, "local");
     }
 
