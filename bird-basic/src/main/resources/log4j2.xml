@@ -64,8 +64,8 @@
 
         <asyncRoot level="INFO">
             <AppenderRef ref="ConsoleAppeder"/>
-            <AppenderRef ref="RootAppeder"/>
-            <AppenderRef ref="ErrorAppeder"/>
+<!--            <AppenderRef ref="RootAppeder"/>-->
+<!--            <AppenderRef ref="ErrorAppeder"/>-->
         </asyncRoot>
     </loggers>
 </configuration>

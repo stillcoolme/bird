@@ -1,4 +1,4 @@
-package com.stillcoolme.designpattern.behavior.callback;
+package com.stillcoolme.designpattern.behavior.callback.first;
 
 /**
  * Author: stillcoolme
@@ -11,9 +11,8 @@ package com.stillcoolme.designpattern.behavior.callback;
  *  1). 类A的方法方法a()通过新起线程的方式调用类B的方法b()，代码接着直接往下执行;
  *  2). 在方法a()需要方法b()执行结果的情况下，在Java中，可以使用Future+Callable的方式对方法b()的执行结果进行监听。
  * 3. 回调：
- *  1). 类A的a()方法调用类B的b()方法;
- *  2). 类B的b()方法执行完毕主动调用类A的callback()方法;
- *  调用示例图查看：resource/file/回调.jpg
+ *  1). 类A的a()方法调用类B的b(CallbackInterface interface)方法;
+ *  2). 类B的b()方法执行完毕主动调用类A的interface.callback()方法;
  *
  *  下面代码代码模拟场景：老师问学生问题，学生思考完毕回答老师
  *  1. 首先定义一个回调接口Callback，只有一个方法tellAnswer(int answer)，即学生思考完毕告诉老师答案
