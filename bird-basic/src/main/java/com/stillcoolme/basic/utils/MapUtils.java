@@ -3,6 +3,7 @@ package com.stillcoolme.basic.utils;
 import com.stillcoolme.basic.bean.Person;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author: stillcoolme
@@ -23,9 +24,6 @@ public class MapUtils {
             System.out.println(key + " " + ss.get(key));
         }
     }
-
-
-
 
     public static void sortMap(Map allGeodeKey2ScoreMap) {
         List<Map.Entry<String, Float>> list1 = new ArrayList<>();
@@ -203,6 +201,27 @@ public class MapUtils {
     }
 
 
+    public static void testPutIfAbsent() {
+        Map<String, String> registry = new HashMap();
+        registry.put("test", "test");
+
+        String str = registry.get("test1");
+        if (str == null) {
+            registry.putIfAbsent("test1", new String("test1"));
+            str = registry.get("test1");
+        }
+
+        // putIfAbsent 优化
+        registry.putIfAbsent("test1", "test1");
+        registry.get("test1");
+
+        for (Map.Entry entry : registry.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+
+    }
+
     public static void main(String[] args) {
 /*        Map<String, Float> map = new HashMap();
         map.put("2dea5b3439b94d248de0e5e0fbc3fa0d", 0.7857033f);
@@ -223,5 +242,8 @@ public class MapUtils {
         removeByIterator();
 
         putSame();
+
+
+        testPutIfAbsent();
     }
 }

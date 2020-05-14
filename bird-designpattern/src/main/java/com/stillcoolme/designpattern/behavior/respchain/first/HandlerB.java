@@ -1,4 +1,4 @@
-package com.stillcoolme.designpattern.behavior.respchain;
+package com.stillcoolme.designpattern.behavior.respchain.first;
 
 /**
  * @author: stillcoolme

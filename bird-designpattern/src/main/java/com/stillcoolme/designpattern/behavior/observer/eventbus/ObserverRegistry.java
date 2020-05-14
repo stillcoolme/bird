@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Function: 观察者注册表，好强！！
  */
 public class ObserverRegistry {
-
+    // 消息类型 -> 观察者类 和 接收该类型消息的方法
     private ConcurrentMap<Class<?>, CopyOnWriteArraySet<ObserverAction>> registry = new ConcurrentHashMap<>();
 
     /**
@@ -23,11 +23,10 @@ public class ObserverRegistry {
         for (Map.Entry<Class<?>, Collection<ObserverAction>> entry : observerActions.entrySet()) {
             Class<?> eventType = entry.getKey();
             Collection<ObserverAction> observerAction = entry.getValue();
+
+            registry.putIfAbsent(eventType, new CopyOnWriteArraySet<>());
             CopyOnWriteArraySet<ObserverAction> registeredObserverAction = registry.get(eventType);
-            if (registeredObserverAction == null) {
-                registry.putIfAbsent(eventType, new CopyOnWriteArraySet<ObserverAction>());
-                registeredObserverAction = registry.get(eventType);
-            }
+
             registeredObserverAction.addAll(observerAction);
         }
     }
