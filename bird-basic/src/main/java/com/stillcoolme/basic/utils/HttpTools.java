@@ -4,28 +4,31 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
 /*
-* http 工具类
-*/
+ * http 工具类
+ */
 public class HttpTools {
     /*
      *  用post方式发送json请求到指定url
      */
-    public static String sendJsonPost(String url,String json_str) {
-        CloseableHttpClient client=null;
-        String returnResult =null;
+    public static String sendJsonPost(String url, String json_str) {
+        CloseableHttpClient client = null;
+        String returnResult = null;
         try {
             // HTTP POST请求
-            client =  HttpClientBuilder.create().build();
+            client = HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(url);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             //添加请求头
@@ -34,28 +37,32 @@ public class HttpTools {
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setEntity(requestEntity);
             returnResult = client.execute(httpPost, responseHandler);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            returnResult =null;
-        }finally {
-            if(client!=null) {
-                try {client.close();} catch (IOException e) {e.printStackTrace();}
+            returnResult = null;
+        } finally {
+            if (client != null) {
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return returnResult;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String url = "http://68.32.128.15:8088/g1/M00/000003E8/20190109/RCCAD1w1aMOITpGDAAFGRnDMt08AD1_qAJxT1UAAUZe171.jpg";
-        String file= url.substring(url.lastIndexOf("/")+1,url.length());
-        String url1 =url.replaceAll("/"+file, "");
-        String date= url1.substring(url1.lastIndexOf("/")+1,url1.length());
+        String file = url.substring(url.lastIndexOf("/") + 1, url.length());
+        String url1 = url.replaceAll("/" + file, "");
+        String date = url1.substring(url1.lastIndexOf("/") + 1, url1.length());
         System.out.println(url1);
         System.out.println(date);
-        System.out.println(url1+"/"+date.substring(0,4)+"/"+date.substring(4,6)+"/"+date.substring(6,8)+"/"+file);
+        System.out.println(url1 + "/" + date.substring(0, 4) + "/" + date.substring(4, 6) + "/" + date.substring(6, 8) + "/" + file);
     }
 
-   //gl
+    //gl
     public static String sendPost(String sendMsg, String sendUrl) {
         HttpPost httpPost = new HttpPost(sendUrl);
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
@@ -75,9 +82,9 @@ public class HttpTools {
             httpPost.setConfig(requestConfig);
             // 发起请求
             HttpResponse response = closeableHttpClient.execute(httpPost);
-            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 // 请求结束，返回结果。并解析json。
-                resData = EntityUtils.toString(response.getEntity(),"UTF-8");
+                resData = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,6 +98,22 @@ public class HttpTools {
             }
         }
         return resData;
+    }
+
+    public static String getRequest(String url) {
+        //1.获得一个httpclient对象
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+         //2.生成一个get请求
+        HttpGet httpget = new HttpGet(url);
+         //3.执行get请求并返回结果
+        CloseableHttpResponse response = null;
+        try {
+            response = httpclient.execute(httpget);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response.getEntity().toString();
     }
 
 }
