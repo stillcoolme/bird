@@ -1,4 +1,4 @@
-package com.stillcoolme.framework2.flink;
+package com.stillcoolme.framework2.flink.source;
 
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 

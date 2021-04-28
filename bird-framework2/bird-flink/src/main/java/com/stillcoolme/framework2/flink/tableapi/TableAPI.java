@@ -1,8 +1,8 @@
 package com.stillcoolme.framework2.flink.tableapi;
 
 import akka.japi.tuple.Tuple4;
-import com.stillcoolme.framework2.flink.Item;
-import com.stillcoolme.framework2.flink.MyStreamingSource;
+import com.stillcoolme.framework2.flink.source.Item;
+import com.stillcoolme.framework2.flink.source.MyStreamingSource;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -36,6 +36,7 @@ public class TableAPI {
         StreamExecutionEnvironment bsEnv = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment bsTableEnv = StreamTableEnvironment.create(bsEnv, bsSettings);
 
+        // 得到DataStream
         SingleOutputStreamOperator<Item> source = bsEnv.addSource(new MyStreamingSource()).map(new MapFunction<Item, Item>() {
             @Override
             public Item map(Item item) throws Exception {

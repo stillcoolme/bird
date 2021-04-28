@@ -17,6 +17,7 @@
     <module>bird-designpattern</module>
     <module>bird-framework2/bird-flink</module>
     <module>bird-framework2/bird-es</module>
+    <module>flink-user-analyse</module>
   </modules>
 
     <name>bird</name>
