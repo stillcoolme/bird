@@ -1,13 +1,7 @@
 package com.stillcoolme.basic;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.Properties;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author: stillcoolme
@@ -18,5 +12,24 @@ import java.util.Properties;
 public class Test {
 
     public static void main(String[] args) {
+
+        Integer test = null;
+        if (test == null) {
+            System.out.println("is null");
+        } else {
+            System.out.println("is not null");
+        }
+
+        String haha = "";
+        if (haha == null) {
+            System.out.println("null");
+        }
+
+        Long ss = Long.valueOf("1234564345632");
+        System.out.println(ss);
+
+        StringUtils.isNumeric("192");
+        StringUtils.compare("aa", "23");
+
     }
 }

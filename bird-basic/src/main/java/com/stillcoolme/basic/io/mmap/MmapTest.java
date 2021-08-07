@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.net.URL;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -17,8 +18,9 @@ public class MmapTest {
 
     @Test
     public void test1() throws Exception {
-        File file = new File("E://mmap");
-        RandomAccessFile randomAccessFile = new RandomAccessFile(file,"rw");
+        URL resource = com.stillcoolme.basic.io.filechannel.Test.class.getResource("/app.properties");
+        RandomAccessFile randomAccessFile = new RandomAccessFile(resource.getPath(),"rw");
+
         MappedByteBuffer mappedByteBuffer = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 1024L * 1024L);
         mappedByteBuffer.put("12345678".getBytes());
         mappedByteBuffer.putLong(1L);

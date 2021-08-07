@@ -35,6 +35,10 @@ public class LocalDateTimeUtils {
         // 时间运算
         System.out.println("时间运算: " + now.plusHours(8));
 
+        LocalDate now1 = LocalDate.now();
+        LocalDate localDate = now1.plusDays(-1);
+        System.out.println(localDate);
+
     }
 
 
