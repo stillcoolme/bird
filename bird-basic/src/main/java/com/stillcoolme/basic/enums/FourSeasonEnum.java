@@ -23,6 +23,11 @@ public enum FourSeasonEnum {
 
     public static void main(String[] args) {
         System.out.println(FourSeasonEnum.SPRING.getName());
-
+        FourSeasonEnum fourSeasonEnum = FourSeasonEnum.AUTUMN;
+        if (fourSeasonEnum.equals(FourSeasonEnum.AUTUMN)) {
+            System.out.println("equal");
+        } else {
+            System.out.println("not equal");
+        }
     }
 }
