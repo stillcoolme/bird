@@ -1,4 +1,4 @@
-package com.stillcoolme;
+package com.stillcoolme.framework.es;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

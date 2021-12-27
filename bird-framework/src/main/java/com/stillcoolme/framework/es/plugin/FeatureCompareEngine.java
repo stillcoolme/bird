@@ -6,6 +6,7 @@ import org.elasticsearch.script.ScriptEngine;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: stillcoolme
@@ -38,5 +39,10 @@ public class FeatureCompareEngine implements ScriptEngine {
     @Override
     public void close() throws IOException {
 
+    }
+
+    @Override
+    public Set<ScriptContext<?>> getSupportedContexts() {
+        return null;
     }
 }

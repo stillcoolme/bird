@@ -1,8 +1,6 @@
 package com.stillcoolme.framework.es.plugin;
 
 import com.alibaba.fastjson.JSONObject;
-import com.stillcoolme.HttpTools;
-import lombok.extern.slf4j.Slf4j;
 
 public class FeatureCompareApp {
     public static final String httpUrl = "";
