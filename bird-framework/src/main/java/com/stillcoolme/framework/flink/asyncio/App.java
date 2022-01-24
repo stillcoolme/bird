@@ -2,6 +2,7 @@ package com.stillcoolme.framework.flink.asyncio;
 
 import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 
@@ -14,6 +15,14 @@ import java.util.concurrent.TimeUnit;
  * @Description
  *
  *  用 asyncio 查询 mysql side table 维表
+ *
+ *  简单的来说，使用 Async I/O 对应到 Flink 的 API 就是 RichAsyncFunction 这个抽象类，
+ *  继承这个抽象类实现里面的open（初始化），asyncInvoke（数据异步调用），close（停止的一些操作）方法，
+ *  最主要的是实现 asyncInvoke 里面的方法。
+ *
+ *  使用异步函数访问外部数据系统，一般是外部系统有异步访问客户端，如果没有的话，可以自己使用线程池异步访问外部系统。
+ *
+ *  还可以参考 袋鼠云的实现 https://blog.csdn.net/yidan7063/article/details/89920935
  */
 public class App {
     public static void main(String[] args) throws Exception {
@@ -41,7 +50,10 @@ public class App {
 //        AsyncDataStream.orderedWait(src, new MysqlAsyncFunction(), 1000, TimeUnit.SECONDS, 10).print();
 
         // 2. mysql客户端连接池 实现  异步IO
-        AsyncDataStream.unorderedWait(src, new MysqlAsyncByThreadPoolFunction(), 10, TimeUnit.SECONDS, 10).print();
+        SingleOutputStreamOperator<String> joinStream =
+                AsyncDataStream.unorderedWait(src, new MysqlAsyncByThreadPoolFunction(), 10, TimeUnit.SECONDS, 10);
+
+        joinStream.print();
 
         env.execute();
 

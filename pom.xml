@@ -16,6 +16,7 @@
     <module>bird-framework-self</module>
     <module>bird-designpattern</module>
     <module>bird-framework2/bird-es</module>
+    <module>bird-framework2/smart-framework</module>
   </modules>
 
     <name>bird</name>

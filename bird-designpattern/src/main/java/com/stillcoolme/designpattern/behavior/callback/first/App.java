@@ -24,7 +24,8 @@ package com.stillcoolme.designpattern.behavior.callback.first;
  *   （1）回调方法tellAnswer(int answer)，即学生回答完毕问题之后，老师要做的事情。这里回调方法参数是调用方传入的！！（定义好了接口，参数，就能先写回调业务逻辑，等学生回调的时候按情况处理，牛逼）
  *   （2）向问学生问题方法askQuestion()。这里面有 student.resolveQuestion(this)  将自身传入，用来进行回调！！
  *
- *  3. 定义一个学生接口，学生解决问题的方法 resolveQuestion(CallBack callback)，接收一个Callback参数，这样学生就知道解决完毕问题向谁报告
+ *  3. 定义一个学生接口，学生解决问题的方法 resolveQuestion(CallBack callback)，
+ *      这个Callback参数，叫做注册回调接口，这样学生就知道解决完毕问题向谁报告
  *  4. 定义一个学生Tom（调用方），在解决完毕问题之后，向老师报告答案。
  *
  *  回调的核心就是

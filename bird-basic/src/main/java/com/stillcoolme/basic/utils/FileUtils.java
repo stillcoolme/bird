@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * @author: stillcoolme
@@ -103,6 +104,24 @@ public class FileUtils {
         return list;
     }
 
+    public static List<String> getFileName(String filePath) {
+        List result = new ArrayList<>();
+        File f = new File(filePath);
+        if (!f.exists()) {
+            System.out.println(filePath + " not exists");
+            return result;
+        }
+        File fa[] = f.listFiles();
+        for (int i = 0; i < fa.length; i++) {
+            File fs = fa[i];
+            if (!fs.isDirectory() &&
+                    Pattern.matches("applilcation-*.properties", fs.getName())) {
+//                System.out.println(fs.getName());
+                result.add(fs.getName());
+            }
+        }
+        return result;
+    }
 
     public static void main(String[] args) {
         String dbName = "dd";
@@ -115,5 +134,8 @@ public class FileUtils {
         String key2 = Optional.ofNullable(jsonObject.getString("key")).orElse("_))");
         key2 = key2.length() == 0 ? "history" : key2;
         System.out.println(key2);
+
+
+        getFileName("/Users/stillcoolme/Downloads/test");
     }
 }
