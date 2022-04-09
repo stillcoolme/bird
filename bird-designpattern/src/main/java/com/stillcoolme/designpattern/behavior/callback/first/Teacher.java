@@ -4,14 +4,7 @@ package com.stillcoolme.designpattern.behavior.callback.first;
  * Author: stillcoolme
  * Date: 2019/9/18 15:26
  * Description:
- *  定义一个老师对象，实现Callback接口
- *  老师对象有两个public方法：
- * （1）回调接口方法tellAnswer(int answer)，
- *    即学生回答完毕问题之后，老师要做的事情！
- *    （回调业务逻辑，
- *     （定义好了接口，参数，就能先写回调业务逻辑，等学生回调的时候按情况处理，牛逼）
- *    ）
- * （2）问问题方法askQuestion()，即向学生问问题
+ *
  */
 public class Teacher implements Callback {
 
@@ -26,6 +19,10 @@ public class Teacher implements Callback {
         student.resolveQuestion(this);
     }
 
+    /**
+     * 对调用方的具体回答，事先定义逻辑处理
+     * @param answer
+     */
     @Override
     public void tellAnswer(int answer) {
         if(answer == 1) {

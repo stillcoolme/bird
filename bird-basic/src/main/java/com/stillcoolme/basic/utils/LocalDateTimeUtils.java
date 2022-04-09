@@ -18,22 +18,31 @@ import java.util.TimeZone;
  *  SimpleDateFormat 线程不安全（https://blog.csdn.net/csdn_ds/article/details/72984646）
  *  所以，如果是JDK8的应用，
  *  可以使用Instant代替Date，
- *  LocalDateTime代替Calendar，DateTimeFormatter代替Simpledateformatter，
+ *  LocalDateTime代替Calendar， LocalDateTime 包括日期和时间
+ *  DateTimeFormatter代替Simpledateformatter，
  *  官方给出的解释：simple beautiful strong immutable thread-safe。
  */
 public class LocalDateTimeUtils {
 
 
     public static void main(String[] asvg){
-//        localDateTimeToEpochMillis()
-        System.out.println(epochMillisToLocalDateTime(1576129680001L).toString());
 
-        System.out.println(ZonedDateTime.now());
+        LocalDateTime localDateTime =
+                stringToLocalDateTime("2017-08-11 01:20:32", "yyyy-MM-dd HH:mm:ss");
+        System.out.println(localDateTime);
 
-        System.out.println(ZonedDateTime.ofInstant(new Timestamp(1576129680001L).toInstant(), ZoneId.systemDefault()));
+        // 获得当前时间
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(now);
+        // 格式化成字符串输出
+        String localDateTimeStr = formatLocalDateTimeToString(now, TIME_PATTERN);
+        System.out.println("格式化成字符串输出: " + localDateTimeStr);
+        // 时间运算
+        System.out.println("时间运算: " + now.plusHours(8));
 
-        System.out.println(Instant.parse("1576129680001"));
-
+        LocalDate now1 = LocalDate.now();
+        LocalDate localDate = now1.plusDays(-1);
+        System.out.println(localDate);
 
     }
 
@@ -55,118 +64,6 @@ public class LocalDateTimeUtils {
      */
     public static final long SECONDMILLI = 1000;
     /**
-     * added time
-     */
-    public static final String TIMETO = " 23:59:59";
-    /**
-     * flag before
-     */
-    public static final transient int BEFORE = 1;
-    /**
-     * flag after
-     */
-    public static final transient int AFTER = 2;
-    /**
-     * flag equal
-     */
-    public static final transient int EQUAL = 3;
-    /**
-     * date format dd/MMM/yyyy:HH:mm:ss +0900
-     */
-    public static final String TIME_PATTERN_LONG = "dd/MMM/yyyy:HH:mm:ss +0900";
-    /**
-     * date format dd/MM/yyyy:HH:mm:ss +0900
-     */
-    public static final String TIME_PATTERN_LONG2 = "dd/MM/yyyy:HH:mm:ss +0900";
-    /**
-     * date format YYYY-MM-DD HH24:MI:SS
-     */
-    public static final String DB_TIME_PATTERN = "YYYY-MM-DD HH24:MI:SS";
-    /**
-     * date format YYYYMMDDHH24MISS
-     */
-    public static final String DB_TIME_PATTERN_1 = "YYYYMMDDHH24MISS";
-    /**
-     * date format dd/MM/yy HH:mm:ss
-     */
-    public static final String TIME_PATTERN_SHORT = "dd/MM/yy HH:mm:ss";
-    /**
-     * date format dd/MM/yy HH24:mm
-     */
-    public static final String TIME_PATTERN_SHORT_1 = "yyyy/MM/dd HH:mm";
-    /**
-     * date format yyyy年MM月dd日 HH:mm:ss
-     */
-    public static final String TIME_PATTERN_SHORT_2 = "yyyy年MM月dd日 HH:mm:ss";
-    /**
-     * date format yyyyMMddHHmmss
-     */
-    public static final String TIME_PATTERN_SESSION = "yyyyMMddHHmmss";
-    /**
-     * date format yyyyMMddHHmmssSSS
-     */
-    public static final String TIME_PATTERN_MILLISECOND = "yyyyMMddHHmmssSSS";
-    /**
-     * date format MMddHHmmss
-     */
-    public static final String TIME_PATTERN_MILLISECONDMM = "MMddHHmmss";
-    /**
-     * date format YYYYMMDD
-     */
-    public static final String DATE_FMT = "YYYYMMDD";
-    /**
-     * date format yyyyMMdd
-     */
-    public static final String DATE_FMT_0 = "yyyyMMdd";
-    /**
-     * date format yyyy/MM/dd
-     */
-    public static final String DATE_FMT_1 = "yyyy/MM/dd";
-    /**
-     * date format yyyy/MM/dd hh:mm:ss
-     */
-    public static final String DATE_FMT_2 = "yyyy/MM/dd hh:mm:ss";
-    /**
-     * date format yyyy-MM-dd
-     */
-    public static final String DATE_FMT_3 = "yyyy-MM-dd";
-    /**
-     * date format yyyy年MM月dd日
-     */
-    public static final String DATE_FMT_4 = "yyyy年MM月dd日";
-    /**
-     * date format yyyy-MM-dd HH
-     */
-    public static final String DATE_FMT_5 = "yyyy-MM-dd HH";
-    /**
-     * date format yyyy-MM
-     */
-    public static final String DATE_FMT_6 = "yyyy-MM";
-    /**
-     * date format MM月dd日 HH:mm
-     */
-    public static final String DATE_FMT_7 = "MM月dd日 HH:mm";
-    /**
-     * date format MM月dd日 HH:mm
-     */
-    public static final String DATE_FMT_8 = "HH:mm:ss";
-    /**
-     * date format MM月dd日 HH:mm
-     */
-    public static final String DATE_FMT_9 = "yyyy.MM.dd";
-    public static final String DATE_FMT_10 = "HH:mm";
-    public static final String DATE_FMT_11 = "yyyy.MM.dd HH:mm:ss";
-    /**
-     * date format yyyy年MM月dd日
-     */
-    public static final String DATE_FMT_12 = "MM月dd日";
-    public static final String DATE_FMT_13 = "yyyy年MM月dd日HH时mm分";
-    public static final String DATE_FMT_14 = "yyyyMM";
-    public static final String DATE_FMT_15 = "MM-dd HH:mm:ss";
-    public static final String DATE_FMT_16 = "yyyyMMddHHmm";
-    public static final String DATE_FMT_17 = "HHmmss";
-    public static final String DATE_FMT_18 = "yyyy";
-    /**
      * date format yyyy-MM-dd HH:mm:ss
      */
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -182,7 +79,6 @@ public class LocalDateTimeUtils {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             return localDateTime.format(formatter);
-
         } catch (DateTimeParseException e) {
             e.printStackTrace();
         }
@@ -643,26 +539,8 @@ public class LocalDateTimeUtils {
         return (start.isBefore(now) && end.isAfter(now)) || start.isEqual(now) || end.isEqual(now);
     }
 
-    /**获取int时间戳*/
-    public static int getIntTimeStamp(){
-        return (int)(System.currentTimeMillis()/1000);
-    }
-    /**获取int时间戳*/
-    public static int getIntTimeStamp(Date d){
-        return (int)(d.getTime()/1000);
-    }
-
-    /**获取long时间戳*/
-    public static long getLongTimeStamp(){
-        return System.currentTimeMillis()/1000;
-    }
-
-    public static Date timeStampToDate(long timeMillis){
-        return new Date(timeMillis * 1000);
-    }
-
     public static Calendar getToday(int dateOffset){
-        Calendar now=Calendar.getInstance(TimeZone.getDefault());
+        Calendar now = Calendar.getInstance(TimeZone.getDefault());
         now.set(Calendar.HOUR,0);
         now.set(Calendar.MINUTE,0);
         now.set(Calendar.SECOND,0);

@@ -22,7 +22,7 @@ public class JavaFutureTest {
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(10));
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    /*public static void main(String[] args) throws ExecutionException, InterruptedException {
         Long t1 = System.currentTimeMillis();
         List<Future> list = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -35,18 +35,29 @@ public class JavaFutureTest {
             });
             list.add(future);
         }
-
         for (int i = 0; i < list.size(); i++) {
             String string = (String) list.get(i).get();
             System.out.println(string + i);
         }
-
         // 执行时间
         System.out.println("time: " + (System.currentTimeMillis() - t1));
-
         System.out.println("后面的业务逻辑...");
-
         service.shutdown();
+    }*/
+
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Callable<Long> callable = new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return 10L;
+            }
+        };
+        FutureTask<Long> ft = new FutureTask<>(callable);
+        service.submit(ft);
+        Long aLong = ft.get();
+        System.out.println(aLong);
+
     }
 
 }
