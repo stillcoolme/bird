@@ -1,6 +1,7 @@
 package com.stillcoolme.basic.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.stillcoolme.basic.utils.config.PropertyUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,6 +15,16 @@ import java.util.Optional;
  * @description:
  */
 public class FileUtils {
+
+    /**
+     * 相对路径读取文件
+     * @return
+     */
+    public static List<String> getLineFromFile() throws IOException {
+        File appFile = new File(FileUtils.class.getResource("/app.properties").getFile());
+        List<String> strings = org.apache.commons.io.FileUtils.readLines(appFile);
+        return strings;
+    }
 
     /**
      * 读取文件夹下的文件名，得到文件名全路径列表
@@ -102,7 +113,6 @@ public class FileUtils {
         }
         return list;
     }
-
 
     public static void main(String[] args) {
         String dbName = "dd";
