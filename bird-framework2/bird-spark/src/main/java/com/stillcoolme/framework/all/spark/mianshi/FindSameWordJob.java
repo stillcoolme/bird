@@ -1,10 +1,10 @@
-package com.stillcoolme.framework.spark.mianshi;
+package com.stillcoolme.framework.all.spark.mianshi;
 
-import com.stillcoolme.framework.spark.SparkBuilder;
+import com.stillcoolme.framework.all.spark.SparkBuilder;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
 
-import static com.stillcoolme.framework.spark.SparkBuilder.BASE_PATH;
+import static com.stillcoolme.framework.all.spark.SparkBuilder.BASE_PATH;
 
 /**
  * @author: stillcoolme

@@ -1,4 +1,4 @@
-package com.stillcoolme.framework.spark;
+package com.stillcoolme.framework.all.spark;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SQLContext;
