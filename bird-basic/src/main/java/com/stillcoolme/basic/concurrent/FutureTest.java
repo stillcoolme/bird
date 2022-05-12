@@ -8,8 +8,8 @@ import java.util.concurrent.*;
  * Author: stillcoolme
  * Date: 2019/7/26 9:38
  * Description:
- *  JDK自带的Future是阻塞的，不会先执行下面的逻辑
- *  另外 CompletableFuture 异步编程  https://my.oschina.net/u/2526533/blog/3190293
+ *  JDK自带的Future是阻塞的，1. 堵在future.get()，不会先执行后面的逻辑；2. 或者轮询方式判断 future.isdone() 任务是否结束再获取结果
+ *  异步需要用 CompletableFuture
  */
 public class FutureTest {
 
@@ -32,7 +32,6 @@ public class FutureTest {
         for (Future<String> future : results) {
             System.out.println(future.get());
         }
-
         System.out.println("Main complete");
 
         if (!executorService.isShutdown()) {

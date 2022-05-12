@@ -26,6 +26,11 @@ public class LocalDateTimeUtils {
 
 
     public static void main(String[] asvg){
+
+        LocalDateTime localDateTime =
+                stringToLocalDateTime("2017-08-11 01:20:32", "yyyy-MM-dd HH:mm:ss");
+        System.out.println(localDateTime);
+
         // 获得当前时间
         LocalDateTime now = LocalDateTime.now();
         System.out.println(now);

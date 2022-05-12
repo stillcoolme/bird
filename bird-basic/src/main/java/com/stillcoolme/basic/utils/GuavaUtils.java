@@ -8,6 +8,10 @@ import com.google.common.hash.Hashing;
  * @author: stillcoolme
  * @date: 2020/4/19 15:04
  * Function:
+ * 集合
+ * 缓存
+ * 异步
+ * 限流
  */
 public class GuavaUtils {
 
