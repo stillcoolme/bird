@@ -566,4 +566,20 @@ public class LocalDateTimeUtils {
         return sdf.format(new Date(seconds));
     }
 
+    /**
+     * 时间转时间戳
+     * @param dateStr
+     * @param format
+     * @return
+     */
+    public static long Date2TimeStamp(String dateStr, String format) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime localDateTime = LocalDateTime.parse (dateStr, formatter);
+            return localDateTime.toEpochSecond(ZoneOffset.of("+8"));
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
