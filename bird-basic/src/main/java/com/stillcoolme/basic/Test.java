@@ -8,10 +8,13 @@ package com.stillcoolme.basic;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-        String realName = "刘第三";
-        realName = realName.substring(0, 1) + "*" + realName.substring(realName.length() - 1, realName.length());
-        System.out.println(realName);
-
+        String realName = "";
+        System.out.println(realName.trim());
+        if (realName.contains("sdf")) {
+            System.out.println("xx");
+        } else {
+            System.out.println("oo");
+        }
 
     }
 }

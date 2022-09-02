@@ -1,6 +1,7 @@
 package com.stillcoolme.basic.utils;
 
 import com.stillcoolme.basic.bean.Person;
+import com.stillcoolme.basic.bean.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,10 +17,30 @@ import static java.util.stream.Collectors.groupingBy;
 public class Map8Utils {
 
     /**
-     * 据性别种类进行分类，返回一个Map<Type, List<Person>>的结果
+     * 利用 flatMap，将用户的权限列表里面相同的权限去重合并
      * @return
      */
-    public static Map<Character, List<Person>> so(List<Person> list) {
+    public static void flatMapTest() {
+        List<String> list = Arrays.asList(new String[]{"first page", "manager page", "manager page"});
+        ArrayList<String> perList = new ArrayList<>(list);
+        User user1 = new User("bobo", perList);
+        User user2 = new User("jack", perList);
+        ArrayList<User> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+
+        List<String> userList = users.stream().flatMap(user -> user.getPermi().stream())
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println(userList.toString());
+    }
+
+    /**
+     * 据性别种类进行分类 groupingBy，返回一个Map<Type, List<Person>>的结果
+     * @param list
+     * @return
+     */
+    public static Map<Character, List<Person>> groupingByTest(List<Person> list) {
         return list.stream().collect(groupingBy(Person::getSex));
 
         // jdk8以前写法。。。
@@ -115,5 +136,7 @@ public class Map8Utils {
 
     public static void main(String[] args) {
         mergeMap();
+
+        flatMapTest();
     }
 }
