@@ -1,4 +1,4 @@
-package com.stillcoolme.framework.flink.source;
+package com.stillcoolme.framework.flink.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Item {
-    String name;
     Integer id;
+    String name;
 }

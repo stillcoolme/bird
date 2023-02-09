@@ -247,8 +247,7 @@ public class LocalDateTimeUtils {
      * @return LocalDateTime
      */
     public static LocalDateTime getCurrentLocalDateTime() {
-        return LocalDateTime.now(Clock.system(ZoneId.of("Asia/Shanghai")));
-
+        return LocalDateTime.now(ZoneOffset.of("+8"));
     }
 
 

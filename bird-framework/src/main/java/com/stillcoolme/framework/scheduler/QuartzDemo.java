@@ -7,6 +7,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import java.util.Date;
 
 /**
+ * https://michael728.github.io/2020/09/06/java-middleware-quartz-basic/
  * 学习一下人家源码的写法
  */
 public class QuartzDemo {

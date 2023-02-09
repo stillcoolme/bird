@@ -135,7 +135,8 @@ public class FileUtils {
         key2 = key2.length() == 0 ? "history" : key2;
         System.out.println(key2);
 
-
+        List<String> xx = readFile("resources/app.properties");
+        System.out.println(xx.get(0));
         getFileName("/Users/stillcoolme/Downloads/test");
     }
 }
