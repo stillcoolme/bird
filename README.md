@@ -1,7 +1,7 @@
 # 平时的日拱一卒
 
 ## bird-basic
-* 工具类及demo
+* 工具类及demo，相关知识点会整理在`Test知识点`对应的类文件中
 * java基础及面试题集
 * 参考
     * [crossoverJie/JCSprout](https://github.com/crossoverJie/JCSprout)
