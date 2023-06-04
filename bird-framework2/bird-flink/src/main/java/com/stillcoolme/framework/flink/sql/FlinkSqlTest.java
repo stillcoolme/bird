@@ -27,9 +27,12 @@ import static org.apache.flink.table.api.Expressions.$;
 public class FlinkSqlTest {
 
     public static void main(String[] args) throws Exception {
-
-        EnvironmentSettings bsSettings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
         StreamExecutionEnvironment bsEnv = StreamExecutionEnvironment.getExecutionEnvironment();
+        bsEnv.setParallelism(1);
+        EnvironmentSettings bsSettings = EnvironmentSettings
+                .newInstance()
+                .useBlinkPlanner()
+                .inStreamingMode().build();
         StreamTableEnvironment bsTableEnv = StreamTableEnvironment.create(bsEnv, bsSettings);
 
         SingleOutputStreamOperator<Item> source = bsEnv.addSource(new MyStreamingSource())
