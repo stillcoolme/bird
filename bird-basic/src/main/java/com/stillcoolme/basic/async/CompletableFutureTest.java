@@ -15,6 +15,7 @@ import java.util.function.Function;
  *   烧水泡茶程序，我们分了3个任务：
  *   任务1负责洗水壶、烧开水，任务2负责洗茶壶、洗茶杯和拿茶叶，任务3负责泡茶。
  *   其中任务3要等待任务1和任务2都完成后才能开始。
+ *   这叫多线程编排？有个京东的工具 asyncTool
  */
 public class CompletableFutureTest {
 

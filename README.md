@@ -23,6 +23,18 @@
     * [Wang-Jun-Chao/leetcode](https://github.com/Wang-Jun-Chao/leetcode)
     * [Blankj/awesome-java-leetcode附各公司题号及基础结构](https://github.com/Blankj/awesome-java-leetcode)
     * [常用算法学习](https://algorithm.yuanbin.me/zh-hans/)
+
+### 刷题常用代码片段
+```java
+// new数组
+int[] prices = new int[]{7,1,5,3,6,4};
+// 字符串变char数组
+char[] arr = s.toCharArray();
+// 获取字符串某位置的char
+char cc = xx.charAt(1);
+
+```
+
     
 ### 数据结构
 0. 时间空间复杂度，做完每道题都应该分析一下时间空间复杂度！
