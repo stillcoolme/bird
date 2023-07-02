@@ -1,7 +1,8 @@
 package com.stillcoolme.basic.bean;
 
-import java.util.Objects;
+import lombok.Data;
 
+@Data
 public class Person{
     private String name;
     private int age ;

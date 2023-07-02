@@ -2,6 +2,7 @@ package com.stillcoolme.basic.utils;
 
 import com.stillcoolme.basic.bean.Person;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class List8Utils {
      * @param personList
      * @return
      */
-    private List<String> afterJava8(List<Person> personList) {
+    private static List<String> sortList(List<Person> personList) {
         return personList.stream()
                 .filter(person -> person.getAge() > 20)
                 .sorted(comparing(Person::getAge))  //根据年龄进行排序
@@ -83,6 +84,13 @@ public class List8Utils {
 
     public static void main(String[] args) {
         matchTest();
+        List<Person> list = new ArrayList();
+        list.add(new Person("haha112", 112, 'x'));
+        list.add(new Person("haha119", 119, 'x'));
+        list.add(new Person("haha110", 110, 'x'));
+        System.out.println(list.size());
+        List<String> strings = sortList(list);
+        System.out.println(strings.toString());
     }
 
 }
