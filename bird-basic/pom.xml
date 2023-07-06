@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>30.1-jre</version>
         </dependency>
 
         <dependency>
@@ -49,39 +49,26 @@
         </dependency>
 
         <!-- 日志 -->
-        <!--log4j2核心包-->
+        <!--log4j 1 依赖 start -->
+        <!-- SLF4J API -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.32</version>
         </dependency>
-        <!--用于与slf4j保持桥接-->
+        <!-- Log4j SLF4J Binding -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.8.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.32</version>
         </dependency>
-        <!--log4j2 异步依赖-->
+        <!-- Log4j Implementation -->
         <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <version>3.3.6</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
-
-
-        <!--log4j 1 依赖-->
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-api</artifactId>-->
-<!--            <version>1.7.25</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-log4j12</artifactId>-->
-<!--            <version>1.7.25</version>-->
-<!--            &lt;!&ndash; <scope>test</scope> &ndash;&gt;-->
-<!--        </dependency>-->
-
+        <!--log4j 1 依赖 end -->
 
     </dependencies>
 
