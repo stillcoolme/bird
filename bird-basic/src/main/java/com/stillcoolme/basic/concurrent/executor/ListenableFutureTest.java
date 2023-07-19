@@ -32,17 +32,6 @@ public class ListenableFutureTest {
             }
         });
 
-        Futures.addCallback(stringTask, new FutureCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                System.out.println("获取StringTask结果: " + result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-            }
-        });
-
         // 执行时间
         System.out.println("time: " + (System.currentTimeMillis() - t1));
 
