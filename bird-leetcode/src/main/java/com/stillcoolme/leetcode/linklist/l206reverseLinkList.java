@@ -19,8 +19,6 @@ public class l206reverseLinkList {
             curr.next = pre;              // curr 往后指
             pre = curr;                   // curr 往后指完，大家继续前进
             curr = temp;                  // curr 往后指完，大家继续前进
-
-
         }
         return pre;
     }
