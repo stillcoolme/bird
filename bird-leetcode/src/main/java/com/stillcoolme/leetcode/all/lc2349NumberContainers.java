@@ -12,12 +12,12 @@ import java.util.TreeSet;
  * @version V1.0.0
  * @date 2023/5/20 17:30
  */
-public class l2349NumberContainers {
+public class lc2349NumberContainers {
 
     HashMap<Integer, Integer> container = new HashMap<>();  //  index: number
     private Map<Integer, TreeSet<Integer>> valIndexMap = new HashMap<>();  // number: TreeSet<index, index>
 
-    public l2349NumberContainers() {
+    public lc2349NumberContainers() {
     }
 
     public void change(int index, int number) {
@@ -40,7 +40,7 @@ public class l2349NumberContainers {
 
 
     public static void main(String[] args) {
-        l2349NumberContainers nc = new l2349NumberContainers();
+        lc2349NumberContainers nc = new lc2349NumberContainers();
          // 没有数字 10 ，所以返回 -1 。
         nc.change(1, 10); // 容器中下标为 1 处填入数字 10 。
         nc.change(1, 20); // 容器中下标为 1 处填入数字 20 。注意，下标 1 处之前为 10 ，现在被替换为 20 。

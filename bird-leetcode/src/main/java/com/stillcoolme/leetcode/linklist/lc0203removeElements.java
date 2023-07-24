@@ -1,4 +1,4 @@
-package com.stillcoolme.leetcode.all;
+package com.stillcoolme.leetcode.linklist;
 
 /**
  * <p>TODO</p>
