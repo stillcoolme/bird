@@ -9,7 +9,7 @@ package com.stillcoolme.leetcode.all;
  */
 
 
-public class l203removeElements {
+public class lc0203removeElements {
 
     public static class ListNode {
         int val;
@@ -47,8 +47,8 @@ public class l203removeElements {
         ListNode listNode6 = new ListNode(6, listNode3);
         ListNode listNode5 = new ListNode(5, listNode6);
         ListNode listNode66 = new ListNode(6, listNode5);
-        l203removeElements l203removeElements = new l203removeElements();
-        ListNode listNode = l203removeElements.removeElements(listNode66, 6);
+        lc0203removeElements lc0203removeElements = new lc0203removeElements();
+        ListNode listNode = lc0203removeElements.removeElements(listNode66, 6);
         System.out.println(listNode);
 
     }

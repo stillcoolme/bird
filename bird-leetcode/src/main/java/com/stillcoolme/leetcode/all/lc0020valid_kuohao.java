@@ -54,7 +54,7 @@ package com.stillcoolme.leetcode.all;
 import java.util.Stack;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class lc0020valid_kuohao {
     public boolean isValid(String s) {
         Stack<Character> stack = new Stack<>();
         char[] arr = s.toCharArray();
@@ -88,7 +88,7 @@ class Solution {
     }
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        lc0020valid_kuohao solution = new lc0020valid_kuohao();
         boolean valid = solution.isValid("[{}]");
         System.out.println(valid);
     }
