@@ -1,5 +1,7 @@
 package com.stillcoolme.leetcode.linklist;
 
+import com.stillcoolme.leetcode.data.ListNode;
+
 /**
  * <p>TODO</p>
  *
@@ -10,14 +12,6 @@ package com.stillcoolme.leetcode.linklist;
 
 
 public class lc0203removeElements {
-
-    public static class ListNode {
-        int val;
-        ListNode next;
-        ListNode() {}
-        ListNode(int val) { this.val = val; }
-        ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-    }
 
     /**
      * 1. 需要构造多一个头节点！

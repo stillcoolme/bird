@@ -7,7 +7,7 @@ package com.stillcoolme.leetcode.all;
  * @version V1.0.0
  * @date 2023/5/20 15:20
  */
-public class l2327 {
+public class lc2327fixTime {
     public int countTime(String time) {
         char queestionMark = '?';
 
@@ -43,7 +43,7 @@ public class l2327 {
     }
 
     public static void main(String[] args) {
-        l2327 l2327 = new l2327();
+        lc2327fixTime l2327 = new lc2327fixTime();
         int i = l2327.countTime("?4:22");
         System.out.println(i);
     }

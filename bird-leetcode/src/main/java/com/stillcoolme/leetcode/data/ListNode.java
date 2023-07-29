@@ -1,10 +1,13 @@
 package com.stillcoolme.leetcode.data;
 
+import lombok.AllArgsConstructor;
+
 /**
  * @author: create by stillcoolme
  * @description: com.stillcoolme.leetcode.data
  * @date:2019/6/23
  **/
+@AllArgsConstructor
 public class ListNode {
 
     public int val;
@@ -13,6 +16,7 @@ public class ListNode {
     public ListNode(int x) {
         val = x;
     }
+
 
     /**
      * 创建测试数据
