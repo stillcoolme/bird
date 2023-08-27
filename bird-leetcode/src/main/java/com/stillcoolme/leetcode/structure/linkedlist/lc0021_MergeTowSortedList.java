@@ -14,7 +14,7 @@ import com.stillcoolme.leetcode.data.ListNode;
  * 输出：1->1->2->3->4->4
  * ```
  **/
-public class _21_MergeTowSortedList {
+public class lc0021_MergeTowSortedList {
 
     /**
      * 普通解题思路：
@@ -86,7 +86,7 @@ public class _21_MergeTowSortedList {
     }
 
     public static void main(String[] args) {
-        _21_MergeTowSortedList solution = new _21_MergeTowSortedList();
+        lc0021_MergeTowSortedList solution = new lc0021_MergeTowSortedList();
         ListNode listNode0 = ListNode.createTestData("[1,3,5,7,9]");
         ListNode listNode1 = ListNode.createTestData("[2,3,6,8,10]");
         ListNode.print(listNode0);
