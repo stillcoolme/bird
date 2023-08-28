@@ -26,6 +26,8 @@ public class LocalDateTimeUtils {
 
 
     public static void main(String[] asvg){
+        long l = localDateTimeToEpochMillis(LocalDateTime.now());
+        System.out.println(l);
 
         LocalDateTime localDateTime =
                 stringToLocalDateTime("2017-08-11 01:20:32", "yyyy-MM-dd HH:mm:ss");
@@ -43,6 +45,10 @@ public class LocalDateTimeUtils {
         LocalDate now1 = LocalDate.now();
         LocalDate localDate = now1.plusDays(-1);
         System.out.println(localDate);
+
+        String str = "{ \n" +
+                "\t\"haha\": \"123\"\n" +
+                "}";
 
     }
 

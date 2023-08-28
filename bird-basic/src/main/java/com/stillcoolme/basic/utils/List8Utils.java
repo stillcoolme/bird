@@ -25,7 +25,7 @@ public class List8Utils {
      */
     private static List<String> sortList(List<Person> personList) {
         return personList.stream()
-                .filter(person -> person.getAge() > 20)
+                .filter(person -> (person.getAge() > 20))
                 .sorted(comparing(Person::getAge))  //根据年龄进行排序
                 .map(Person::getName)  //map流映射: 提取名称，将 Person 转换成 String
                 .collect(Collectors.toList());  //转换为List !! 就不用另外加了
@@ -85,7 +85,7 @@ public class List8Utils {
     public static void main(String[] args) {
         matchTest();
         List<Person> list = new ArrayList();
-        list.add(new Person("haha112", 112, 'x'));
+        list.add(new Person("haha112", 112, 'y'));
         list.add(new Person("haha119", 119, 'x'));
         list.add(new Person("haha110", 110, 'x'));
         System.out.println(list.size());

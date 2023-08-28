@@ -14,6 +14,11 @@ public class ListNode {
         val = x;
     }
 
+    public ListNode(int x, ListNode next) {
+        this.next = next;
+        val = x;
+    }
+
     /**
      * 创建测试数据
      *

@@ -35,6 +35,33 @@ public class Map8Utils {
         System.out.println(userList.toString());
     }
 
+
+    /**
+     * 以 user name 为 key， User 为value的 map
+     * @return
+     */
+    public static void toPersonNameMap() {
+        List<String> list = Arrays.asList(new String[]{"first page", "manager page", "manager page"});
+        ArrayList<String> perList = new ArrayList<>(list);
+        User user1 = new User("bobo", perList);
+        User user2 = new User("jack", perList);
+        ArrayList<User> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+
+        Map<String, User> userNameMap = users.stream().collect(Collectors.toMap(User::getName, user -> user));
+        System.out.println(userNameMap.toString());
+
+
+        Map<String, List<String>> userNametoPermMap = userNameMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue().getPermi() // 假设Person类有一个getAge()方法来获取年龄
+                ));
+        System.out.println(userNametoPermMap.toString());
+    }
+
+
     /**
      * 据性别种类进行分类 groupingBy，返回一个Map<Type, List<Person>>的结果
      * @param list
@@ -138,5 +165,7 @@ public class Map8Utils {
         mergeMap();
 
         flatMapTest();
+
+        toPersonNameMap();
     }
 }
