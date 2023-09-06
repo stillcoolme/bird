@@ -25,7 +25,7 @@ public class List8Utils {
      */
     private static List<String> sortList(List<Person> personList) {
         return personList.stream()
-                .filter(person -> (person.getAge() > 20))
+                .filter(person -> (person.getAge() > 20 && !"haha112".equals(person.getName())))
                 .sorted(comparing(Person::getAge))  //根据年龄进行排序
                 .map(Person::getName)  //map流映射: 提取名称，将 Person 转换成 String
                 .collect(Collectors.toList());  //转换为List !! 就不用另外加了
@@ -91,6 +91,13 @@ public class List8Utils {
         System.out.println(list.size());
         List<String> strings = sortList(list);
         System.out.println(strings.toString());
+
+        String test = "";
+        if (" ".equals(test)) {
+            System.out.println(true);
+        } else {
+            System.out.println(false);
+        }
     }
 
 }

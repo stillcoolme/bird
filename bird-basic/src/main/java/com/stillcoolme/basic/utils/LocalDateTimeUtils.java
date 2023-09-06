@@ -91,6 +91,24 @@ public class LocalDateTimeUtils {
         return null;
     }
 
+
+    /**
+     * localDateTime 转 自定义格式string
+     *
+     * @param localDate
+     * @param format        例：“yyyy-MM-dd
+     * @return
+     */
+    public static String formatLocalDateToString(LocalDate localDate, String format) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+            return localDate.format(formatter);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * string 转 LocalDateTime
      *
@@ -102,6 +120,23 @@ public class LocalDateTimeUtils {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             return LocalDateTime.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * string 转 LocalDateTime
+     *
+     * @param dateStr 例："2017-08-11 01:00:00"
+     * @param format  例："yyyy-MM-dd HH:mm:ss"
+     * @return
+     */
+    public static LocalDate stringToLocalDate(String dateStr, String format) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+            return LocalDate.parse(dateStr, formatter);
         } catch (DateTimeParseException e) {
             e.printStackTrace();
         }
