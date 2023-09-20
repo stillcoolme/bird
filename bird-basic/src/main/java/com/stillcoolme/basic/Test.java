@@ -1,6 +1,7 @@
 package com.stillcoolme.basic;
 
 import com.stillcoolme.basic.utils.LocalDateTimeUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
@@ -18,6 +19,10 @@ import java.util.*;
 public class Test {
 
     public static void main(String[] args) {
+
+        String xx = DigestUtils.md5Hex("430100199807293569");
+        System.out.println("xx: " + xx);
+
         String str = "2022-12-05";
         int i = "2022-12-06".compareTo(str);
         System.out.println(i);
