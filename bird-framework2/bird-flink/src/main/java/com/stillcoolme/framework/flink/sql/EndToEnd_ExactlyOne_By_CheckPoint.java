@@ -3,6 +3,7 @@ package com.stillcoolme.framework.flink.sql;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.flink.runtime.state.hashmap.HashMapStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment;
 
 /**
@@ -37,6 +38,7 @@ public class EndToEnd_ExactlyOne_By_CheckPoint {
         }
 
         // 接入数据源，读取文件获取数据
+        //DataStreamSource<String> lines = env.socketTextStream("node1", 9999);
 
 
 
