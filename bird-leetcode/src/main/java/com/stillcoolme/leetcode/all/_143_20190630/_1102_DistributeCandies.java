@@ -1,4 +1,4 @@
-package com.stillcoolme.leetcode.contest._143_20190630;
+package com.stillcoolme.leetcode.all._143_20190630;
 
 /**
  * @author: create by stillcoolme
