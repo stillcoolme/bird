@@ -1,4 +1,4 @@
-package com.stillcoolme.leetcode.contest._145_20190714;
+package com.stillcoolme.leetcode.all._145_20190714;
 
 import java.util.*;
 
