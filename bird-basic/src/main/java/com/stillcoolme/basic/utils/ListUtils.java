@@ -32,7 +32,7 @@ public class ListUtils {
 
 
     // compareList By float
-    public static void ListCompare() {
+    public static void listCompare() {
         List<Result> list = new ArrayList<>();
         list.add(new Result(1, 23.1f));
         list.add(new Result(2, 23.12f));
@@ -40,20 +40,17 @@ public class ListUtils {
         Collections.sort(list, new Comparator<Result>() {
             @Override
             public int compare(Result o1, Result o2) {
+                // o1 - o2 正序 （返回负数说明比较小排前面，返回正数说明比较大排后面）， o2 - o1 倒序
+                // 正序
                 float result = o1.getScore() - o2.getScore();
                 // 倒序
-                if(result < 0) {
+//                float result = o2.getScore() - o1.getScore();
+
+                if(result > 0) {
                     return 1;
                 } else {
                     return -1;
                 }
-
-                // 正序
-                /*if(result < 0) {
-                    return 1;
-                } else {
-                    return -1;
-                }*/
             }
         });
         for (int i = 0; i < list.size(); i++) {
@@ -62,6 +59,7 @@ public class ListUtils {
     }
 
     public static void main(String[] args) {
+        listCompare();
         String[] str = new String[3];
         for (int i = 0; i < 3; i++) {
             str[i] = i + " ";
