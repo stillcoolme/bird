@@ -5,11 +5,8 @@ import com.stillcoolme.leetcode.data.ListNode;
 /**
  * 2023-07-24 10min做不出来， 不知到往前的指针怎么变成往后？
  */
-<<<<<<<< HEAD:bird-leetcode/src/main/java/com/stillcoolme/leetcode/structure/linkedlist/lc0206reverseLinkList.java
-public class lc0206reverseLinkList {
-========
-public class lc0206_ReverseLinkList {
->>>>>>>> d20e00e0ee0a0e9c12588cb0364b61b1af96356b:bird-leetcode/src/main/java/com/stillcoolme/leetcode/structure/linkedlist/lc0206_ReverseLinkList.java
+
+public class _0206_ReverseLinkList {
 
 
     public ListNode reverseList(ListNode head) {

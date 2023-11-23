@@ -1,15 +1,6 @@
 package com.stillcoolme.basic;
 
-import com.stillcoolme.basic.utils.LocalDateTimeUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * @author: stillcoolme
@@ -19,47 +10,25 @@ import java.util.*;
 public class Test {
 
     public static void main(String[] args) {
+        int[] test = new int[0];
 
-        String xx = DigestUtils.md5Hex("430100199807293569");
-        System.out.println("xx: " + xx);
+        String realLabelId = "bcard_gen_cust_app_2011";
+        System.out.println("xx: " + realLabelId.contains("bcard_gen_cust"));
 
-        String str = "2022-12-05";
-        int i = "2022-12-06".compareTo(str);
-        System.out.println(i);
-
-        ArrayList arrayList = new ArrayList();
-        arrayList.add("BOB");
-
-        Map<String, List<String>> thisMap= new HashMap<>();
-        thisMap.put("name", Arrays.asList("HAHA", "BOBO", "LUCY"));
-        arrayList.addAll(thisMap.get("name"));
-
-        System.out.println(arrayList);
-
-        String inputTime = "2023-10-29";
-//        String inputTime = "2023-10-29 23:59:59";
-        if (StringUtils.isNotEmpty(inputTime) && inputTime.length() >= 10) {
-            inputTime = inputTime.substring(0, 10);
-            System.out.println("inputTime: " + inputTime);
-            SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd");
-
-            Date yyyyMMdd = null;
-            try {
-                yyyyMMdd = inputFormatter.parse(inputTime);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            String yyyyMMddString = new SimpleDateFormat("yyyyMMdd").format(yyyyMMdd);
-            System.out.println(yyyyMMddString);
+        String labelValue = "569.0";
+        String newLabelValue = labelValue.substring(labelValue.length() - 2);
+        System.out.println(".0".equals(newLabelValue));
 
 
-            String yyyy_MM_ddString = new SimpleDateFormat("yyyy-MM-dd").format(yyyyMMdd);
-            System.out.println(yyyy_MM_ddString);
-
-
-            String yyyyMMddhhmmssString = new SimpleDateFormat("yyyyMMddHHmmss").format(yyyyMMdd);
-            System.out.println(yyyyMMddhhmmssString);
+        String loan_core = "1900-01-01 24:49:29";
+        if (loan_core.startsWith("1900-01-01")) {
+            System.out.println(loan_core.substring(0, 10));
+        } else {
+            System.out.println("no");
         }
+        ArrayList arrayList = new ArrayList();
+        arrayList.toArray();
 
+        System.out.println("".split("\\(")[0]);
     }
 }

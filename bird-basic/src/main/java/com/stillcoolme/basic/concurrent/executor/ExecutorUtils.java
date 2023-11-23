@@ -1,13 +1,13 @@
 package com.stillcoolme.basic.concurrent.executor;
 
+import cn.hutool.core.date.StopWatch;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
- * @author: stillcoolmebnhhhhhh
+ * @author: stillcoolme
  *
  *
  *
@@ -39,9 +39,33 @@ public class ExecutorUtils {
     }
 
     public static void main(String[] args) {
-        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        // 生产 导入标签图书馆外部打标标签 就是这样用的，在一个ServiceImpl类里面起一个 ThreadPoolExecutor，不过参数要设置一下
+//        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        ThreadFactory NAME_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("label-import-%d").build();
+        ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+                400, 400, 1000L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(1024000),
+                NAME_THREAD_FACTORY,
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+
+        // 生产常用这种匿名方法提交任务，就不用在 Service类里写内部类了
+        executorService.execute(() -> {
+            try {
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
+
+                // labelService.do()
+
+                stopWatch.stop();
+                log.info("ExecutorUtls 异步执行完成，duration: ", stopWatch.getTotalTimeMillis());
+            } catch (Exception e) {
+                log.info("ExecutorUtls 异步执行异常", e);
+            }
+        });
+
         threadPoolStatus(executorService, "test");
-        log.debug("hahdfhasdf");
+
     }
 
 }
